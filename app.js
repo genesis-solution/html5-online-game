@@ -66,12 +66,13 @@ app.get('/game', authenticateToken, (req, res) => {
   res.sendFile(__dirname + '/public/index.html');
 });
 
-app.get('/game.html', authenticateToken, (req, res) => {
-  res.sendFile(__dirname + '/public/index.html');
-});
-
 // Endpoint to serve the user's information (username) to the client
 app.get('/user/info', authenticateToken, (req, res) => {
+  const { username } = req.user;
+  res.json({ username });
+});
+
+app.get('/currenttime', authenticateToken, (req, res) => {
   const { username } = req.user;
   res.json({ username });
 });
@@ -241,6 +242,22 @@ io.on('connection', (socket) => {
           // Broadcast move to the other player in the room
           socket.to(roomName).emit('opponentMove', moveData);
       }
+  });
+
+  socket.on('updatetimer', (timer) => {
+    const roomName = findRoomBySocketId(socket.id);
+    if (roomName) {
+        // Broadcast move to the other player in the room
+        socket.to(roomName).emit('updatetimer', timer);
+    }
+  });
+
+  socket.on('toggleuser', (status) => {
+    const roomName = findRoomBySocketId(socket.id);
+    if (roomName) {
+        // Broadcast move to the other player in the room
+        socket.to(roomName).emit('toggleuser', status);
+    }
   });
 
   socket.on('disconnect', () => {

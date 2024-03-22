@@ -23,7 +23,7 @@ function initGameCanvas(w,h){
 	stage.enableMouseOver(20);
 	stage.mouseMoveOutside = true;
 	
-	createjs.Ticker.framerate = 60;
+	createjs.Ticker.framerate = 25;
 	createjs.Ticker.addEventListener("tick", tick);
 }
 
