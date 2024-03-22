@@ -74,7 +74,8 @@ var textDisplay = {
 	resultDesc:'you won [NUMBER] round, [SCORE]:[OPPONENTSCORE]',
 	bEmployee: false,
 	room: '',
-	firstGame: 'yes'
+	firstGame: 'yes',
+	currentTurn: 'me'
 }
 
 //Social share, [SCORE] will replace with game score
@@ -986,23 +987,19 @@ function displayPlayerTurn(){
 		if(n == gameData.player && !gameData.complete){
 			userTurn = textDisplay.userTurn;
 
-			if ( typeof initSocket == 'function' && multiplayerSettings.enable && socketData.online) {
-				if(socketData.host){
-					userTurn = n == 1 ? textDisplay.playerTurn.replace('[NAME]', $.players['gamePlayer'+ n].text) : userTurn;
-				}else{
-					userTurn = n == 0 ? textDisplay.playerTurn.replace('[NAME]', $.players['gamePlayer'+ n].text) : userTurn;
-				}
-			}else{
-				if(n == 1 && gameData.ai){
-					userTurn = textDisplay.computerTurn;
+			if(n == 1 && gameData.ai){
+				userTurn = textDisplay.computerTurn;
+			}
+			else {
+				if (textDisplay.bEmployee) {
+					userTurn = textDisplay.userTurn;
+					textDisplay.currentTurn = 'me';
 				}
 				else {
-					if (textDisplay.bEmployee) {
-						userTurn = textDisplay.userTurn;
-					}
-					else {
-						if (gameData.player == 1)
-							userTurn = "Other turn"
+					if (gameData.player == 1)
+					{
+						userTurn = "Other turn"
+						textDisplay.currentTurn = 'other';
 					}
 				}
 			}
@@ -1083,10 +1080,12 @@ function placeMove(column) {
 	}
 	
 	if (textDisplay.player2 != '') {
+
 		textDisplay.bEmployee = false;
 		var playerKey = textDisplay.bEmployee ? 1 : 0
 		if (gameData.player == playerKey)
 		{
+			textDisplay.firstGame = 'no'
 			placeIconForMy(firstEmptyRow, column, gameData.player)
 			gameData.moving = true;
 			socket.emit('move', {row: firstEmptyRow, column: column, player: 1});
@@ -1233,41 +1232,13 @@ function createSocket() {
 	});
 
 	socket.on('toggleuser', (roomName) => {
-		toggleGameTimer(true)
 
-		if (gameData.ai == true || textDisplay.firstGame == 'no') {
-			
-			togglePlayer();
-				
-			if (gameData.ai) {
-				if(gameData.player == 1){
-					makeAIMove();
-				}
-				displayPlayerTurn();
-			} else {
-				displayPlayerTurn();
-			}
+		toggleGameTimer(true)
+		if (textDisplay.firstGame == 'no')
+		{
+			checkPlayerStatusByTimeout();
 		}
-		else {
-			for (var i = 0; i < gameData.settings.column; i++) {
-				var boardClone = JSON.parse(JSON.stringify(gameData.board));
-				var firstNoEmptyRow = getFirstNoEmptyRow(i, boardClone);
-				if (firstNoEmptyRow !== -1) {
-					textDisplay.firstGame = 'no';
-					// change chance
-					togglePlayer();
-					
-					if (gameData.ai) {
-						if(gameData.player == 1){
-							makeAIMove();
-						}
-						displayPlayerTurn();
-					} else {
-						displayPlayerTurn();
-					}
-				}
-			}
-		}
+
 	});
 
 	socket.on('playerDisconnected', (roomName) => {
@@ -1279,6 +1250,7 @@ function createSocket() {
 	
 	socket.on('opponentMove', (moveData) => {
 		// Handle opponent's move
+		textDisplay.firstGame = 'no'
 		placeIconForOtherMan(moveData.row, moveData.column, moveData.player);
 		// You can update your game UI accordingly with the opponent's move
 	});
@@ -1350,6 +1322,32 @@ function checkPlayerStatus(player){
 			}
 		}});
 	}
+}
+
+function checkPlayerStatusByTimeout(){
+	gameData.moving = false;
+
+	var tweenTimer = 2.5;
+	boardComplete = true;
+	toggleGameTimer(true);
+	gameData.complete = true;
+
+	if($.players['gameTurn'+ 0].text == 'Your turn'){
+		playerData.opponentScore++;
+	}
+	else {
+		playerData.score++;
+	}
+
+	displayPlayerScore();
+	playSound('soundComplete');
+	
+	displayPlayerTurn();
+	gameData.turn = gameData.turn == 1 ? 0 : 1;
+	gameData.player = gameData.turn;
+	TweenMax.to(gameContainer, tweenTimer, {overwrite:true, onComplete:function(){
+		buildBoard();
+	}});
 }
 
 function togglePlayer(){
@@ -1638,18 +1636,18 @@ function updateGame(){
 		if(timeData.enable){
 			
 			if (gameData.ai == false) {
-				timeData.nowDate = new Date();
-				timeData.elapsedTime = Math.floor((timeData.nowDate.getTime() - timeData.startDate.getTime()));
-				timeData.timer = Math.floor((timeData.countdown) - (timeData.elapsedTime));
+				if (gameData.player == 0) {
+					timeData.nowDate = new Date();
+					timeData.elapsedTime = Math.floor((timeData.nowDate.getTime() - timeData.startDate.getTime()));
+					timeData.timer = Math.floor((timeData.countdown) - (timeData.elapsedTime));
 
-				if (timeData.timer <= 0) {
-					timeData.startDate = new Date();
-				}
+					if (timeData.timer <= 0) {
+						timeData.startDate = new Date();
+					}
 
-				if (socket != null) {
-					socket.emit("updatetimer", timeData.timer)
-				} else {
-					// createSocket()
+					if (socket != null) {
+						socket.emit("updatetimer", timeData.timer)
+					}
 				}
 			} else {
 				timeData.nowDate = new Date();
@@ -1681,8 +1679,16 @@ function updateTimer(){
 	}
 
 	if(timeData.timer <= 0) {
-		if (socket != null) {
-			socket.emit("toggleuser", textDisplay.room);
+
+		if (gameData.ai == true) {
+			checkPlayerStatusByTimeout();
+		}
+		else {
+			timeData.enable = false;
+
+			if (gameData.player == 0 && socket != null) {
+				socket.emit("toggleuser", textDisplay.room);
+			}
 		}
 
 	} else {
