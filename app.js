@@ -212,7 +212,7 @@ io.on('connection', (socket) => {
 
             const date = new Date();
             const roomName = `Room-${date.getTime()}`;
-            console.log(roomName)
+            console.log("created room", roomName)
             rooms[roomName] = {
                 player1: { id: player1.id, name: player1.playerName },
                 player2: { id: player2.id, name: player2.playerName }
@@ -226,7 +226,7 @@ io.on('connection', (socket) => {
             player2.emit('joinedRoom', roomName);
 
             // Inform clients the game started
-            io.to(roomName).emit('startGame', [player1.playerName, player2.playerName]);
+            io.to(roomName).emit('startGamebySocket', [player1.playerName, player2.playerName]);
         }
     } else {
         // Inform client that the name is already taken
@@ -251,8 +251,9 @@ io.on('connection', (socket) => {
             waitingPlayers.splice(index, 1);
         }
         // Inform the other player in the room about disconnection
-        socket.to(roomName).emit('playerDisconnected');
+        socket.to(roomName).emit('playerDisconnected', roomName);
         // Remove the room
+        console.log("disconnected", roomName)
         delete rooms[roomName];
     } else {
         // Remove player from waiting list if disconnected before match
@@ -261,7 +262,6 @@ io.on('connection', (socket) => {
             waitingPlayers.splice(index, 1);
         }
     }
-    console.log('User disconnected');
   });
 });
 

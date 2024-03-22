@@ -73,7 +73,8 @@ var textDisplay = {
 	resultTitle:'Game Over',
 	resultDesc:'you won [NUMBER] round, [SCORE]:[OPPONENTSCORE]',
 	bEmployee: false,
-	room: ''
+	room: '',
+	firstGame: 'yes'
 }
 
 //Social share, [SCORE] will replace with game score
@@ -560,7 +561,7 @@ function preventRefresh(event) {
 	}
 
 	// Show your own confirmation dialog
-    var confirmationMessage = 'Are you sure you want to reload this page? Any unsaved changes may be lost.';
+    var confirmationMessage = 'Are you sure you want to reload this page? Current result will be submitted by other member.';
     event.returnValue = confirmationMessage; // For older browsers
 
     return confirmationMessage; // For modern browsers
@@ -997,11 +998,7 @@ function displayPlayerTurn(){
 				}
 				else {
 					if (textDisplay.bEmployee) {
-						if (gameData.player == 0)
-							userTurn = "Other turn"
-						else {
-							userTurn = textDisplay.userTurn;
-						}
+						userTurn = textDisplay.userTurn;
 					}
 					else {
 						if (gameData.player == 1)
@@ -1194,42 +1191,46 @@ var players = [];
 function createSocket() {
 	socket = io();
 
-	socket.on('startGame', (players) => {
+	socket.on('startGamebySocket', (players) => {
 		// Start the game
-		if (textDisplay.player2 == '')
-		{
-			timeData.isDown = false
-			timerDownTxt.text = ""
+		timeData.isDown = false
+		timerDownTxt.text = ""
 
-			textDisplay.bEmployee = false
-			// online job
-			if (players[0] != textDisplay.player1) {
-				textDisplay.bEmployee = true
-				textDisplay.player1 = players[1]
-				textDisplay.player2 = players[0]
-			}
-			else {
-				textDisplay.player1 = players[0]
-				textDisplay.player2 = players[1]
-			}
-
-			playSound('soundButton');
-			goPage('game');
-			// online job
-			if (textDisplay.bEmployee) {
-				gameData.player = 0;
-				gameData.moving = false
-				gameData.turn = 1
-			}
-
-			displayPlayerTurn();
+		textDisplay.bEmployee = false
+		// online job
+		if (players[0] != textDisplay.player1) {
+			textDisplay.bEmployee = true
+			textDisplay.player1 = players[1]
+			textDisplay.player2 = players[0]
 		}
+		else {
+			textDisplay.player1 = players[0]
+			textDisplay.player2 = players[1]
+		}
+
+		playSound('soundButton');
+		goPage('game');
+		// online job
+		if (textDisplay.bEmployee) {
+			gameData.player = 0;
+			gameData.moving = false
+			gameData.turn = 1
+		}
+
+		displayPlayerTurn();
 	});
 
 	socket.on('joinedRoom', (roomName) => {
 		textDisplay.room = roomName
 		// console.log(`Joined room: ${roomName}`);
 		// You can handle room joining here if needed
+	});
+
+	socket.on('playerDisconnected', (roomName) => {
+		textDisplay.player2 = '';
+		if (roomName == textDisplay.room) {
+			endGame();
+		}
 	});
 	
 	socket.on('opponentMove', (moveData) => {
@@ -1239,7 +1240,7 @@ function createSocket() {
 	});
 	// Listen for nameTaken event
 	socket.on('nameTaken', () => {
-		//
+		console.log("already logged in")
 	});
 
 	joinGame(socket)
@@ -1266,6 +1267,7 @@ function checkPlayerStatus(player){
 	var connectLine = checkIsWinner(gameData.player, gameData.board);
 	if (connectLine.length >= gameData.settings.connect) {
 		boardComplete = true;
+		toggleGameTimer(true);
 		gameData.complete = true;
 		if(player == 0){
 			playerData.score++;
@@ -1278,6 +1280,7 @@ function checkPlayerStatus(player){
 	} else if (checkIsTie(gameData.board)) {
 		boardComplete = true;
 		tweenTimer = 1.5;
+		toggleGameTimer(true);
 		gameData.complete = true;
 		showGameStatus('draw');
 		playSound('soundDraw');
@@ -1472,6 +1475,15 @@ function getFirstEmptyRow(columnIndex, board) {
 	return -1;
 }
 
+function getFirstNoEmptyRow(columnIndex, board) {
+	for (var i = gameData.settings.row - 1; i >= 0; i--) {
+		if (board[i][columnIndex] !== -1) {
+			return i;
+		}
+	}
+	return -1;
+}
+
 function countUp(c, r, player, board) {
 	var startr = (r - gameData.settings.connect >= 0) ? r - gameData.settings.connect + 1 : 0;
 	var line = [];
@@ -1615,17 +1627,41 @@ function updateTimer(){
 
 		toggleGameTimer(true)
 		
-		// change chance
-		togglePlayer();
-		
-		if (gameData.ai) {
-			if(gameData.player == 1){
-				makeAIMove();
+		if (gameData.ai == true || textDisplay.firstGame == 'no') {
+			console.log(textDisplay.firstGame)
+			togglePlayer();
+				
+			if (gameData.ai) {
+				if(gameData.player == 1){
+					makeAIMove();
+				}
+				displayPlayerTurn();
+			} else {
+				displayPlayerTurn();
 			}
-			displayPlayerTurn();
-		} else {
-			displayPlayerTurn();
 		}
+		else {
+			console.log(textDisplay.firstGame)
+			for (var i = 0; i < gameData.settings.column; i++) {
+				var boardClone = JSON.parse(JSON.stringify(gameData.board));
+				var firstNoEmptyRow = getFirstNoEmptyRow(i, boardClone);
+				if (firstNoEmptyRow !== -1) {
+					textDisplay.firstGame = 'no';
+					// change chance
+					togglePlayer();
+					
+					if (gameData.ai) {
+						if(gameData.player == 1){
+							makeAIMove();
+						}
+						displayPlayerTurn();
+					} else {
+						displayPlayerTurn();
+					}
+				}
+			}
+		}
+		
 	} else {
 		if((timeData.oldTimer - timeData.timer) > 1000){
 			if(timeData.timer < 1000){
@@ -1693,6 +1729,7 @@ function endGame(){
 	TweenMax.to(gameContainer, 2, {overwrite:true, onComplete:function(){
 		goPage('result')
 	}});
+
 }
 
 /*!
