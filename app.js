@@ -245,18 +245,33 @@ io.on('connection', (socket) => {
   });
 
   socket.on('updatetimer', (timer) => {
-    const roomName = findRoomBySocketId(socket.id);
-    if (roomName) {
-        // Broadcast move to the other player in the room
-        socket.to(roomName).emit('updatetimer', timer);
+    const roomName1 = findRoomBySocketId(socket.id);
+    if (roomName1) {
+      for (const roomName in rooms) {
+          if (rooms.hasOwnProperty(roomName)) {
+              const room = rooms[roomName];
+              if (room.player1.id === socket.id || room.player2.id === socket.id) {
+                io.to(room.player1.id).emit('updatetimer', timer);
+                io.to(room.player2.id).emit('updatetimer', timer);
+              }
+          }
+      }
     }
   });
 
   socket.on('toggleuser', (status) => {
-    const roomName = findRoomBySocketId(socket.id);
-    if (roomName) {
+    const roomName1 = findRoomBySocketId(socket.id);
+    if (roomName1) {
         // Broadcast move to the other player in the room
-        socket.to(roomName).emit('toggleuser', status);
+        for (const roomName in rooms) {
+          if (rooms.hasOwnProperty(roomName)) {
+              const room = rooms[roomName];
+              if (room.player1.id === socket.id || room.player2.id === socket.id) {
+                io.to(room.player1.id).emit('toggleuser', status);
+                io.to(room.player2.id).emit('toggleuser', status);
+              }
+          }
+      }
     }
   });
 
