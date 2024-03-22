@@ -785,7 +785,7 @@ function saveGame(score, opponentscore){
         'authorization': localStorage.getItem("authorization")
       },
       success: function (result) {
-          console.log(result);
+        //   console.log(result);
       }
     });
 }
@@ -1226,6 +1226,50 @@ function createSocket() {
 		// You can handle room joining here if needed
 	});
 
+	socket.on('updatetimer', (timer) => {
+		
+		timeData.timer = timer;
+		updateTimer();
+	});
+
+	socket.on('toggleuser', (roomName) => {
+		toggleGameTimer(true)
+
+		if (gameData.ai == true || textDisplay.firstGame == 'no') {
+			
+			togglePlayer();
+				
+			if (gameData.ai) {
+				if(gameData.player == 1){
+					makeAIMove();
+				}
+				displayPlayerTurn();
+			} else {
+				displayPlayerTurn();
+			}
+		}
+		else {
+			for (var i = 0; i < gameData.settings.column; i++) {
+				var boardClone = JSON.parse(JSON.stringify(gameData.board));
+				var firstNoEmptyRow = getFirstNoEmptyRow(i, boardClone);
+				if (firstNoEmptyRow !== -1) {
+					textDisplay.firstGame = 'no';
+					// change chance
+					togglePlayer();
+					
+					if (gameData.ai) {
+						if(gameData.player == 1){
+							makeAIMove();
+						}
+						displayPlayerTurn();
+					} else {
+						displayPlayerTurn();
+					}
+				}
+			}
+		}
+	});
+
 	socket.on('playerDisconnected', (roomName) => {
 		textDisplay.player2 = '';
 		if (roomName == textDisplay.room) {
@@ -1240,7 +1284,7 @@ function createSocket() {
 	});
 	// Listen for nameTaken event
 	socket.on('nameTaken', () => {
-		console.log("already logged in")
+		//console.log("already logged in")
 	});
 
 	joinGame(socket)
@@ -1592,14 +1636,27 @@ function toggleGameTimer(con){
 function updateGame(){
 	if(!gameData.paused){
 		if(timeData.enable){
-			timeData.nowDate = new Date();
-			timeData.elapsedTime = Math.floor((timeData.nowDate.getTime() - timeData.startDate.getTime()));
-			timeData.timer = Math.floor((timeData.countdown) - (timeData.elapsedTime));
+			
+			if (gameData.ai == false) {
+				timeData.nowDate = new Date();
+				timeData.elapsedTime = Math.floor((timeData.nowDate.getTime() - timeData.startDate.getTime()));
+				timeData.timer = Math.floor((timeData.countdown) - (timeData.elapsedTime));
 
-			updateTimer();
-			// if ( typeof initSocket == 'function' && multiplayerSettings.enable && socketData.online) {
-			// 	postSocketUpdate('updatetimer', timeData.timer, true);
-			// }
+				if (timeData.timer <= 0) {
+					timeData.startDate = new Date();
+				}
+
+				if (socket != null) {
+					socket.emit("updatetimer", timeData.timer)
+				} else {
+					// createSocket()
+				}
+			} else {
+				timeData.nowDate = new Date();
+				timeData.elapsedTime = Math.floor((timeData.nowDate.getTime() - timeData.startDate.getTime()));
+				timeData.timer = Math.floor((timeData.countdown) - (timeData.elapsedTime));
+				updateTimer();
+			}
 		}
 	}
 }
@@ -1623,45 +1680,11 @@ function updateTimer(){
 		timeData.oldTimer = timeData.timer;
 	}
 
-	if(timeData.timer <= 0){
+	if(timeData.timer <= 0) {
+		if (socket != null) {
+			socket.emit("toggleuser", textDisplay.room);
+		}
 
-		toggleGameTimer(true)
-		
-		if (gameData.ai == true || textDisplay.firstGame == 'no') {
-			console.log(textDisplay.firstGame)
-			togglePlayer();
-				
-			if (gameData.ai) {
-				if(gameData.player == 1){
-					makeAIMove();
-				}
-				displayPlayerTurn();
-			} else {
-				displayPlayerTurn();
-			}
-		}
-		else {
-			console.log(textDisplay.firstGame)
-			for (var i = 0; i < gameData.settings.column; i++) {
-				var boardClone = JSON.parse(JSON.stringify(gameData.board));
-				var firstNoEmptyRow = getFirstNoEmptyRow(i, boardClone);
-				if (firstNoEmptyRow !== -1) {
-					textDisplay.firstGame = 'no';
-					// change chance
-					togglePlayer();
-					
-					if (gameData.ai) {
-						if(gameData.player == 1){
-							makeAIMove();
-						}
-						displayPlayerTurn();
-					} else {
-						displayPlayerTurn();
-					}
-				}
-			}
-		}
-		
 	} else {
 		if((timeData.oldTimer - timeData.timer) > 1000){
 			if(timeData.timer < 1000){
@@ -1842,7 +1865,7 @@ function share(action){
 	if( action == 'twitter' ) {
 		shareurl = 'https://twitter.com/intent/tweet?url='+loc+'&text='+text;
 	}else if( action == 'facebook' ){
-		shareurl = 'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(loc+'share.php?desc='+text+'&title='+title+'&url='+loc+'&thumb='+loc+'share.jpg&width=590&height=300');
+		
 	}else if( action == 'google' ){
 		shareurl = 'https://plus.google.com/share?url='+loc;
 	}else if( action == 'whatsapp' ){
