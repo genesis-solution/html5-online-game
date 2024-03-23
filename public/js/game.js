@@ -1226,7 +1226,6 @@ function createSocket() {
 	});
 
 	socket.on('updatetimer', (timer) => {
-		
 		timeData.timer = timer;
 		updateTimer();
 	});
@@ -1242,9 +1241,9 @@ function createSocket() {
 	});
 
 	socket.on('playerDisconnected', (roomName) => {
-		textDisplay.player2 = '';
 		if (roomName == textDisplay.room) {
 			endGame();
+			textDisplay.player2 = '';
 		}
 	});
 	
@@ -1322,9 +1321,19 @@ function checkPlayerStatus(player){
 			}
 		}});
 	}
+
+	if (playerData.score >= 3 || playerData.opponentScore >= 3) {
+		endGame();
+		textDisplay.player2 = '';
+		if (socket != null)
+		{
+			socket.disconnect();
+		}
+	}
 }
 
 function checkPlayerStatusByTimeout(){
+	
 	gameData.moving = false;
 
 	var tweenTimer = 2.5;
@@ -1348,6 +1357,15 @@ function checkPlayerStatusByTimeout(){
 	TweenMax.to(gameContainer, tweenTimer, {overwrite:true, onComplete:function(){
 		buildBoard();
 	}});
+
+	if (playerData.score >= 3 || playerData.opponentScore >= 3) {
+		endGame();
+		textDisplay.player2 = '';
+		if (socket != null)
+		{
+			socket.disconnect();
+		}
+	}
 }
 
 function togglePlayer(){
@@ -1620,6 +1638,7 @@ function checkIsTie(board) {
 function toggleGameTimer(con){	
 	if(con){
 		timeData.startDate = new Date();
+		timeData.oldTimer = -1;
 	}else{
 		
 	}
@@ -1664,11 +1683,6 @@ function updateTimerDownGame(){
 		timeData.nowDate = new Date();
 		timeData.elapsedTime = Math.floor((timeData.nowDate.getTime() - timeData.startDate.getTime()));
 		timeData.timer = Math.floor((timeData.countdown) - (timeData.elapsedTime));
-
-		updateTimerDown();
-		if ( typeof initSocket == 'function' && multiplayerSettings.enable && socketData.online) {
-			postSocketUpdate('updatetimer', timeData.timer, true);
-		}
 	}
 		
 }
@@ -1680,6 +1694,8 @@ function updateTimer(){
 
 	if(timeData.timer <= 0) {
 
+		timerTxt.color = '#170e77';
+		timeData.oldTimer = -1;
 		if (gameData.ai == true) {
 			checkPlayerStatusByTimeout();
 		}
@@ -1692,13 +1708,16 @@ function updateTimer(){
 		}
 
 	} else {
+		
 		if((timeData.oldTimer - timeData.timer) > 1000){
 			if(timeData.timer < 1000){
-				animateTimer()
 				playSound('soundCountdownEnd');
-			}else if(timeData.timer < 6000){
-				animateTimer()
+			} else if(timeData.timer <= 10000){
+				timerTxt.color = '#FF0000'
+				// animateTimer()
 				playSound('soundCountdown');
+			} else {
+				timerTxt.color = '#170e77';
 			}
 			timeData.oldTimer = timeData.timer;
 		}
