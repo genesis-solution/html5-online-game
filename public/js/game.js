@@ -1639,8 +1639,6 @@ function toggleGameTimer(con){
 	if(con){
 		timeData.startDate = new Date();
 		timeData.oldTimer = -1;
-	}else{
-		
 	}
 	timeData.enable = con;
 }
@@ -1693,7 +1691,6 @@ function updateTimer(){
 	}
 
 	if(timeData.timer <= 0) {
-
 		timerTxt.color = '#170e77';
 		timeData.oldTimer = -1;
 		if (gameData.ai == true) {
