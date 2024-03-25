@@ -1681,6 +1681,8 @@ function updateTimerDownGame(){
 		timeData.nowDate = new Date();
 		timeData.elapsedTime = Math.floor((timeData.nowDate.getTime() - timeData.startDate.getTime()));
 		timeData.timer = Math.floor((timeData.countdown) - (timeData.elapsedTime));
+
+		updateTimerDown();
 	}
 		
 }
@@ -1739,11 +1741,7 @@ function updateTimerDown(){
 		checkGameType(true);
 		
 		playSound('soundButton');
-		if ( typeof initSocket == 'function' && multiplayerSettings.enable && socketData.online) {
-			postSocketUpdate('start');
-		}else{
-			goPage('game');
-		}
+		goPage('game');
 	}else{
 		if(Math.abs((timeData.oldTimer - timeData.timer)) > 1000){
 			if(timeData.timer < 1000){
