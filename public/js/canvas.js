@@ -325,7 +325,7 @@ function buildGameCanvas(response){
 	resultTitleTxt.text = textDisplay.resultTitle;
 	
 	resultDescTxt = new createjs.Text();
-	resultDescTxt.font = "45px bpreplaybold";
+	resultDescTxt.font = "25px bpreplaybold";
 	resultDescTxt.lineHeight = 35;
 	resultDescTxt.color = '#fff';
 	resultDescTxt.textAlign = "center";

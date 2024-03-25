@@ -71,7 +71,7 @@ var textDisplay = {
 	exitMessage:'Are you sure you want\nto quit game?',
 	share:'Share your score:',
 	resultTitle:'Game Over',
-	resultDesc:'you won [NUMBER] round, [SCORE]:[OPPONENTSCORE]',
+	resultDesc:'you won [NUMBER], [SCORE]:[OPPONENTSCORE]',
 	bEmployee: false,
 	room: '',
 	firstGame: 'yes',
@@ -251,7 +251,12 @@ function buildGameButton(){
 	buttonContinue.cursor = "pointer";
 	buttonContinue.addEventListener("click", function(evt) {
 		playSound('soundButton');
-		goPage('main');
+		//goPage('main');
+		const urlParams = new URLSearchParams(window.location.search);
+
+        // Get the value of a specific parameter
+        const tokenkey = urlParams.get('authorization'); // Returns 'value1'
+		redirectToWithAuth('/game', tokenkey);
 	});
 	
 	buttonFacebook.cursor = "pointer";
@@ -639,6 +644,7 @@ function goPage(page){
 			if (!gameData.ai) {
 				createSocket();
 			}
+			
 			buttonPlayersStart.visible = false;
 			buttonPlayersIcon.visible = false;
 			buttonPlayersSwitch.visible = false;
@@ -687,8 +693,17 @@ function goPage(page){
 			
 			playSound('soundResult');
 			
-			TweenMax.to(tweenData, .5, {tweenScore:playerData.score, overwrite:true, onUpdate:function(){
-				resultDescTxt.text = textDisplay.resultDesc.replace('[NUMBER]', Math.floor(tweenData.tweenScore)).replace('[SCORE]', Math.floor(playerData.score)).replace('[OPPONENTSCORE]', Math.floor(playerData.opponentScore));
+			textDisplay.gameWin.replace('[NUMBER]', playerData.score);
+			TweenMax.to(tweenData, .5, {tweenScore:playerData.score, overwrite:true, onUpdate: function(){
+				var textMessage = ''
+				if (Math.floor(playerData.score) > Math.floor(playerData.opponentScore)) {
+					textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+				} else if (Math.floor(playerData.score) < Math.floor(playerData.opponentScore)) {
+					textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+				} else {
+					textMessage = 'DRAW: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+				}
+				resultDescTxt.text = textMessage; // textDisplay.resultDesc.replace('[NUMBER]', Math.floor(tweenData.tweenScore)).replace('[SCORE]', Math.floor(playerData.score)).replace('[OPPONENTSCORE]', Math.floor(playerData.opponentScore));
 			}});
 
 			saveGame(playerData.score, playerData.opponentScore);
@@ -704,6 +719,20 @@ function goPage(page){
 	resizeCanvas();
 }
 
+function redirectToWithAuth(url, authToken) {
+	var form = document.createElement('form');
+	form.method = 'GET';
+	form.action = url;
+
+	var headerInput = document.createElement('input');
+	headerInput.type = 'hidden';
+	headerInput.name = 'authorization';
+	headerInput.value = authToken;
+
+	form.appendChild(headerInput);
+	document.body.appendChild(form);
+	form.submit();
+  }
 /*!
  * 
  * START GAME - This is the function that runs to start game
@@ -781,7 +810,7 @@ function saveGame(score, opponentscore){
 	$.ajax({
       type: "POST",
       url: '/result',
-      data: {score:score, user: textDisplay.player1, opponentScore: opponentscore, oppenent: textDisplay.player2, room: textDisplay.room},
+      data: {score:score, user: $.players['player'+ 0].text, opponentScore: opponentscore, oppenent: textDisplay.player2, room: textDisplay.room},
 	  headers: {
         'authorization': localStorage.getItem("authorization")
       },
@@ -1243,7 +1272,6 @@ function createSocket() {
 	socket.on('playerDisconnected', (roomName) => {
 		if (roomName == textDisplay.room) {
 			endGame();
-			textDisplay.player2 = '';
 		}
 	});
 	
@@ -1324,7 +1352,6 @@ function checkPlayerStatus(player){
 
 	if (playerData.score >= 3 || playerData.opponentScore >= 3) {
 		endGame();
-		textDisplay.player2 = '';
 		if (socket != null)
 		{
 			socket.disconnect();
@@ -1360,7 +1387,6 @@ function checkPlayerStatusByTimeout(){
 
 	if (playerData.score >= 3 || playerData.opponentScore >= 3) {
 		endGame();
-		textDisplay.player2 = '';
 		if (socket != null)
 		{
 			socket.disconnect();
@@ -1736,7 +1762,7 @@ function updateTimerDown(){
 		timerDownTxt.text = ""
 
 		if (socket != null)
-			socket.disconnect()
+			socket.emit('beforeautogame', {})
 
 		checkGameType(true);
 		
