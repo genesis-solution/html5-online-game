@@ -46,11 +46,17 @@ const authenticateToken = (req, res, next) => {
   if (token == null) return res.redirect('/');
 
   jwt.verify(token, secretKey, (err, user) => {
-      if (err) return res.redirect('/');
+    if (err) return res.redirect('/');
 
+    if (!isNameTaken(user.username) && !isRoomTaken(user.username) && !isNameTakenFromTotalPlayers(user.username)) {
       req.user = user;
       next();
-  });
+    } else {
+      return res.redirect('/?authorization=' + token);
+    }
+    
+});
+  
 };
 
 // Endpoint to serve the HTML login/register page
@@ -123,17 +129,25 @@ app.post('/login', (req, res) => {
       if (err) return res.status(401).json({ error: 'Invalid credentials' });
 
       // Check if the username and password match a registered user
-      db.query('SELECT * FROM players WHERE username = ? AND password = ?', [user.username, user.password], (err, results) => {
-        if (err) {
-          console.error('Error checking login credentials:', err);
-          return res.status(401).json({ error: 'Invalid credentials' });
-        }
+      // db.query('SELECT * FROM players WHERE username = ? AND password = ?', [user.username, user.password], (err, results) => {
+      //   if (err) {
+      //     console.error('Error checking login credentials:', err);
+      //     return res.status(401).json({ error: 'Invalid credentials' });
+      //   }
 
-        if (results.length === 0) {
-          return res.status(401).json({ error: 'Invalid credentials' });
-        }
+      //   if (results.length === 0) {
+      //     return res.status(401).json({ error: 'Invalid credentials' });
+      //   }
+
+        
+        
+      // });
+      if (!isNameTaken(user.username) && !isRoomTaken(user.username) && !isNameTakenFromTotalPlayers(user.username)) {
         return res.status(200).json({ error: 'Success' });
-      });
+      }
+      else {
+        return res.status(401).json({ error: 'Already joined with same account' });
+      }
   });
 
   
@@ -192,7 +206,7 @@ app.post('/result', authenticateToken, (req, res) => {
   res.json({success: true})
 });
 
-
+let totalPlayers = [];
 let waitingPlayers = []; // Store players waiting to be matched
 let rooms = {}; // Store game rooms
 
@@ -201,10 +215,11 @@ io.on('connection', (socket) => {
 
    // Handle joinGame event
    socket.on('joinGame', (playerName) => {
-    if (!isNameTaken(playerName)) {
+    if (!isNameTaken(playerName) && !isRoomTaken(playerName) && !isNameTakenFromTotalPlayers(playerName)) {
         // If the name is not taken, proceed
         socket.playerName = playerName; // Store the player's name in the socket object
         waitingPlayers.push(socket); // Add the player to the waiting list
+        totalPlayers.push(socket);
 
         // Try to match players when there are at least two waiting
         if (waitingPlayers.length >= 2) {
@@ -275,24 +290,44 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('disconnect', () => {
+  socket.on('beforeautogame', () => {
     const roomName = findRoomBySocketId(socket.id);
+    const index = waitingPlayers.indexOf(socket);
+    if (index !== -1) {
+        waitingPlayers.splice(index, 1);
+    }
+
+    console.log("Players count: ", totalPlayers.length)
+
     if (roomName) {
-        const index = waitingPlayers.indexOf(socket);
-        if (index !== -1) {
-            waitingPlayers.splice(index, 1);
-        }
         // Inform the other player in the room about disconnection
         socket.to(roomName).emit('playerDisconnected', roomName);
         // Remove the room
         console.log("disconnected", roomName)
         delete rooms[roomName];
-    } else {
-        // Remove player from waiting list if disconnected before match
-        const index = waitingPlayers.indexOf(socket);
-        if (index !== -1) {
-            waitingPlayers.splice(index, 1);
-        }
+    }
+  });
+
+  socket.on('disconnect', () => {
+    const roomName = findRoomBySocketId(socket.id);
+
+    const index = waitingPlayers.indexOf(socket);
+    if (index !== -1) {
+        waitingPlayers.splice(index, 1);
+    }
+
+    const index2 = totalPlayers.indexOf(socket);
+    if (index2 !== -1) {
+      console.log('deleted')
+      totalPlayers.splice(index2, 1);
+    }
+
+    if (roomName) {
+        // Inform the other player in the room about disconnection
+        socket.to(roomName).emit('playerDisconnected', roomName);
+        // Remove the room
+        console.log("disconnected", roomName)
+        delete rooms[roomName];
     }
   });
 });
@@ -316,6 +351,27 @@ function isNameTaken(playerName) {
       if (player.playerName == playerName) {
           return true;
       }
+  }
+  return false;
+}
+
+function isNameTakenFromTotalPlayers(playerName) {
+  for (const player of totalPlayers) {
+      if (player.playerName == playerName) {
+          return true;
+      }
+  }
+  return false;
+}
+
+function isRoomTaken(playerName) {
+  for (const roomName in rooms) {
+    if (rooms.hasOwnProperty(roomName)) {
+        const room = rooms[roomName];
+        if (room.player1.name === playerName || room.player1.id === playerName) {
+          return true;
+        }
+    }
   }
   return false;
 }
