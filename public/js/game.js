@@ -75,7 +75,8 @@ var textDisplay = {
 	bEmployee: false,
 	room: '',
 	firstGame: 'yes',
-	currentTurn: 'me'
+	currentTurn: 'me',
+	giveup: ''
 }
 
 //Social share, [SCORE] will replace with game score
@@ -319,8 +320,9 @@ function buildGameButton(){
 		stopAudio();
 		togglePop(false);
 
-		endGame();
-		
+		if (socket != null && !gameData.ai) {
+			socket.emit('giveup', textDisplay.player1);
+		}
 		// stopGame();
 		// goPage('main');
 	});
@@ -696,13 +698,22 @@ function goPage(page){
 			textDisplay.gameWin.replace('[NUMBER]', playerData.score);
 			TweenMax.to(tweenData, .5, {tweenScore:playerData.score, overwrite:true, onUpdate: function(){
 				var textMessage = ''
-				if (Math.floor(playerData.score) > Math.floor(playerData.opponentScore)) {
-					textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
-				} else if (Math.floor(playerData.score) < Math.floor(playerData.opponentScore)) {
+
+				var result = ''
+				if (textDisplay.giveup == 'me') {
 					textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+				} else if (textDisplay.giveup == 'other') {
+					textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
 				} else {
-					textMessage = 'DRAW: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+					if (Math.floor(playerData.score) > Math.floor(playerData.opponentScore)) {
+						textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+					} else if (Math.floor(playerData.score) < Math.floor(playerData.opponentScore)) {
+						textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+					} else {
+						textMessage = 'DRAW: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+					}
 				}
+				
 				resultDescTxt.text = textMessage; // textDisplay.resultDesc.replace('[NUMBER]', Math.floor(tweenData.tweenScore)).replace('[SCORE]', Math.floor(playerData.score)).replace('[OPPONENTSCORE]', Math.floor(playerData.opponentScore));
 			}});
 
@@ -1257,6 +1268,16 @@ function createSocket() {
 	socket.on('updatetimer', (timer) => {
 		timeData.timer = timer;
 		updateTimer();
+	});
+
+	socket.on('giveup', (playerName) => {
+		if (playerName == textDisplay.player1) {
+			textDisplay.giveup = 'me';
+		}
+		else {
+			textDisplay.giveup = 'other';
+		}
+		endGame();
 	});
 
 	socket.on('toggleuser', (roomName) => {

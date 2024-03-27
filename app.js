@@ -274,6 +274,21 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('giveup', (playerName) => {
+    const roomName1 = findRoomBySocketId(socket.id);
+    if (roomName1) {
+      for (const roomName in rooms) {
+          if (rooms.hasOwnProperty(roomName)) {
+              const room = rooms[roomName];
+              if (room.player1.id === socket.id || room.player2.id === socket.id) {
+                io.to(room.player1.id).emit('giveup', playerName);
+                io.to(room.player2.id).emit('giveup', playerName);
+              }
+          }
+      }
+    }
+  });
+
   socket.on('toggleuser', (status) => {
     const roomName1 = findRoomBySocketId(socket.id);
     if (roomName1) {
