@@ -11,23 +11,42 @@ const io = socketIo(server);
 const bodyParser = require('body-parser');
 const PORT = 9000;
 
-
 const secretKey = 'html5_game_by_alex'; // Change this to your actual secret key
-// MySQL connection setup
-const db = mysql.createConnection({
+
+// Create MySQL connection pool
+const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
   password: '',
   database: 'html5_game',
+  connectionLimit: 10 // Adjust as needed
 });
 
-db.connect((err) => {
-  if (err) {
-    console.error('Error connecting to MySQL:', err);
-    return;
-  }
-  console.log('Connected to MySQL database');
-});
+// Function to get a connection from the pool
+function getConnectionFromPool(pool) {
+  return new Promise((resolve, reject) => {
+    pool.getConnection((error, connection) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(connection);
+      }
+    });
+  });
+}
+
+// Function to execute a query on the database connection
+function queryDatabase(connection, sqlQuery) {
+  return new Promise((resolve, reject) => {
+    connection.query(sqlQuery, (error, results) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(results);
+      }
+    });
+  });
+}
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -95,30 +114,36 @@ app.get('/generateJWTtoken', (req, res) => {
   res.json({ token })
 })
 // Endpoint to handle user registration
-app.post('/register', (req, res) => {
+app.post('/register', async (req, res) => {
   const { username, password } = req.body;
 
-  // Check if the username is already taken
-  db.query('SELECT * FROM players WHERE username = ?', [username], (err, results) => {
-    if (err) {
-      console.error('Error checking username:', err);
-      return res.status(500).send('Internal server error');
-    }
+  try {
+    // Get a connection from the pool
+    const connection = await getConnectionFromPool(pool);
 
-    if (results.length > 0) {
-      return res.status(400).send('Username already taken. Please choose another one.');
-    }
+    // Perform database query
+    const result = await queryDatabase(connection, 'SELECT * FROM players WHERE username = ' + username);
 
-    // Insert the new user into the database
-    db.query('INSERT INTO players (username, password) VALUES (?, ?)', [username, password], (err) => {
-      if (err) {
-        console.error('Error registering user:', err);
-        return res.status(500).send('Internal server error');
-      }
+    // Release the connection back to the pool
+    connection.release();
+
+    if (result.length > 0) {
+      res.status(400).send('Username already taken. Please choose another one.');
+    } else {
+      const connection1 = await getConnectionFromPool(pool);
+
+      // Perform database query
+      const result1 = await queryDatabase(connection1, 'INSERT INTO players (username, password) VALUES (' + username + ', ' + password + ')');
+  
+      // Release the connection back to the pool
+      connection1.release();
 
       res.redirect('/login.html');
-    });
-  });
+    }
+  } catch (error) {
+    console.error('Error:', error.message);
+    return res.status(500).send('Internal server error');
+  }
 });
 
 // Endpoint to handle user login
@@ -128,20 +153,6 @@ app.post('/login', (req, res) => {
   jwt.verify(token, secretKey, (err, user) => {
       if (err) return res.status(401).json({ error: 'Invalid credentials' });
 
-      // Check if the username and password match a registered user
-      // db.query('SELECT * FROM players WHERE username = ? AND password = ?', [user.username, user.password], (err, results) => {
-      //   if (err) {
-      //     console.error('Error checking login credentials:', err);
-      //     return res.status(401).json({ error: 'Invalid credentials' });
-      //   }
-
-      //   if (results.length === 0) {
-      //     return res.status(401).json({ error: 'Invalid credentials' });
-      //   }
-
-        
-        
-      // });
       if (!isNameTaken(user.username) && !isRoomTaken(user.username) && !isNameTakenFromTotalPlayers(user.username)) {
         return res.status(200).json({ error: 'Success' });
       }
@@ -165,45 +176,49 @@ app.post('/logout', authenticateToken, (req, res) => {
   });
 });
 
-app.post('/result', authenticateToken, (req, res) => {
+app.post('/result', authenticateToken, async (req, res) => {
   // Destroy the user's session to log them out
   var { score, user, opponentScore, oppenent, room } = req.body;
 
   console.log(req.body)
-  if (room == '') {
-    room = 'Computer'
 
-    db.query(
-      'INSERT INTO player_results (score, user, opponentScore, oppenent, room) VALUES (?, ?, ?, ?, ?)',
-      [score, user, opponentScore, oppenent, room],
-      (err) => {
-        if (err) {
-          console.error('Error saving game result to database:', err);
-        }
+  try {
 
-      }
-    );
-  } else {
-    db.query('SELECT * FROM player_results WHERE (user = ? OR oppenent = ?)  AND room = ?', [user, user, room], (err, results) => {
-      if (err) {
-        console.error('Error checking login credentials:', err);
-      }
+    if (room == '') {
+      room = 'Computer'
   
-      if (results.length === 0) {
-        db.query(
-          'INSERT INTO player_results (score, user, opponentScore, oppenent, room) VALUES (?, ?, ?, ?, ?)',
-          [score, user, opponentScore, oppenent, room],
-          (err) => {
-            if (err) {
-              console.error('Error saving game result to database:', err);
-            }
-            
-          }
-        );
+      const connection = await getConnectionFromPool(pool);
+
+      // Perform database query
+      const result = await queryDatabase(connection, `INSERT INTO player_results (score, user, opponentScore, oppenent, room) VALUES (${score}, '${user}', ${opponentScore}, '${oppenent}', '${room}')`);
+
+      // Release the connection back to the pool
+      connection.release();
+    } else {
+      const connection = await getConnectionFromPool(pool);
+
+      // Perform database query
+      const result = await queryDatabase(connection, `SELECT * FROM player_results WHERE (user = '${user}' OR oppenent = '${user}')  AND room = '${room}'`);
+
+      // Release the connection back to the pool
+      connection.release();
+
+      if (result.length == 0) {
+        const connection1 = await getConnectionFromPool(pool);
+
+        // Perform database query
+        const result1 = await queryDatabase(connection1, `INSERT INTO player_results (score, user, opponentScore, oppenent, room) VALUES (${score}, '${user}', ${opponentScore}, '${oppenent}', '${room}')`);
+
+        // Release the connection back to the pool
+        connection1.release();
       }
-    });
+    }
+    res.json({success: true})
+  } catch (error) {
+    console.error('Error:', error.message);
+    
+    res.json({success: false})
   }
-  res.json({success: true})
 });
 
 let totalPlayers = [];
@@ -268,6 +283,21 @@ io.on('connection', (socket) => {
               if (room.player1.id === socket.id || room.player2.id === socket.id) {
                 io.to(room.player1.id).emit('updatetimer', timer);
                 io.to(room.player2.id).emit('updatetimer', timer);
+              }
+          }
+      }
+    }
+  });
+
+  socket.on('giveup', (playerName) => {
+    const roomName1 = findRoomBySocketId(socket.id);
+    if (roomName1) {
+      for (const roomName in rooms) {
+          if (rooms.hasOwnProperty(roomName)) {
+              const room = rooms[roomName];
+              if (room.player1.id === socket.id || room.player2.id === socket.id) {
+                io.to(room.player1.id).emit('giveup', playerName);
+                io.to(room.player2.id).emit('giveup', playerName);
               }
           }
       }
