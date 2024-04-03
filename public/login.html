@@ -29,8 +29,11 @@
         const urlParams = new URLSearchParams(window.location.search);
 
         // Get the value of a specific parameter
-        const tokenkey = urlParams.get('authorization'); // Returns 'value1'
-        localStorage.setItem('authorization', tokenkey);
+        const tokenkey = urlParams.get('t'); // Returns 'value1'
+        localStorage.setItem('t', tokenkey);
+
+        const gameID = urlParams.get('gameID'); // Returns 'value1'
+        localStorage.setItem('gameID', gameID);
 
         const xhr = new XMLHttpRequest();
         xhr.open('POST', '/login');
@@ -41,7 +44,7 @@
                 document.getElementById('succ_alert').style.display = "block"
                 document.getElementById('responseMessage_succ').innerText = 'Login successful.';
 
-                redirectToWithAuth('/game', tokenkey);
+                redirectToWithAuth('/game', tokenkey, gameID);
             } else {
                 document.getElementById('alert').style.display = "block"
                 document.getElementById('responseMessage').innerText = data.error;
@@ -52,7 +55,7 @@
             document.getElementById('alert').style.display = "block"
             document.getElementById('responseMessage').innerText = 'An error occurred. Please try again later.';
         };
-        xhr.send(JSON.stringify({ token: tokenkey }));
+        xhr.send(JSON.stringify({ t: tokenkey, gameID: gameID }));
     
       } catch (error) {
           console.error('Error:', error);
@@ -60,17 +63,23 @@
           document.getElementById('responseMessage').innerText = 'An error occurred. Please try again later.';
       }
 
-      function redirectToWithAuth(url, authToken) {
+      function redirectToWithAuth(url, authToken, gameID) {
         var form = document.createElement('form');
         form.method = 'GET';
         form.action = url;
 
         var headerInput = document.createElement('input');
         headerInput.type = 'hidden';
-        headerInput.name = 'authorization';
+        headerInput.name = 't';
         headerInput.value = authToken;
+
+        var gameIDInput = document.createElement('input');
+        gameIDInput.type = 'hidden';
+        gameIDInput.name = 'gameID';
+        gameIDInput.value = gameID;
   
         form.appendChild(headerInput);
+        form.appendChild(gameIDInput);
         document.body.appendChild(form);
         form.submit();
       }

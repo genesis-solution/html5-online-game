@@ -178,26 +178,29 @@ function buildGameCanvas(response){
 	vsTxt.textBaseline='alphabetic';
 	vsTxt.text = textDisplay.vs;
 
+	textDisplay.player1 = response.username;
+	Player1 = response;
+
 	for(var n=0; n<2; n++){
 		$.players['playerContainer'+ n] = new createjs.Container();
 
 		$.players['playerBg'+ n] = new createjs.Bitmap(loader.getResult('itemPlayer'));
 		centerReg($.players['playerBg'+ n]);
 
-		textDisplay.player1 = response.username;
-
 		$.players['player'+ n] = new createjs.Text();
 		$.players['player'+ n].font = "25px bpreplaybold";
 		$.players['player'+ n].color = '#170e77';
 		$.players['player'+ n].textAlign = "center";
 		$.players['player'+ n].textBaseline='alphabetic';
-		$.players['player'+ n].text = response.username; //textDisplay.player1;
+		$.players['player'+ n].text = response.username;
 		$.players['player'+ n].x = 0;
 		$.players['player'+ n].y = 70;
 
 		$.players['playerIconContainer'+ n] = new createjs.Container();
 
-		$.players['playerContainer'+ n].addChild($.players['playerBg'+ n], $.players['player'+ n], $.players['playerIconContainer'+ n]);
+		$.players['playerFlagContainer'+ n] = new createjs.Container();
+
+		$.players['playerContainer'+ n].addChild($.players['playerBg'+ n], $.players['player'+ n], $.players['playerIconContainer'+ n], $.players['playerFlagContainer'+ n]);
 		playersContainer.addChild($.players['playerContainer'+ n]);
 	}
 
@@ -220,6 +223,7 @@ function buildGameCanvas(response){
 	timerDownTxt.textAlign = "center";
 	timerDownTxt.textBaseline='alphabetic';
 	timerDownTxt.text = "";
+	timerDownTxt.visible = false;
 
 	alertTxt = new createjs.Text();
 	alertTxt.font = "36px bpreplaybold";
@@ -251,6 +255,7 @@ function buildGameCanvas(response){
 	timerContainer.addChild(itemTimer, timerTxt, timerRedTxt);
 
 	itemStatus = new createjs.Bitmap(loader.getResult('itemStatus'));
+	itemStatus.visible = false;
 	centerReg(itemStatus);
 
 	statusTxt = new createjs.Text();
@@ -259,23 +264,24 @@ function buildGameCanvas(response){
 	statusTxt.textAlign = "center";
 	statusTxt.textBaseline='alphabetic';
 	statusTxt.y = 13;
+	statusTxt.visible = false;
 
 	statusContainer.addChild(itemStatus, statusTxt);
+
+	// textDisplay.player1 = response.username;
 
 	for(var n=0; n<2; n++){
 		$.players['gamePlayerContainer'+ n] = new createjs.Container();
 
 		$.players['gamePlayerBg'+ n] = new createjs.Bitmap(loader.getResult('itemGamePlayer'));
 		centerReg($.players['gamePlayerBg'+ n]);
-
-		textDisplay.player1 = response.username;
 		
 		$.players['gamePlayer'+ n] = new createjs.Text();
 		$.players['gamePlayer'+ n].font = "25px bpreplaybold";
 		$.players['gamePlayer'+ n].color = '#170e77';
 		$.players['gamePlayer'+ n].textAlign = "center";
 		$.players['gamePlayer'+ n].textBaseline='alphabetic';
-		$.players['gamePlayer'+ n].text = response.username; //textDisplay.player1;
+		$.players['gamePlayer'+ n].text = response.username;
 		$.players['gamePlayer'+ n].y += 63;
 
 		$.players['gameWin'+ n] = new createjs.Text();
@@ -295,8 +301,9 @@ function buildGameCanvas(response){
 		$.players['gameTurn'+ n].y += 150;
 
 		$.players['gameIconContainer'+ n] = new createjs.Container();
+		$.players['gameFlagContainer'+ n] = new createjs.Container();
 
-		$.players['gamePlayerContainer'+ n].addChild($.players['gamePlayerBg'+ n], $.players['gameIconContainer'+ n], $.players['gamePlayer'+ n], $.players['gameWin'+ n], $.players['gameTurn'+ n]);
+		$.players['gamePlayerContainer'+ n].addChild($.players['gamePlayerBg'+ n], $.players['gameIconContainer'+ n], $.players['gamePlayer'+ n], $.players['gameWin'+ n], $.players['gameTurn'+ n], $.players['gameFlagContainer'+ n]);
 		gameContainer.addChild($.players['gamePlayerContainer'+ n]);
 	}
 
@@ -325,12 +332,20 @@ function buildGameCanvas(response){
 	resultTitleTxt.text = textDisplay.resultTitle;
 	
 	resultDescTxt = new createjs.Text();
-	resultDescTxt.font = "25px bpreplaybold";
-	resultDescTxt.lineHeight = 35;
+	resultDescTxt.font = "20px bpreplaybold";
+	resultDescTxt.lineHeight = 28;
 	resultDescTxt.color = '#fff';
 	resultDescTxt.textAlign = "center";
 	resultDescTxt.textBaseline='alphabetic';
 	resultDescTxt.text = '';
+
+	resultPriceTxt = new createjs.Text();
+	resultPriceTxt.font = "25px bpreplaybold";
+	resultPriceTxt.lineHeight = 35;
+	resultPriceTxt.color = '#fff';
+	resultPriceTxt.textAlign = "center";
+	resultPriceTxt.textBaseline='alphabetic';
+	resultPriceTxt.text = '';
 	
 	
 	buttonFacebook = new createjs.Bitmap(loader.getResult('buttonFacebook'));
@@ -415,7 +430,7 @@ function buildGameCanvas(response){
 	mainContainer.addChild(logo, logoP, buttonTypeContainer, buttonPlayerContainer, buttonLocalContainer, buttonStart);
 	boardContainer.addChild(boardDesignBackContainer, boardIconContainer, boardDesignContainer, boardColor, boardBorder, statusContainer);
 	gameContainer.addChild(boardContainer, timerContainer);
-	resultContainer.addChild(itemResult, itemResultP, buttonContinue, resultTitleTxt, resultDescTxt);
+	resultContainer.addChild(itemResult, itemResultP, buttonContinue, resultTitleTxt, resultDescTxt, resultPriceTxt);
 	
 	if(shareEnable){
 		resultContainer.addChild(resultShareTxt, buttonFacebook, buttonTwitter, buttonWhatsapp);
@@ -527,7 +542,7 @@ function changeCanvasViewport(){
 			timerDownTxt.y = canvasH/2 - 80;
 
 			alertTxt.x = canvasW/2;
-			alertTxt.y = canvasH/2 - 120;
+			alertTxt.y = canvasH/2 - 150;
 
 			$.players['playerContainer'+ 0].x = canvasW/2 - 250;
 			$.players['playerContainer'+ 1].x = canvasW/2 + 250;
@@ -568,7 +583,10 @@ function changeCanvasViewport(){
 			resultTitleTxt.y = canvasH/100 * 35;
 	
 			resultDescTxt.x = canvasW/2;
-			resultDescTxt.y = canvasH/100 * 43;
+			resultDescTxt.y = canvasH/100 * 40;
+
+			resultPriceTxt.x = canvasW/2;
+			resultPriceTxt.y = canvasH/100 * 43;
 			
 			//exit
 			itemExit.visible = true;
@@ -665,7 +683,7 @@ function changeCanvasViewport(){
 			timerDownTxt.y = canvasH/2 - 80;
 
 			alertTxt.x = canvasW/2;
-			alertTxt.y = canvasH/2 - 120;
+			alertTxt.y = canvasH/2 - 150;
 
 			$.players['playerContainer'+ 0].x = canvasW/2 - 180;
 			$.players['playerContainer'+ 1].x = canvasW/2 + 180;
@@ -706,7 +724,10 @@ function changeCanvasViewport(){
 			resultTitleTxt.y = canvasH/100 * 38;
 	
 			resultDescTxt.x = canvasW/2;
-			resultDescTxt.y = canvasH/100 * 45;
+			resultDescTxt.y = canvasH/100 * 42;
+
+			resultPriceTxt.x = canvasW/2;
+			resultPriceTxt.y = canvasH/100 * 45;
 			
 			//exit
 			itemExit.visible = false;

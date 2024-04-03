@@ -18,6 +18,25 @@ var iconsArr = [
 	{o:'assets/icon_5.png', x:'assets/icon_5.png', board:{color:'#7661d1', winColor:'#321699', shadowColor:'#2a27a0', borderColor:'#28159b'}},
 ]
 
+const possibleColors = [
+	"DodgerBlue",
+	"OliveDrab",
+	"Gold",
+	"Pink",
+	"SlateBlue",
+	"LightBlue",
+	"Gold",
+	"Violet",
+	"PaleGreen",
+	"SteelBlue",
+	"SandyBrown",
+	"Chocolate",
+	"Crimson"
+  ];
+
+const maxConfettis = 150;
+let particles = [];
+
 //classic settings
 var defaultSettings = {
 	twoPlayer:true,
@@ -60,10 +79,10 @@ var textDisplay = {
 	vs:'VS',
 	player1:'',
 	player2:'',
-	computer:'Computer',
+	computer:'',
 	userTurn:'Your turn',
 	playerTurn:'[NAME] turn',
-	computerTurn:'Computer turn',
+	computerTurn:'Turn',
 	gameWin:'[NUMBER] win',
 	draw:'Draw',
 	timeUp:'Time\'s Up',
@@ -76,7 +95,27 @@ var textDisplay = {
 	room: '',
 	firstGame: 'yes',
 	currentTurn: 'me',
-	giveup: ''
+	giveup: '',
+	winEffect: 'no',
+	effectduration: ''
+}
+
+var Player1 = {
+	username: '',
+	betUsd: '',
+	Status: '',
+	CountryName: '',
+	TokenId: '',
+	entityId: ''
+}
+
+var Player2 = {
+	username: '',
+	betUsd: '',
+	Status: '',
+	CountryName: '',
+	TokenId: '',
+	entityId: ''
 }
 
 //Social share, [SCORE] will replace with game score
@@ -256,8 +295,9 @@ function buildGameButton(){
 		const urlParams = new URLSearchParams(window.location.search);
 
         // Get the value of a specific parameter
-        const tokenkey = urlParams.get('authorization'); // Returns 'value1'
-		redirectToWithAuth('/game', tokenkey);
+        const tokenkey = urlParams.get('t'); // Returns 'value1'
+		const gameID = urlParams.get('gameID'); // Returns 'value1'
+		redirectToWithAuth('/game', tokenkey, gameID);
 	});
 	
 	buttonFacebook.cursor = "pointer";
@@ -357,11 +397,11 @@ function toggleMainButton(con){
 	buttonLocalContainer.visible = false;
 
 	if(con == 'default'){
-		buttonTypeContainer.visible = true;
+		//buttonTypeContainer.visible = true;
 	}else if(con == 'start'){
-		buttonStart.visible = true;
+		//buttonStart.visible = true;
 	}else if(con == 'local'){
-	 	buttonLocalContainer.visible = true;
+	 	//buttonLocalContainer.visible = true;
 	}else if(con == 'players'){
 		if(gameData.type == 'classic'){
 			if(!defaultSettings.twoPlayer){
@@ -504,7 +544,262 @@ function displayPlayerIcon(){
 		$.players['playerIcon'+ n].scaleX = $.players['playerIcon'+ n].scaleY = 1.3;
 
 		$.players['playerIconContainer'+ n].addChild($.players['playerIcon'+ n]);
+
+		//playerFlagContainer
+		$.players['playerFlagContainer'+ n].removeAllChildren();
+
+		const countryCode = getCountryFromIP(n);
+
+		if (countryCode != '')
+		{
+			// Load flag as an image
+			const flagImg = new Image();
+			flagImg.src = `https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/flags/4x3/${countryCode.toLowerCase()}.svg`;
+
+			const flagWidth = 8; // Set your desired width here
+			const flagHeight = 6; // Set your desired height here
+		
+			flagImg.onload = function(container) {
+				// This function will be called when the image is loaded
+				return function() {
+					// Create a bitmap from the flag image
+					const bitmap = new createjs.Bitmap(flagImg);
+					// Set static width and height of the bitmap
+					bitmap.scaleX = flagWidth / bitmap.image.width;
+					bitmap.scaleY = flagHeight / bitmap.image.height;
+		
+					// Center the bitmap within the container
+					bitmap.regX = flagWidth + parseInt(bitmap.image.width * 2);
+					bitmap.regY = 3500;
+
+					container.addChild(bitmap);
+				};
+			}($.players['playerFlagContainer'+ n]); 
+		}
 	}
+}
+
+function getCountryFromIP(n) {
+    // Dummy implementation, you should replace this with actual logic
+    // This could involve using a Geolocation API or querying a database
+    // For demonstration purposes, let's just return a random country
+	const countryNameToCode = {
+		"Afghanistan": "AF",
+		"Albania": "AL",
+		"Algeria": "DZ",
+		"Andorra": "AD",
+		"Angola": "AO",
+		"Antigua and Barbuda": "AG",
+		"Argentina": "AR",
+		"Armenia": "AM",
+		"Australia": "AU",
+		"Austria": "AT",
+		"Azerbaijan": "AZ",
+		"Bahamas": "BS",
+		"Bahrain": "BH",
+		"Bangladesh": "BD",
+		"Barbados": "BB",
+		"Belarus": "BY",
+		"Belgium": "BE",
+		"Belize": "BZ",
+		"Benin": "BJ",
+		"Bhutan": "BT",
+		"Bolivia": "BO",
+		"Bosnia and Herzegovina": "BA",
+		"Botswana": "BW",
+		"Brazil": "BR",
+		"Brunei": "BN",
+		"Bulgaria": "BG",
+		"Burkina Faso": "BF",
+		"Burundi": "BI",
+		"Cabo Verde": "CV",
+		"Cambodia": "KH",
+		"Cameroon": "CM",
+		"Canada": "CA",
+		"Central African Republic": "CF",
+		"Chad": "TD",
+		"Chile": "CL",
+		"China": "CN",
+		"Colombia": "CO",
+		"Comoros": "KM",
+		"Congo": "CG",
+		"Congo-Brazzaville": "CG",
+		"Costa Rica": "CR",
+		"Croatia": "HR",
+		"Cuba": "CU",
+		"Cyprus": "CY",
+		"Czechia": "CZ",
+		"Czech Republic": "CZ",
+		"Denmark": "DK",
+		"Djibouti": "DJ",
+		"Dominica": "DM",
+		"Dominican Republic": "DO",
+		"Ecuador": "EC",
+		"Egypt": "EG",
+		"El Salvador": "SV",
+		"Equatorial Guinea": "GQ",
+		"Eritrea": "ER",
+		"Estonia": "EE",
+		"Eswatini": "SZ",
+		"Swaziland": "SZ",
+		"Ethiopia": "ET",
+		"Fiji": "FJ",
+		"Finland": "FI",
+		"France": "FR",
+		"Gabon": "GA",
+		"Gambia": "GM",
+		"Georgia": "GE",
+		"Germany": "DE",
+		"Ghana": "GH",
+		"Greece": "GR",
+		"Grenada": "GD",
+		"Guatemala": "GT",
+		"Guinea": "GN",
+		"Guinea-Bissau": "GW",
+		"Guyana": "GY",
+		"Haiti": "HT",
+		"Holy See": "VA",
+		"Honduras": "HN",
+		"Hungary": "HU",
+		"Iceland": "IS",
+		"India": "IN",
+		"Indonesia": "ID",
+		"Iran": "IR",
+		"Iraq": "IQ",
+		"Ireland": "IE",
+		"Israel": "IL",
+		"Italy": "IT",
+		"Jamaica": "JM",
+		"Japan": "JP",
+		"Jordan": "JO",
+		"Kazakhstan": "KZ",
+		"Kenya": "KE",
+		"Kiribati": "KI",
+		"Korea, North": "KP",
+		"Korea, Sounth": "KO",
+		"Kosovo": "XK",
+		"Kuwait": "KW",
+		"Kyrgyzstan": "KG",
+		"Laos": "LA",
+		"Latvia": "LV",
+		"Lebanon": "LB",
+		"Lesotho": "LS",
+		"Liberia": "LR",
+		"Libya": "LY",
+		"Liechtenstein": "LI",
+		"Lithuania": "LT",
+		"Luxembourg": "LU",
+		"Madagascar": "MG",
+		"Malawi": "MW",
+		"Malaysia": "MY",
+		"Maldives": "MV",
+		"Mali": "ML",
+		"Malta": "MT",
+		"Marshall Islands": "MH",
+		"Mauritania": "MR",
+		"Mauritius": "MU",
+		"Mexico": "MX",
+		"Micronesia": "FM",
+		"Moldova": "MD",
+		"Monaco": "MC",
+		"Mongolia": "MN",
+		"Montenegro": "ME",
+		"Morocco": "MA",
+		"Mozambique": "MZ",
+		"Myanmar": "MM",
+		"Burma": "MM",
+		"Namibia": "NA",
+		"Nauru": "NR",
+		"Nepal": "NP",
+		"Netherlands": "NL",
+		"New Zealand": "NZ",
+		"Nicaragua": "NI",
+		"Niger": "NE",
+		"Nigeria": "NG",
+		"North Macedonia": "MK",
+		"Norway": "NO",
+		"Oman": "OM",
+		"Pakistan": "PK",
+		"Palau": "PW",
+		"Palestine State": "PS",
+		"Panama": "PA",
+		"Papua New Guinea": "PG",
+		"Paraguay": "PY",
+		"Peru": "PE",
+		"Philippines": "PH",
+		"Poland": "PL",
+		"Portugal": "PT",
+		"Qatar": "QA",
+		"Romania": "RO",
+		"Russia": "RU",
+		"Rwanda": "RW",
+		"Saint Kitts and Nevis": "KN",
+		"Saint Lucia": "LC",
+		"Saint Vincent and the Grenadines": "VC",
+		"Samoa": "WS",
+		"San Marino": "SM",
+		"Sao Tome and Principe": "ST",
+		"Saudi Arabia": "SA",
+		"Senegal": "SN",
+		"Serbia": "RS",
+		"Seychelles": "SC",
+		"Sierra Leone": "SL",
+		"Singapore": "SG",
+		"Slovakia": "SK",
+		"Slovenia": "SI",
+		"Solomon Islands": "SB",
+		"Somalia": "SO",
+		"South Africa": "ZA",
+		"South Sudan": "SS",
+		"Spain": "ES",
+		"Sri Lanka": "LK",
+		"Sudan": "SD",
+		"Suriname": "SR",
+		"Sweden": "SE",
+		"Switzerland": "CH",
+		"Syria": "SY",
+		"Taiwan": "TW",
+		"Tajikistan": "TJ",
+		"Tanzania": "TZ",
+		"Thailand": "TH",
+		"Timor-Leste": "TL",
+		"Togo": "TG",
+		"Tonga": "TO",
+		"Trinidad and Tobago": "TT",
+		"Tunisia": "TN",
+		"Turkey": "TR",
+		"Turkmenistan": "TM",
+		"Tuvalu": "TV",
+		"Uganda": "UG",
+		"Ukraine": "UA",
+		"United Arab Emirates": "AE",
+		"United Kingdom": "GB",
+		"United States": "US",
+		"Uruguay": "UY",
+		"Uzbekistan": "UZ",
+		"Vanuatu": "VU",
+		"Venezuela": "VE",
+		"Vietnam": "VN",
+		"Yemen": "YE",
+		"Zambia": "ZM",
+		"Zimbabwe": "ZW",
+	  };
+	  
+	let selectedCountryName = ''
+	if (parseInt(n) == 0) {
+		if (Player1.CountryName != '') {
+			selectedCountryName = countryNameToCode[Player1.CountryName];
+		}
+	} else {
+		if (Player2.CountryName != '') {
+			selectedCountryName = countryNameToCode[Player2.CountryName];
+
+		}
+	}
+	
+	if (selectedCountryName != undefined && selectedCountryName != '')
+		return selectedCountryName;
+	else return '';
 }
 
 function resizeSocketLog(){
@@ -605,6 +900,7 @@ function goPage(page){
 			// }else{
 			// 	toggleMainButton('default');
 			// }
+			// Push new confetti objects to `particles[]`
 			toggleMainButton('players');
 		break;
 
@@ -642,54 +938,92 @@ function goPage(page){
 		break;
 
 		case 'players':
+			if (textDisplay.effectduration == '') {
+				textDisplay.effectduration = 15 * 1000;
+				var end = Date.now() + textDisplay.effectduration;
+
+				(function frame() {
+					// launch a few confetti from the left edge
+					confetti({
+						particleCount: 3,
+						angle: 60,
+						spread: 180,
+						startVelocity: 80,
+						origin: { x: 0.5, y: 1 }
+						// origin: {
+						//     x: Math.random(),
+						//     // since they fall down, start a bit higher than random
+						//     y: Math.random() - 0.2
+						// }
+					});
+					if (Date.now() < end) {
+						requestAnimationFrame(frame);
+					}
+				}());
+			}
 
 			if (!gameData.ai) {
 				createSocket();
-			}
-			
-			buttonPlayersStart.visible = false;
-			buttonPlayersIcon.visible = false;
-			buttonPlayersSwitch.visible = false;
-			targetContainer = playersContainer;
 
-			if (gameData.ai) {
 				buttonPlayersStart.visible = false;
-			}
-			else {
+				buttonPlayersIcon.visible = false;
+				buttonPlayersSwitch.visible = false;
+				targetContainer = playersContainer;
+				
 				timeData.oldTimer = -1;
 				timeData.countdown = boardSettings.timerDown
 				timeData.isDown = true
 				toggleGameTimer(true);
 				timerDownTxt.text = millisecondsToTimeGame(timeData.countdown);
-			}
 
-			if ( typeof initSocket == 'function' && multiplayerSettings.enable && socketData.online) {
+				$.players['player'+ 1].text = textDisplay.player2;
+			} else {
+				$.players['player'+ 1].text = textDisplay.computer;
+
 				buttonPlayersStart.visible = false;
 				buttonPlayersIcon.visible = false;
 				buttonPlayersSwitch.visible = false;
 
-				if(socketData.host){
-					buttonPlayersStart.visible = true;
-					buttonPlayersIcon.visible = true;
-					buttonPlayersSwitch.visible = true;
-				}
-			}else{
-				if(gameData.ai){
-					$.players['player'+ 1].text = textDisplay.computer;
-				}else{
-					$.players['player'+ 1].text = textDisplay.player2;
-				}
+				targetContainer = playersContainer;
 			}
-
-		break;
+			break;
 		
 		case 'game':
+			buttonPlayersStart.visible = false;
+			buttonPlayersIcon.visible = false;
+			buttonPlayersSwitch.visible = false;
 			targetContainer = gameContainer;
-			startGame();
+			if (gameData.ai) {
+				$.ajax({
+					url: '/bot/info',
+					type: 'GET',
+					data: {
+						't': localStorage.getItem('t'),
+						'gameID': localStorage.getItem('gameID')
+					  },
+					success: function(response) {
+						Player2 = response;
+						textDisplay.computer = response.username;
+						textDisplay.computerTurn = response.username + ' turn';
+						$.players['player'+ 1].text = response.username;
+
+						startGame();
+					},
+					error: function(xhr, status, error) {
+					  // Handle errors
+					  console.error(xhr.responseText);
+					//  window.location.replace('/login?gameID='+gameID+'&t='+tokenkey);
+					}
+				});
+			}
+			else {
+				startGame();
+			}
 		break;
 		
 		case 'result':
 			targetContainer = resultContainer;
+
 			stopGame();
 			togglePop(false);
 			
@@ -697,23 +1031,72 @@ function goPage(page){
 			
 			textDisplay.gameWin.replace('[NUMBER]', playerData.score);
 			TweenMax.to(tweenData, .5, {tweenScore:playerData.score, overwrite:true, onUpdate: function(){
-				var textMessage = ''
-
-				var result = ''
+				var textMessage = '';
+				var textTitle = '';
+				var textPrice = '';
 				if (textDisplay.giveup == 'me') {
-					textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+					//textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+
+					textTitle = "The outcome of this game favors the opponent.\n\n 🙁  \n\n"
+					textMessage = "\n\nOne more try,\nyou've got this!";
+
+					resultTitleTxt.font = "20px bpreplaybold";
+					resultShareTxt.visible = false;
+					buttonFacebook.visible = false;
+					buttonTwitter.visible = false;
+					buttonWhatsapp.visible = false;
+					resultPriceTxt.visible = false;
+
 				} else if (textDisplay.giveup == 'other') {
-					textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+					//textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
+
+					textTitle = "You won!!!!";
+					textMessage = "Congratulations, you won:"
+					textPrice = "$30"
+					resultTitleTxt.font = "60px bpreplaybold";
+					if (textDisplay.winEffect == 'yes')
+					{
+						textDisplay.winEffect = 'no';
+						particles = [];
+						for (var i = 0; i < maxConfettis; i++) {
+							particles.push(new confettiParticle());
+						}
+						Draw();
+					}
 				} else {
 					if (Math.floor(playerData.score) > Math.floor(playerData.opponentScore)) {
-						textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+						//textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
+						textTitle = "You won!!!!";
+						textMessage = "Congratulations, you won:";
+						textPrice = "$30";
+						resultTitleTxt.font = "60px bpreplaybold";
+						if (textDisplay.winEffect == 'yes')
+						{
+							textDisplay.winEffect = 'no';
+							particles = [];
+							for (var i = 0; i < maxConfettis; i++) {
+								particles.push(new confettiParticle());
+							}
+							Draw();
+						}
 					} else if (Math.floor(playerData.score) < Math.floor(playerData.opponentScore)) {
-						textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+						textTitle = "The outcome of this game favors the opponent.\n\n 🙁 \n\n";
+						textMessage = "\n\nOne more try,\nyou've got this!";
+
+						resultTitleTxt.font = "20px bpreplaybold";
+						resultShareTxt.visible = false;
+						buttonFacebook.visible = false;
+						buttonTwitter.visible = false;
+						buttonWhatsapp.visible = false;
+						resultPriceTxt.visible = false;
+						//textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
 					} else {
-						textMessage = 'DRAW: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+						//textMessage = 'DRAW: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
 					}
 				}
 				
+				resultTitleTxt.text = textTitle;
+				resultPriceTxt.text = textPrice;
 				resultDescTxt.text = textMessage; // textDisplay.resultDesc.replace('[NUMBER]', Math.floor(tweenData.tweenScore)).replace('[SCORE]', Math.floor(playerData.score)).replace('[OPPONENTSCORE]', Math.floor(playerData.opponentScore));
 			}});
 
@@ -730,17 +1113,87 @@ function goPage(page){
 	resizeCanvas();
 }
 
-function redirectToWithAuth(url, authToken) {
+function randomFromTo(from, to) {
+	return Math.floor(Math.random() * (to - from + 1) + from);
+}
+
+var canvas1 = document.getElementById("gameCanvas");
+var context = canvas1.getContext("2d");
+
+function confettiParticle() {
+	this.x = randomFromTo(0, Math.random() * stageW * 2); // x
+	this.y = Math.random() * stageH - stageH; // y
+	this.r = randomFromTo(11, 33); // radius
+	this.d = Math.random() * maxConfettis + 11;
+	this.color =
+	  possibleColors[Math.floor(Math.random() * possibleColors.length)];
+	this.tilt = Math.floor(Math.random() * 33) - 11;
+	this.tiltAngleIncremental = Math.random() * 0.07 + 0.05;
+	this.tiltAngle = 0;
+  
+	this.draw = function() {
+		context.beginPath();
+		context.lineWidth = this.r / 2;
+		context.strokeStyle = this.color;
+		context.moveTo(this.x + this.tilt + this.r / 3, this.y);
+		context.lineTo(this.x + this.tilt, this.y + this.tilt + this.r / 5);
+		return context.stroke();
+	};
+}
+
+function Draw() {
+	const results = [];
+  
+	// Magical recursive functional love
+	requestAnimationFrame(Draw);
+  
+	//context.clearRect(0, 0, windowW, window.innerHeight);
+  
+	for (var i = 0; i < maxConfettis; i++) {
+	  results.push(particles[i].draw());
+	}
+  
+	let particle = {};
+	let remainingFlakes = 0;
+	for (var i = 0; i < maxConfettis; i++) {
+	  particle = particles[i];
+  
+	  particle.tiltAngle += particle.tiltAngleIncremental;
+	  particle.y += (Math.cos(particle.d) + 3 + particle.r / 2) / 2;
+	  particle.tilt = Math.sin(particle.tiltAngle - i / 3) * 15;
+  
+	  if (particle.y <= windowH) remainingFlakes++;
+  
+	  // If a confetti has fluttered out of view,
+	  // bring it back to above the viewport and let if re-fall.
+	  if (particle.x > stageW * 2 + 20 || particle.x < -20 || particle.y > windowH) {
+		particle.x = Math.random() * stageW * 2;
+		particle.y = -20;
+		particle.tilt = Math.floor(Math.random() * 10) - 20;
+	  }
+	}
+  
+	return results;
+  }
+
+
+function redirectToWithAuth(url, authToken, gameID) {
 	var form = document.createElement('form');
 	form.method = 'GET';
 	form.action = url;
 
 	var headerInput = document.createElement('input');
 	headerInput.type = 'hidden';
-	headerInput.name = 'authorization';
+	headerInput.name = 't';
 	headerInput.value = authToken;
 
+	var gameIDInput = document.createElement('input');
+	gameIDInput.type = 'hidden';
+	gameIDInput.name = 'gameID';
+	gameIDInput.value = gameID;
+
 	form.appendChild(headerInput);
+	form.appendChild(gameIDInput);
 	document.body.appendChild(form);
 	form.submit();
   }
@@ -823,7 +1276,8 @@ function saveGame(score, opponentscore){
       url: '/result',
       data: {score:score, user: $.players['player'+ 0].text, opponentScore: opponentscore, oppenent: textDisplay.player2, room: textDisplay.room},
 	  headers: {
-        'authorization': localStorage.getItem("authorization")
+        't': localStorage.getItem("t"),
+		'gameID': localStorage.getItem("gameID")
       },
       success: function (result) {
         //   console.log(result);
@@ -863,6 +1317,37 @@ function buildPlayers(){
 		$.players['gameIcon'+ n].scaleX = $.players['gameIcon'+ n].scaleY = 1.3;
 
 		$.players['gameIconContainer'+ n].addChild($.players['gameIcon'+ n]);
+
+		//playerFlagContainer
+		$.players['gameFlagContainer'+ n].removeAllChildren();
+
+		const countryCode = getCountryFromIP(n);
+		
+		if (countryCode != '') {
+			// Load flag as an image
+			const flagImg = new Image();
+			flagImg.src = `https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/flags/4x3/${countryCode.toLowerCase()}.svg`;
+
+			const flagWidth = 8; // Set your desired width here
+			const flagHeight = 6; // Set your desired height here
+		
+			flagImg.onload = function(container) {
+				// This function will be called when the image is loaded
+				return function() {
+					// Create a bitmap from the flag image
+					const bitmap = new createjs.Bitmap(flagImg);
+					// Set static width and height of the bitmap
+					bitmap.scaleX = flagWidth / bitmap.image.width;
+					bitmap.scaleY = flagHeight / bitmap.image.height;
+		
+					// Center the bitmap within the container
+					bitmap.regX = flagWidth + parseInt(bitmap.image.width * 2);
+					bitmap.regY = 4000;
+
+					container.addChild(bitmap);
+				};
+			}($.players['gameFlagContainer'+ n]); 
+		}
 	}
 
 	playerData.score = 0;
@@ -1781,6 +2266,7 @@ function updateTimerDown(){
 	if(timeData.isDown && timeData.timer <= 0){
 		timeData.isDown = false
 		timerDownTxt.text = ""
+		timerDownTxt.visible = false;
 
 		if (socket != null)
 			socket.emit('beforeautogame', {})
@@ -1817,6 +2303,7 @@ function endGame(){
 
 	toggleGameTimer(false);
 	TweenMax.to(gameContainer, 2, {overwrite:true, onComplete:function(){
+		textDisplay.winEffect = 'yes';
 		goPage('result')
 	}});
 

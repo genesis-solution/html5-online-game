@@ -25,16 +25,16 @@ function initMain(){
 	const urlParams = new URLSearchParams(window.location.search);
 
 	// Get the value of a specific parameter
-	const tokenkey = urlParams.get('authorization'); // Returns 'value1'
-	localStorage.setItem('authorization', tokenkey);
+	const tokenkey = urlParams.get('t'); // Returns 'value1'
+	const gameID = urlParams.get('gameID'); // Returns 'value1'
+	localStorage.setItem('t', tokenkey);
+	localStorage.setItem('gameID', gameID);
 	$.ajax({
 		url: '/user/info',
 		type: 'GET',
-		headers: {
-		  'authorization': localStorage.getItem('authorization')
-		},
 		data: {
-			'authorization': localStorage.getItem('authorization'),
+			't': localStorage.getItem('t'),
+			'gameID': localStorage.getItem('gameID')
 		  },
 		success: function(response) {
 			buildGameCanvas(response);
@@ -55,6 +55,7 @@ function initMain(){
 		error: function(xhr, status, error) {
 		  // Handle errors
 		  console.error(xhr.responseText);
+		  window.location.replace('/login?gameID='+gameID+'&t='+tokenkey);
 		}
 	});
 }
