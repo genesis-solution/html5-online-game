@@ -57,7 +57,8 @@
 			{src:'assets/button_sound_on.png', id:'buttonSoundOn'},
 			{src:'assets/button_sound_off.png', id:'buttonSoundOff'},
 			{src:'assets/button_exit.png', id:'buttonExit'},
-			{src:'assets/button_settings.png', id:'buttonSettings'}
+			{src:'assets/button_settings.png', id:'buttonSettings'},
+			{src:'assets/loading.gif', id:'buttonLoading'}
 	];
 
 	for(var n=0; n<iconsArr.length; n++){

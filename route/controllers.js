@@ -1,30 +1,76 @@
 const { getConnectionFromPool, queryDatabase } = require('../config/database');
 const { secretKey } = require('../config/config');
 const jwt = require('jsonwebtoken');
+const request = require('request');
+const xml2js = require('xml2js');
 
 async function login(req, res) {
-  const { username, password } = req.body;
+  const { t, gameID } = req.body;
 
   try {
-    // Get a connection from the pool
-    const connection = await getConnectionFromPool();
+    const url = 'http://isapi.mekashron.com/SmartWinners/player1.dll/soap/IPlayer1';
+    const func_name = "Entity_Get";
 
-    // Perform database query to check if the user exists
-    const result = await queryDatabase(connection, `SELECT * FROM players WHERE username = '${username}' AND password = '${password}'`);
+    var soapOptions = {
+      uri: url,
+      headers: {
+          'Content-Type': 'text/xml; charset=utf-8',
+          'Connection': 'keep-alive'
+      },
+      method: 'POST',
+      body: `<?xml version="1.0" encoding="UTF-8"?>
+          <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope" xmlns:ns1="urn:Player1.Intf-IPlayer1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns2="urn:CommonWSTypes" xmlns:enc="http://www.w3.org/2003/05/soap-encoding">
+          <env:Body>
+          <ns1:`+func_name+` env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
+          <tokenID xsi:type="xsd:string">`+t+`</tokenID>
+          <gameID xsi:type="xsd:int">`+gameID+`</gameID>
+          <Fields xsi:nil="true" xsi:type="ns2:ArrayOfString"/>
+          </ns1:`+func_name+`></env:Body>
+          </env:Envelope>
+          `
+    };
 
-    // Release the connection back to the pool
-    connection.release();
+    
+    request(soapOptions, function(_err, _resp) {
+      if (_err == null) {
+        if (_resp.statusCode == 200)
+        {
+          xml2js.parseString(_resp.body, async (err, result) => {
+            if (err) {
+                console.error('Error parsing XML response:', err);
+                res.status(401).json({ error: 'Invalid credentials' });
+            } else {
+              const resultValue = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'][0]['return'][0]['_'];
+              var userInfo = JSON.parse(resultValue)
 
-    // If user exists and password matches, generate and send token
-    if (result.length > 0) {
-      const token = jwt.sign({ username }, secretKey);
-      res.json({ token });
-    } else {
-      res.status(401).json({ error: 'Invalid credentials' });
-    }
+              if (userInfo.ResultCode == undefined && userInfo.ResultMessage == undefined) {
+                req.user = {
+                  username: userInfo.Name,
+                  betUsd: userInfo.betUsd,
+                  Status: userInfo.Status,
+                  CountryName: 'Israel',
+                  TokenId: '',
+                  entityId: ''
+                }
+                res.json({token: t})
+              }
+              else {
+                res.status(401).json({ error: userInfo.ResultMessage });
+              }
+            }
+          });
+        }
+        else {
+          res.status(401).json({ error: 'Invalid credentials' });
+        }
+      } else {
+        console.log(_err)
+        res.status(401).json({ error: 'Invalid credentials' });
+      }
+    });
   } catch (error) {
     console.error('Error:', error.message);
-    return res.status(500).send('Internal server error');
+    res.status(401).json({ error: 'Invalid credentials' });
   }
 }
 
@@ -113,8 +159,76 @@ async function result(req, res) {
   }
 
   function getUserInfo(req, res) {
-    const { username } = req.user;
-    res.json({ username });
+    res.json(req.user);
+  }
+
+  function getBotInfo(req, res) {
+    const { gameID, t } = req.query;
+
+    try {
+      const url = 'http://isapi.mekashron.com/SmartWinners/player1.dll/soap/IPlayer1';
+      const func_name = "Bot_Get";
+  
+      var soapOptions = {
+        uri: url,
+        headers: {
+            'Content-Type': 'text/xml; charset=utf-8',
+            'Connection': 'keep-alive'
+        },
+        method: 'POST',
+        body: `<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope" xmlns:ns1="urn:Player1.Intf-IPlayer1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:enc="http://www.w3.org/2003/05/soap-encoding">
+        <env:Body>
+        <ns1:`+func_name+` env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
+        <GameId xsi:type="xsd:int">`+gameID+`</GameId>
+        <betUSD xsi:type="xsd:double">0</betUSD>
+        </ns1:`+func_name+`>
+        </env:Body>
+        </env:Envelope>
+            `
+      };
+      
+      request(soapOptions, function(_err, _resp) {
+        if (_err == null) {
+          if (_resp.statusCode == 200)
+          {
+            xml2js.parseString(_resp.body, async (err, result) => {
+              if (err) {
+                  console.error('Error parsing XML response:', err);
+                  res.status(401).json({ error: 'Invalid credentials' });
+              } else {
+
+                const resultValue = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'][0]['return'][0]['_'];
+                var userInfo = JSON.parse(resultValue)
+  
+                if (userInfo.ResultCode == undefined && userInfo.ResultMessage == undefined) {
+                  console.log(userInfo)
+                  res.json({
+                    username: userInfo.Name,
+                    CountryName: userInfo.CountryName,
+                    TokenId: userInfo.TokenId,
+                    entityId: userInfo.entityId,
+                    betUsd: 0,
+                    Status: 0
+                  })
+                }
+                else {
+                  res.status(401).json({ error: userInfo.ResultMessage });
+                }
+              }
+            });
+          }
+          else {
+            res.status(401).json({ error: 'Invalid credentials' });
+          }
+        } else {
+          console.log(_err)
+          res.status(401).json({ error: 'Invalid credentials' });
+        }
+      });
+    } catch (error) {
+      console.error('Error:', error.message);
+      res.status(401).json({ error: 'Invalid credentials' });
+    }
   }
   
   function getCurrentTime(req, res) {
@@ -122,4 +236,4 @@ async function result(req, res) {
     res.json({ currentTime });
   }
   
-  module.exports = { login, register, logout, generateJWTtoken, result, getUserInfo, getCurrentTime };
+  module.exports = { login, register, logout, generateJWTtoken, result, getUserInfo, getBotInfo, getCurrentTime };

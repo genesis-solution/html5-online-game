@@ -1,5 +1,5 @@
 const express = require('express');
-const { login, register, result, logout, generateJWTtoken, getUserInfo, getCurrentTime } = require('./route/controllers');
+const { login, register, result, logout, generateJWTtoken, getUserInfo, getBotInfo, getCurrentTime } = require('./route/controllers');
 const cors = require('cors');
 const { authenticateToken } = require('./middleware/middlewares');
 
@@ -13,12 +13,17 @@ gameRoutes.use(cors());
 loginRoutes.get('/', (req, res) => {
   res.sendFile(__dirname + '/public/login.html');
 });
+loginRoutes.get('/login', (req, res) => {
+  res.sendFile(__dirname + '/public/login.html');
+});
 loginRoutes.post('/login', login);
 loginRoutes.post('/register', register);
 loginRoutes.post('/logout', logout);
 loginRoutes.get('/generateJWTtoken', generateJWTtoken);
 // Endpoint to serve user's information (username)
 gameRoutes.get('/user/info', getUserInfo);
+
+gameRoutes.get('/bot/info', getBotInfo);
 // Endpoint to serve current time
 gameRoutes.get('/currenttime', getCurrentTime);
 
