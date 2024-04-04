@@ -1,6 +1,5 @@
-const { authenticateToken } = require('./middleware/middlewares');
-const { loginRoutes, gameRoutes } = require('./userRoutes');
-const { getConnectionFromPool, queryDatabase } = require('./config/database');
+const request = require('request');
+const xml2js = require('xml2js');
 
 let totalPlayers = [];
 let waitingPlayers = []; // Store players waiting to be matched
@@ -12,10 +11,17 @@ function handleSocketEvents(io) {
         console.log('New client connected');
 
         // Handle joinGame event
-        socket.on('joinGame', (playerName) => {
-            if (!isNameTaken(playerName) && !isRoomTaken(playerName) && !isNameTakenFromTotalPlayers(playerName)) {
+        socket.on('joinGame', (player) => {
+            if (!isNameTaken(player.playerName) && !isRoomTaken(player.playerName) && !isNameTakenFromTotalPlayers(player.playerName)) {
                 // If the name is not taken, proceed
-                socket.playerName = playerName; // Store the player's name in the socket object
+                socket.playerName = player.playerName; // Store the player's name in the socket object
+                socket.TokenId = player.player.TokenId;
+                socket.gameID = player.player.gameID;
+                socket.Status = player.player.Status;
+                socket.betUsd = player.player.betUsd;
+                socket.CountryName = player.player.CountryName;
+                socket.entityId = player.player.entityId;
+
                 waitingPlayers.push(socket); // Add the player to the waiting list
                 totalPlayers.push(socket);
 
@@ -27,9 +33,13 @@ function handleSocketEvents(io) {
                     const date = new Date();
                     const roomName = `Room-${date.getTime()}`;
                     console.log("created room", roomName)
+
+                    const obj_player1 = { id: player1.id, name: player1.playerName, username: player1.playerName, playerName: player1.playerName, CountryName: player1.CountryName, entityId: player1.entityId, TokenId: player1.TokenId, gameID: player1.gameID, Status: player1.Status, betUsd: player1.betUsd, CountryName: player1.CountryName };
+                    const obj_player2 = { id: player2.id, name: player2.playerName, username: player2.playerName, playerName: player2.playerName, CountryName: player2.CountryName, entityId: player2.entityId, TokenId: player2.TokenId, gameID: player2.gameID, Status: player2.Status, betUsd: player2.betUsd, CountryName: player2.CountryName };
+
                     rooms[roomName] = {
-                        player1: { id: player1.id, name: player1.playerName },
-                        player2: { id: player2.id, name: player2.playerName }
+                        player1: obj_player1,
+                        player2: obj_player2
                     };
 
                     player1.join(roomName);
@@ -40,7 +50,7 @@ function handleSocketEvents(io) {
                     player2.emit('joinedRoom', roomName);
 
                     // Inform clients the game started
-                    io.to(roomName).emit('startGamebySocket', [player1.playerName, player2.playerName]);
+                    io.to(roomName).emit('startGamebySocket', [obj_player1, obj_player2]);
                 }
             } else {
                 // Inform client that the name is already taken
@@ -169,7 +179,7 @@ function isNameTaken(playerName) {
     return false;
   }
   
-  function isNameTakenFromTotalPlayers(playerName) {
+function isNameTakenFromTotalPlayers(playerName) {
     for (const player of totalPlayers) {
         if (player.playerName == playerName) {
             return true;

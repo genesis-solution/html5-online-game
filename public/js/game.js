@@ -106,7 +106,8 @@ var Player1 = {
 	Status: '',
 	CountryName: '',
 	TokenId: '',
-	entityId: ''
+	entityId: '',
+	gameID: ''
 }
 
 var Player2 = {
@@ -115,7 +116,8 @@ var Player2 = {
 	Status: '',
 	CountryName: '',
 	TokenId: '',
-	entityId: ''
+	entityId: '',
+	gameID: ''
 }
 
 //Social share, [SCORE] will replace with game score
@@ -835,12 +837,6 @@ function togglePop(con){
 	confirmContainer.visible = con;
 }
 
-window.onbeforeunload = function(event)
-{
-	event.preventDefault();
-	preventRefresh(event);
-};
-
 // Disable F5 and Ctrl+R
 document.addEventListener('keydown', function(event) {
     if (event.key === 'F5' || (event.key === 'r' && event.ctrlKey)) {
@@ -956,7 +952,7 @@ function goPage(page){
 						//     y: Math.random() - 0.2
 						// }
 					});
-					if (Date.now() < end) {
+					if (Date.now() < end && gameData.paused) {
 						requestAnimationFrame(frame);
 					}
 				}());
@@ -1028,6 +1024,8 @@ function goPage(page){
 			togglePop(false);
 			
 			playSound('soundResult');
+
+			var winner = '';
 			
 			textDisplay.gameWin.replace('[NUMBER]', playerData.score);
 			TweenMax.to(tweenData, .5, {tweenScore:playerData.score, overwrite:true, onUpdate: function(){
@@ -1037,6 +1035,7 @@ function goPage(page){
 				if (textDisplay.giveup == 'me') {
 					//textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
 
+					winner = Player2.username;
 					textTitle = "The outcome of this game favors the opponent.\n\n 🙁  \n\n"
 					textMessage = "\n\nOne more try,\nyou've got this!";
 
@@ -1050,6 +1049,7 @@ function goPage(page){
 				} else if (textDisplay.giveup == 'other') {
 					//textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
 
+					winner = Player1.username;
 					textTitle = "You won!!!!";
 					textMessage = "Congratulations, you won:"
 					textPrice = "$30"
@@ -1066,6 +1066,7 @@ function goPage(page){
 				} else {
 					if (Math.floor(playerData.score) > Math.floor(playerData.opponentScore)) {
 						//textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
+						winner = Player1.username;
 						textTitle = "You won!!!!";
 						textMessage = "Congratulations, you won:";
 						textPrice = "$30";
@@ -1083,6 +1084,7 @@ function goPage(page){
 						textTitle = "The outcome of this game favors the opponent.\n\n 🙁 \n\n";
 						textMessage = "\n\nOne more try,\nyou've got this!";
 
+						winner = Player2.username;
 						resultTitleTxt.font = "20px bpreplaybold";
 						resultShareTxt.visible = false;
 						buttonFacebook.visible = false;
@@ -1091,6 +1093,21 @@ function goPage(page){
 						resultPriceTxt.visible = false;
 						//textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
 					} else {
+						//textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
+						winner = Player1.username;
+						textTitle = "You won!!!!";
+						textMessage = "Congratulations, you won:";
+						textPrice = "$30";
+						resultTitleTxt.font = "60px bpreplaybold";
+						if (textDisplay.winEffect == 'yes')
+						{
+							textDisplay.winEffect = 'no';
+							particles = [];
+							for (var i = 0; i < maxConfettis; i++) {
+								particles.push(new confettiParticle());
+							}
+							Draw();
+						}
 						//textMessage = 'DRAW: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
 					}
 				}
@@ -1098,9 +1115,9 @@ function goPage(page){
 				resultTitleTxt.text = textTitle;
 				resultPriceTxt.text = textPrice;
 				resultDescTxt.text = textMessage; // textDisplay.resultDesc.replace('[NUMBER]', Math.floor(tweenData.tweenScore)).replace('[SCORE]', Math.floor(playerData.score)).replace('[OPPONENTSCORE]', Math.floor(playerData.opponentScore));
-			}});
 
-			saveGame(playerData.score, playerData.opponentScore);
+				saveGame(playerData.score, playerData.opponentScore, winner);
+			}});
 		break;
 	}
 	
@@ -1262,27 +1279,26 @@ function startGame(){
 	}
 }
 
-function saveGame(score, opponentscore){
-	if ( typeof toggleScoreboardSave == 'function' ) { 
-		$.scoreData.score = score;
-		if(typeof type != 'undefined'){
-			$.scoreData.type = type;	
-		}
-		toggleScoreboardSave(true);
-	}
+function saveGame(score, opponentscore, winner){
 
-	$.ajax({
-      type: "POST",
-      url: '/result',
-      data: {score:score, user: $.players['player'+ 0].text, opponentScore: opponentscore, oppenent: textDisplay.player2, room: textDisplay.room},
-	  headers: {
-        't': localStorage.getItem("t"),
-		'gameID': localStorage.getItem("gameID")
-      },
-      success: function (result) {
-        //   console.log(result);
-      }
-    });
+	var tokenID = localStorage.getItem("t");
+	if (tokenID != undefined && tokenID != '')
+	{
+		localStorage.removeItem("t");
+		$.ajax({
+			type: "POST",
+			url: '/result',
+			data: {score:score, user: Player1, opponentScore: opponentscore, oppenent: Player2, winner: winner, room: textDisplay.room, t: tokenID, gameID: localStorage.getItem("gameID")},
+			success: function (result) {
+			  //   console.log(result);
+			  
+			},
+			error: function(xhr, status, error) {
+			  // Handle errors
+			  console.error(xhr.responseText);
+			}
+		  });
+	}
 }
 
 /*!
@@ -1722,14 +1738,18 @@ function createSocket() {
 
 		textDisplay.bEmployee = false
 		// online job
-		if (players[0] != textDisplay.player1) {
+		if (players[0].playerName != textDisplay.player1) {
 			textDisplay.bEmployee = true
-			textDisplay.player1 = players[1]
-			textDisplay.player2 = players[0]
+			textDisplay.player1 = players[1].playerName
+			textDisplay.player2 = players[0].playerName
+
+			Player2 = players[0]
 		}
 		else {
-			textDisplay.player1 = players[0]
-			textDisplay.player2 = players[1]
+			textDisplay.player1 = players[0].playerName
+			textDisplay.player2 = players[1].playerName
+
+			Player2 = players[1]
 		}
 
 		playSound('soundButton');
@@ -1756,6 +1776,7 @@ function createSocket() {
 	});
 
 	socket.on('giveup', (playerName) => {
+		console.log("giveup", playerName)
 		if (playerName == textDisplay.player1) {
 			textDisplay.giveup = 'me';
 		}
@@ -1789,14 +1810,15 @@ function createSocket() {
 	});
 	// Listen for nameTaken event
 	socket.on('nameTaken', () => {
-		//console.log("already logged in")
+		console.log("already logged in")
+		redirectToWithAuth('/login', "", "");
 	});
 
 	joinGame(socket)
 }
 
 function joinGame(socket) {
-	socket.emit('joinGame', textDisplay.player1);
+	socket.emit('joinGame', {playerName: textDisplay.player1, player: Player1});
 }
 
 /*!

@@ -19,13 +19,17 @@ async function login(req, res) {
       },
       method: 'POST',
       body: `<?xml version="1.0" encoding="UTF-8"?>
-          <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope" xmlns:ns1="urn:Player1.Intf-IPlayer1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns2="urn:CommonWSTypes" xmlns:enc="http://www.w3.org/2003/05/soap-encoding">
+          <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope" xmlns:ns1="urn:Player1.Intf-IPlayer1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:enc="http://www.w3.org/2003/05/soap-encoding" xmlns:ns2="urn:CommonWSTypes">
           <env:Body>
           <ns1:`+func_name+` env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
           <tokenID xsi:type="xsd:string">`+t+`</tokenID>
           <gameID xsi:type="xsd:int">`+gameID+`</gameID>
-          <Fields xsi:nil="true" xsi:type="ns2:ArrayOfString"/>
-          </ns1:`+func_name+`></env:Body>
+          <Fields enc:itemType="xsd:string" enc:arraySize="2" xsi:type="ns2:ArrayOfString">
+          <item xsi:type="xsd:string">c.countryname</item>
+          <item xsi:type="xsd:string">ef.filedata</item>
+          </Fields>
+          </ns1:`+func_name+`>
+          </env:Body>
           </env:Envelope>
           `
     };
@@ -40,22 +44,29 @@ async function login(req, res) {
                 console.error('Error parsing XML response:', err);
                 res.status(401).json({ error: 'Invalid credentials' });
             } else {
-              const resultValue = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'][0]['return'][0]['_'];
-              var userInfo = JSON.parse(resultValue)
+              if (result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'] != undefined && result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'].length > 0)
+              {
+                const resultValue = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'][0]['return'][0]['_'];
+                var userInfo = JSON.parse(resultValue)
 
-              if (userInfo.ResultCode == undefined && userInfo.ResultMessage == undefined) {
-                req.user = {
-                  username: userInfo.Name,
-                  betUsd: userInfo.betUsd,
-                  Status: userInfo.Status,
-                  CountryName: 'Israel',
-                  TokenId: '',
-                  entityId: ''
+                if (userInfo.ResultCode == undefined && userInfo.ResultMessage == undefined) {
+                  req.user = {
+                    username: userInfo.Name,
+                    betUsd: userInfo.betUsd,
+                    Status: userInfo.Status,
+                    CountryName: userInfo.countryname,
+                    TokenId: t,
+                    gameID: gameID,
+                    entityId: ''
+                  }
+                  res.json({token: t})
                 }
-                res.json({token: t})
+                else {
+                  res.status(401).json({ error: userInfo.ResultMessage });
+                }
               }
               else {
-                res.status(401).json({ error: userInfo.ResultMessage });
+                res.status(401).json({ error: "Already joined" });
               }
             }
           });
@@ -116,7 +127,7 @@ async function generateJWTtoken(req, res) {
 }
 
 async function result(req, res) {
-    var { score, user, opponentScore, oppenent, room } = req.body;
+    var { score, user, opponentScore, oppenent, room, winner } = req.body;
 
     console.log(req.body)
 
@@ -124,31 +135,31 @@ async function result(req, res) {
         if (room == '') {
             room = 'Computer'
         
-            const connection = await getConnectionFromPool();
+            // const connection = await getConnectionFromPool();
 
-            // Perform database query
-            const result = await queryDatabase(connection, `INSERT INTO player_results (score, user, opponentScore, oppenent, room) VALUES (${score}, '${user}', ${opponentScore}, '${oppenent}', '${room}')`);
+            // // Perform database query
+            // const result = await queryDatabase(connection, `INSERT INTO player_results (score, user, opponentScore, oppenent, room) VALUES (${score}, '${user}', ${opponentScore}, '${oppenent}', '${room}')`);
 
-            // Release the connection back to the pool
-            connection.release();
+            // // Release the connection back to the pool
+            // connection.release();
         } else {
-            const connection = await getConnectionFromPool();
+            // const connection = await getConnectionFromPool();
 
-            // Perform database query
-            const result = await queryDatabase(connection, `SELECT * FROM player_results WHERE (user = '${user}' OR oppenent = '${user}')  AND room = '${room}'`);
+            // // Perform database query
+            // const result = await queryDatabase(connection, `SELECT * FROM player_results WHERE (user = '${user}' OR oppenent = '${user}')  AND room = '${room}'`);
 
-            // Release the connection back to the pool
-            connection.release();
+            // // Release the connection back to the pool
+            // connection.release();
 
-            if (result.length == 0) {
-                const connection1 = await getConnectionFromPool();
+            // if (result.length == 0) {
+            //     const connection1 = await getConnectionFromPool();
 
-                // Perform database query
-                const result1 = await queryDatabase(connection1, `INSERT INTO player_results (score, user, opponentScore, oppenent, room) VALUES (${score}, '${user}', ${opponentScore}, '${oppenent}', '${room}')`);
+            //     // Perform database query
+            //     const result1 = await queryDatabase(connection1, `INSERT INTO player_results (score, user, opponentScore, oppenent, room) VALUES (${score}, '${user}', ${opponentScore}, '${oppenent}', '${room}')`);
 
-                // Release the connection back to the pool
-                connection1.release();
-            }
+            //     // Release the connection back to the pool
+            //     connection1.release();
+            // }
         }
         res.json({success: true})
     } catch (error) {
@@ -158,82 +169,82 @@ async function result(req, res) {
     }
   }
 
-  function getUserInfo(req, res) {
-    res.json(req.user);
-  }
+function getUserInfo(req, res) {
+  res.json(req.user);
+}
 
-  function getBotInfo(req, res) {
-    const { gameID, t } = req.query;
+function getBotInfo(req, res) {
+  const { gameID, t } = req.query;
 
-    try {
-      const url = 'http://isapi.mekashron.com/SmartWinners/player1.dll/soap/IPlayer1';
-      const func_name = "Bot_Get";
-  
-      var soapOptions = {
-        uri: url,
-        headers: {
-            'Content-Type': 'text/xml; charset=utf-8',
-            'Connection': 'keep-alive'
-        },
-        method: 'POST',
-        body: `<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope" xmlns:ns1="urn:Player1.Intf-IPlayer1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:enc="http://www.w3.org/2003/05/soap-encoding">
-        <env:Body>
-        <ns1:`+func_name+` env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
-        <GameId xsi:type="xsd:int">`+gameID+`</GameId>
-        <betUSD xsi:type="xsd:double">0</betUSD>
-        </ns1:`+func_name+`>
-        </env:Body>
-        </env:Envelope>
-            `
-      };
-      
-      request(soapOptions, function(_err, _resp) {
-        if (_err == null) {
-          if (_resp.statusCode == 200)
-          {
-            xml2js.parseString(_resp.body, async (err, result) => {
-              if (err) {
-                  console.error('Error parsing XML response:', err);
-                  res.status(401).json({ error: 'Invalid credentials' });
-              } else {
+  try {
+    const url = 'http://isapi.mekashron.com/SmartWinners/player1.dll/soap/IPlayer1';
+    const func_name = "Bot_Get";
 
-                const resultValue = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'][0]['return'][0]['_'];
-                var userInfo = JSON.parse(resultValue)
-  
-                if (userInfo.ResultCode == undefined && userInfo.ResultMessage == undefined) {
-                  console.log(userInfo)
-                  res.json({
-                    username: userInfo.Name,
-                    CountryName: userInfo.CountryName,
-                    TokenId: userInfo.TokenId,
-                    entityId: userInfo.entityId,
-                    betUsd: 0,
-                    Status: 0
-                  })
-                }
-                else {
-                  res.status(401).json({ error: userInfo.ResultMessage });
-                }
+    var soapOptions = {
+      uri: url,
+      headers: {
+          'Content-Type': 'text/xml; charset=utf-8',
+          'Connection': 'keep-alive'
+      },
+      method: 'POST',
+      body: `<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope" xmlns:ns1="urn:Player1.Intf-IPlayer1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:enc="http://www.w3.org/2003/05/soap-encoding">
+      <env:Body>
+      <ns1:`+func_name+` env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
+      <GameId xsi:type="xsd:int">`+gameID+`</GameId>
+      <betUSD xsi:type="xsd:double">0</betUSD>
+      </ns1:`+func_name+`>
+      </env:Body>
+      </env:Envelope>
+          `
+    };
+    
+    request(soapOptions, function(_err, _resp) {
+      if (_err == null) {
+        if (_resp.statusCode == 200)
+        {
+          xml2js.parseString(_resp.body, async (err, result) => {
+            if (err) {
+                console.error('Error parsing XML response:', err);
+                res.status(401).json({ error: 'Invalid credentials' });
+            } else {
+
+              const resultValue = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'][0]['return'][0]['_'];
+              var userInfo = JSON.parse(resultValue)
+
+              if (userInfo.ResultCode == undefined && userInfo.ResultMessage == undefined) {
+                console.log(userInfo)
+                res.json({
+                  username: userInfo.Name,
+                  CountryName: userInfo.CountryName,
+                  TokenId: userInfo.TokenId,
+                  entityId: userInfo.entityId,
+                  betUsd: 0,
+                  Status: 0
+                })
               }
-            });
-          }
-          else {
-            res.status(401).json({ error: 'Invalid credentials' });
-          }
-        } else {
-          console.log(_err)
+              else {
+                res.status(401).json({ error: userInfo.ResultMessage });
+              }
+            }
+          });
+        }
+        else {
           res.status(401).json({ error: 'Invalid credentials' });
         }
-      });
-    } catch (error) {
-      console.error('Error:', error.message);
-      res.status(401).json({ error: 'Invalid credentials' });
-    }
+      } else {
+        console.log(_err)
+        res.status(401).json({ error: 'Invalid credentials' });
+      }
+    });
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(401).json({ error: 'Invalid credentials' });
   }
-  
-  function getCurrentTime(req, res) {
-    const currentTime = new Date().toLocaleTimeString();
-    res.json({ currentTime });
-  }
-  
-  module.exports = { login, register, logout, generateJWTtoken, result, getUserInfo, getBotInfo, getCurrentTime };
+}
+
+function getCurrentTime(req, res) {
+  const currentTime = new Date().toLocaleTimeString();
+  res.json({ currentTime });
+}
+
+module.exports = { login, register, logout, generateJWTtoken, result, getUserInfo, getBotInfo, getCurrentTime };
