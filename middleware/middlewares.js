@@ -8,13 +8,10 @@ const path = require('path');
 
 function authenticateToken(req, res, next) {
   let tokenID = req.query.t;
-  let gameID = req.query.gameID;
+  let gameID = 1;
 
   if (tokenID == null && req.body.t != undefined) {
     tokenID = req.body.t;
-  }
-  if (gameID == null && req.body.gameID != undefined) {
-    gameID = req.body.gameID;
   }
 
   if (tokenID == null || gameID == null) return res.status(401).json({ error: 'Invalid credentials' });

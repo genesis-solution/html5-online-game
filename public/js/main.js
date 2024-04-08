@@ -26,9 +26,8 @@ function initMain(){
 
 	// Get the value of a specific parameter
 	const tokenkey = urlParams.get('t'); // Returns 'value1'
-	const gameID = urlParams.get('gameID'); // Returns 'value1'
 	localStorage.setItem('t', tokenkey);
-	localStorage.setItem('gameID', gameID);
+	localStorage.setItem('gameID', 1);
 	$.ajax({
 		url: '/user/info',
 		type: 'GET',

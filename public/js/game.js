@@ -295,13 +295,7 @@ function buildGameButton(){
 	buttonContinue.cursor = "pointer";
 	buttonContinue.addEventListener("click", function(evt) {
 		playSound('soundButton');
-		//goPage('main');
-		const urlParams = new URLSearchParams(window.location.search);
-
-        // Get the value of a specific parameter
-        const tokenkey = urlParams.get('t'); // Returns 'value1'
-		const gameID = urlParams.get('gameID'); // Returns 'value1'
-		redirectToWithAuth('/game', tokenkey, gameID);
+		window.location.href = 'https://www.player1.win';
 	});
 	
 	buttonFacebook.cursor = "pointer";
@@ -997,7 +991,7 @@ function goPage(page){
 					type: 'GET',
 					data: {
 						't': localStorage.getItem('t'),
-						'gameID': localStorage.getItem('gameID')
+						'gameID': 1
 					  },
 					success: function(response) {
 						Player2 = response;
@@ -1015,7 +1009,6 @@ function goPage(page){
 						} else {
 							console.error('Error:', errorThrown);
 						}
-					//  window.location.replace('/login?gameID='+gameID+'&t='+tokenkey);
 					}
 				});
 			}
@@ -1294,8 +1287,7 @@ function saveGame(score, opponentscore, winner){
 	const tokenkey = urlParams.get('t'); // Returns 'value1'
 	localStorage.setItem('t', tokenkey);
 
-	const gameID = urlParams.get('gameID'); // Returns 'value1'
-	localStorage.setItem('gameID', gameID);
+	localStorage.setItem('gameID', 1);
 	
 	var tokenID = localStorage.getItem("t");
 	if (tokenID != undefined && tokenID != '')
@@ -1309,7 +1301,8 @@ function saveGame(score, opponentscore, winner){
 			  
 			  if (result.success == true && textDisplay.giveup == 'other' || (Math.floor(playerData.score) >= Math.floor(playerData.opponentScore))) {
 				console.log(result.PriseUsd);
-				resultPriceTxt.text = "$" + result.PriseUsd;
+				if (result.PriseUsd != undefined)
+					resultPriceTxt.text = "$" + result.PriseUsd;
 			  }
 			},
 			error: function(xhr, status, error) {
