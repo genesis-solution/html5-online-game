@@ -2,6 +2,9 @@ const jwt = require('jsonwebtoken');
 const { secretKey } = require('../config/config');
 const request = require('request');
 const xml2js = require('xml2js');
+const fs = require('fs');
+const path = require('path');
+
 
 function authenticateToken(req, res, next) {
   let tokenID = req.query.t;
@@ -29,18 +32,19 @@ function authenticateToken(req, res, next) {
     },
     method: 'POST',
     body: `<?xml version="1.0" encoding="UTF-8"?>
-        <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope" xmlns:ns1="urn:Player1.Intf-IPlayer1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:enc="http://www.w3.org/2003/05/soap-encoding" xmlns:ns2="urn:CommonWSTypes">
-        <env:Body>
-        <ns1:`+func_name+` env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
-        <tokenID xsi:type="xsd:string">`+tokenID+`</tokenID>
-        <gameID xsi:type="xsd:int">`+gameID+`</gameID>
-        <Fields enc:itemType="xsd:string" enc:arraySize="2" xsi:type="ns2:ArrayOfString">
-        <item xsi:type="xsd:string">c.countryname</item>
-        <item xsi:type="xsd:string">ef.filedata</item>
-        </Fields>
-        </ns1:`+func_name+`>
-        </env:Body>
-        </env:Envelope>
+            <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope" xmlns:ns1="urn:Player1.Intf-IPlayer1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:enc="http://www.w3.org/2003/05/soap-encoding" xmlns:ns2="urn:CommonWSTypes">
+            <env:Body>
+            <ns1:`+func_name+` env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
+            <tokenID xsi:type="xsd:string">`+tokenID+`</tokenID>
+            <gameID xsi:type="xsd:int">`+gameID+`</gameID>
+            <Fields enc:itemType="xsd:string" enc:arraySize="3" xsi:type="ns2:ArrayOfString">
+            <item xsi:type="xsd:string">e.EntityId</item>
+            <item xsi:type="xsd:string">c.countryname</item>
+            <item xsi:type="xsd:string">ef.fileData</item>
+            </Fields>
+            </ns1:`+func_name+`>
+            </env:Body>
+          </env:Envelope>
         `
   };
 
@@ -55,24 +59,31 @@ function authenticateToken(req, res, next) {
                 console.error('Error parsing XML response:', err);
                 res.status(401).json({ error: 'Invalid credentials' });
             } else {
-              const resultValue = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'][0]['return'][0]['_'];
-              var userInfo = JSON.parse(resultValue)
-  
-              if (userInfo.ResultCode == undefined && userInfo.ResultMessage == undefined) {
-                console.log(userInfo)
-                req.user = {
-                  username: userInfo.Name, // userInfo.Name,
-                  betUsd: userInfo.betUsd,
-                  Status: userInfo.Status,
-                  CountryName: userInfo.countryname,
-                  TokenId: tokenID,
-                  gameID: gameID,
-                  entityId: ''
+              try {
+                const resultValue = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'][0]['return'][0]['_'];
+                var userInfo = JSON.parse(resultValue)
+    
+                if (userInfo.ResultCode == undefined && userInfo.ResultMessage == undefined) {
+                  
+                  req.user = {
+                    username: userInfo.Name, // userInfo.Name,
+                    betUsd: userInfo.betUsd,
+                    Status: userInfo.Status,
+                    CountryName: userInfo.countryname,
+                    TokenId: tokenID,
+                    gameID: gameID,
+                    entityId: userInfo.EntityId
+                  }
+                  next();
                 }
-                next();
-              }
-              else {
-                res.status(401).json({ error: userInfo.ResultMessage });
+                else {
+                  const errorMessage = userInfo.ResultMessage;
+                  const errorHtml = fs.readFileSync(path.join(__dirname, '../public', 'error.html'), 'utf8');
+                  const htmlWithErrorMessage = errorHtml.replace('{{ errorMessage }}', errorMessage);
+                  return res.status(400).send(htmlWithErrorMessage);
+                }
+              } catch (error_) {
+                res.status(401).json({ error: 'Invalid credentials' });
               }
             }
           });

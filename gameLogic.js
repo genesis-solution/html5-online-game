@@ -12,7 +12,7 @@ function handleSocketEvents(io) {
 
         // Handle joinGame event
         socket.on('joinGame', (player) => {
-            if (!isNameTaken(player.playerName) && !isRoomTaken(player.playerName) && !isNameTakenFromTotalPlayers(player.playerName)) {
+            if (player.player.entityId != '' && !isNameTaken(player.playerName) && !isRoomTaken(player.playerName) && !isNameTakenFromTotalPlayers(player.playerName)) {
                 // If the name is not taken, proceed
                 socket.playerName = player.playerName; // Store the player's name in the socket object
                 socket.TokenId = player.player.TokenId;
@@ -34,23 +34,87 @@ function handleSocketEvents(io) {
                     const roomName = `Room-${date.getTime()}`;
                     console.log("created room", roomName)
 
-                    const obj_player1 = { id: player1.id, name: player1.playerName, username: player1.playerName, playerName: player1.playerName, CountryName: player1.CountryName, entityId: player1.entityId, TokenId: player1.TokenId, gameID: player1.gameID, Status: player1.Status, betUsd: player1.betUsd, CountryName: player1.CountryName };
-                    const obj_player2 = { id: player2.id, name: player2.playerName, username: player2.playerName, playerName: player2.playerName, CountryName: player2.CountryName, entityId: player2.entityId, TokenId: player2.TokenId, gameID: player2.gameID, Status: player2.Status, betUsd: player2.betUsd, CountryName: player2.CountryName };
+                    let obj_player1 = { id: player1.id, name: player1.playerName, username: player1.playerName, playerName: player1.playerName, CountryName: player1.CountryName, entityId: player1.entityId, TokenId: player1.TokenId, gameID: player1.gameID, Status: player1.Status, betUsd: player1.betUsd, CountryName: player1.CountryName };
+                    let obj_player2 = { id: player2.id, name: player2.playerName, username: player2.playerName, playerName: player2.playerName, CountryName: player2.CountryName, entityId: player2.entityId, TokenId: player2.TokenId, gameID: player2.gameID, Status: player2.Status, betUsd: player2.betUsd, CountryName: player2.CountryName };
 
-                    rooms[roomName] = {
-                        player1: obj_player1,
-                        player2: obj_player2
-                    };
+                    try {
+                        const url = 'http://isapi.mekashron.com/SmartWinners/player1.dll/soap/IPlayer1';
+                        const func_name = "Entity_Entry_Update";
+                    
+                        var soapOptions = {
+                          uri: url,
+                          headers: {
+                              'Content-Type': 'text/xml; charset=utf-8',
+                              'Connection': 'keep-alive'
+                          },
+                          method: 'POST',
+                          body: `
+                            <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope" xmlns:ns1="urn:Player1.Intf-IPlayer1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:enc="http://www.w3.org/2003/05/soap-encoding" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns2="urn:CommonWSTypes">
+                            <env:Body>
+                            <ns1:Entity_Entry_Update env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
+                            <TokenIds enc:itemType="xsd:string" enc:arraySize="2" xsi:type="ns2:ArrayOfString">
+                            <item xsi:type="xsd:string">`+obj_player1.TokenId+`</item>
+                            <item xsi:type="xsd:string">`+obj_player2.TokenId+`</item>
+                            </TokenIds>
+                            <gameID xsi:type="xsd:int">`+obj_player1.gameID+`</gameID>
+                            <games_entryID xsi:type="xsd:int">0</games_entryID>
+                            <NamesArray xsi:nil="true" xsi:type="ns2:ArrayOfString"/>
+                            <ValuesArray xsi:nil="true" xsi:type="ns2:ArrayOfString"/></ns1:Entity_Entry_Update>
+                            </env:Body>
+                            </env:Envelope>
+                              `
+                        };
+                    
+                        
+                        request(soapOptions, function(_err, _resp) {
+                          if (_err == null) {
+                            if (_resp.statusCode == 200)
+                            {
+                              xml2js.parseString(_resp.body, async (err, result) => {
+                                if (err) {
+                                    console.error('Error parsing XML response:', err);
+                                    res.status(401).json({ error: 'Invalid credentials' });
+                                } else {
+                                  if (result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'] != undefined && result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'].length > 0)
+                                  {
+                                    const resultValue = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'][0]['return'][0]['_'];
+                                    var returnValue = JSON.parse(resultValue)
+                    
+                                    if (returnValue.ResultCode == 0 && returnValue.ResultMessage == 'OK') {
+                                        obj_player1['games_entryID'] = returnValue.games_entryID;
+                                        obj_player2['games_entryID'] = returnValue.games_entryID;
 
-                    player1.join(roomName);
-                    player2.join(roomName);
+                                        rooms[roomName] = {
+                                            player1: obj_player1,
+                                            player2: obj_player2
+                                        };
+                    
+                                        player1.join(roomName);
+                                        player2.join(roomName);
+                    
+                                        // Inform clients they joined the room
+                                        player1.emit('joinedRoom', roomName);
+                                        player2.emit('joinedRoom', roomName);
 
-                    // Inform clients they joined the room
-                    player1.emit('joinedRoom', roomName);
-                    player2.emit('joinedRoom', roomName);
-
-                    // Inform clients the game started
-                    io.to(roomName).emit('startGamebySocket', [obj_player1, obj_player2]);
+                                        io.to(roomName).emit('startGamebySocket', [obj_player1, obj_player2]);
+                                    }
+                                    else {
+                                      
+                                    }
+                                  }
+                                  else {
+                                    
+                                  }
+                                }
+                              });
+                            }
+                          } else {
+                            console.log(_err)
+                          }
+                        });
+                    } catch (error) {
+                    console.error('start game:', error.message);
+                    }
                 }
             } else {
                 // Inform client that the name is already taken
