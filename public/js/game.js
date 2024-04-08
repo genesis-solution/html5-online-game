@@ -107,7 +107,8 @@ var Player1 = {
 	CountryName: '',
 	TokenId: '',
 	entityId: '',
-	gameID: ''
+	gameID: '',
+	games_entryID: ''
 }
 
 var Player2 = {
@@ -117,7 +118,8 @@ var Player2 = {
 	CountryName: '',
 	TokenId: '',
 	entityId: '',
-	gameID: ''
+	gameID: '',
+	games_entryID: ''
 }
 
 //Social share, [SCORE] will replace with game score
@@ -1007,7 +1009,12 @@ function goPage(page){
 					},
 					error: function(xhr, status, error) {
 					  // Handle errors
-					  console.error(xhr.responseText);
+					  
+					  	if (xhr.status === 400) {
+							$('body').html(xhr.responseText);
+						} else {
+							console.error('Error:', errorThrown);
+						}
 					//  window.location.replace('/login?gameID='+gameID+'&t='+tokenkey);
 					}
 				});
@@ -1028,31 +1035,50 @@ function goPage(page){
 			var winner = '';
 			
 			textDisplay.gameWin.replace('[NUMBER]', playerData.score);
-			TweenMax.to(tweenData, .5, {tweenScore:playerData.score, overwrite:true, onUpdate: function(){
-				var textMessage = '';
-				var textTitle = '';
-				var textPrice = '';
-				if (textDisplay.giveup == 'me') {
-					//textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+			// TweenMax.to(tweenData, .5, {tweenScore:playerData.score, overwrite:true, onUpdate: function(){
+				
+			// }});
 
-					winner = Player2.username;
-					textTitle = "The outcome of this game favors the opponent.\n\n 🙁  \n\n"
-					textMessage = "\n\nOne more try,\nyou've got this!";
+			var textMessage = '';
+			var textTitle = '';
+			var textPrice = '';
+			if (textDisplay.giveup == 'me') {
+				//textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
 
-					resultTitleTxt.font = "20px bpreplaybold";
-					resultShareTxt.visible = false;
-					buttonFacebook.visible = false;
-					buttonTwitter.visible = false;
-					buttonWhatsapp.visible = false;
-					resultPriceTxt.visible = false;
+				winner = Player2.entityId;
+				textTitle = "The outcome of this game favors the opponent.\n\n 🙁  \n\n"
+				textMessage = "\n\nOne more try,\nyou've got this!";
 
-				} else if (textDisplay.giveup == 'other') {
+				resultTitleTxt.font = "20px bpreplaybold";
+				resultShareTxt.visible = false;
+				buttonFacebook.visible = false;
+				buttonTwitter.visible = false;
+				buttonWhatsapp.visible = false;
+				resultPriceTxt.visible = false;
+
+			} else if (textDisplay.giveup == 'other') {
+				//textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
+
+				winner = Player1.entityId;
+				textTitle = "You won!!!!";
+				textMessage = "Congratulations, you won:"
+				resultTitleTxt.font = "60px bpreplaybold";
+				if (textDisplay.winEffect == 'yes')
+				{
+					textDisplay.winEffect = 'no';
+					particles = [];
+					for (var i = 0; i < maxConfettis; i++) {
+						particles.push(new confettiParticle());
+					}
+					Draw();
+				}
+			} else {
+				if (Math.floor(playerData.score) > Math.floor(playerData.opponentScore)) {
 					//textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
-
-					winner = Player1.username;
+					winner = Player1.entityId;
 					textTitle = "You won!!!!";
-					textMessage = "Congratulations, you won:"
-					textPrice = "$30"
+					textMessage = "Congratulations, you won:";
+					
 					resultTitleTxt.font = "60px bpreplaybold";
 					if (textDisplay.winEffect == 'yes')
 					{
@@ -1063,61 +1089,42 @@ function goPage(page){
 						}
 						Draw();
 					}
+				} else if (Math.floor(playerData.score) < Math.floor(playerData.opponentScore)) {
+					textTitle = "The outcome of this game favors the opponent.\n\n 🙁 \n\n";
+					textMessage = "\n\nOne more try,\nyou've got this!";
+
+					winner = Player2.entityId;
+					resultTitleTxt.font = "20px bpreplaybold";
+					resultShareTxt.visible = false;
+					buttonFacebook.visible = false;
+					buttonTwitter.visible = false;
+					buttonWhatsapp.visible = false;
+					resultPriceTxt.visible = false;
+					//textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
 				} else {
-					if (Math.floor(playerData.score) > Math.floor(playerData.opponentScore)) {
-						//textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
-						winner = Player1.username;
-						textTitle = "You won!!!!";
-						textMessage = "Congratulations, you won:";
-						textPrice = "$30";
-						resultTitleTxt.font = "60px bpreplaybold";
-						if (textDisplay.winEffect == 'yes')
-						{
-							textDisplay.winEffect = 'no';
-							particles = [];
-							for (var i = 0; i < maxConfettis; i++) {
-								particles.push(new confettiParticle());
-							}
-							Draw();
+					//textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
+					winner = Player1.entityId;
+					textTitle = "You won!!!!";
+					textMessage = "Congratulations, you won:";
+					
+					resultTitleTxt.font = "60px bpreplaybold";
+					if (textDisplay.winEffect == 'yes')
+					{
+						textDisplay.winEffect = 'no';
+						particles = [];
+						for (var i = 0; i < maxConfettis; i++) {
+							particles.push(new confettiParticle());
 						}
-					} else if (Math.floor(playerData.score) < Math.floor(playerData.opponentScore)) {
-						textTitle = "The outcome of this game favors the opponent.\n\n 🙁 \n\n";
-						textMessage = "\n\nOne more try,\nyou've got this!";
-
-						winner = Player2.username;
-						resultTitleTxt.font = "20px bpreplaybold";
-						resultShareTxt.visible = false;
-						buttonFacebook.visible = false;
-						buttonTwitter.visible = false;
-						buttonWhatsapp.visible = false;
-						resultPriceTxt.visible = false;
-						//textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
-					} else {
-						//textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
-						winner = Player1.username;
-						textTitle = "You won!!!!";
-						textMessage = "Congratulations, you won:";
-						textPrice = "$30";
-						resultTitleTxt.font = "60px bpreplaybold";
-						if (textDisplay.winEffect == 'yes')
-						{
-							textDisplay.winEffect = 'no';
-							particles = [];
-							for (var i = 0; i < maxConfettis; i++) {
-								particles.push(new confettiParticle());
-							}
-							Draw();
-						}
-						//textMessage = 'DRAW: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+						Draw();
 					}
+					//textMessage = 'DRAW: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
 				}
-				
-				resultTitleTxt.text = textTitle;
-				resultPriceTxt.text = textPrice;
-				resultDescTxt.text = textMessage; // textDisplay.resultDesc.replace('[NUMBER]', Math.floor(tweenData.tweenScore)).replace('[SCORE]', Math.floor(playerData.score)).replace('[OPPONENTSCORE]', Math.floor(playerData.opponentScore));
+			}
+			
+			resultTitleTxt.text = textTitle;
+			resultDescTxt.text = textMessage; // textDisplay.resultDesc.replace('[NUMBER]', Math.floor(tweenData.tweenScore)).replace('[SCORE]', Math.floor(playerData.score)).replace('[OPPONENTSCORE]', Math.floor(playerData.opponentScore));
 
-				saveGame(playerData.score, playerData.opponentScore, winner);
-			}});
+			saveGame(playerData.score, playerData.opponentScore, winner);
 		break;
 	}
 	
@@ -1281,6 +1288,15 @@ function startGame(){
 
 function saveGame(score, opponentscore, winner){
 
+	const urlParams = new URLSearchParams(window.location.search);
+
+	// Get the value of a specific parameter
+	const tokenkey = urlParams.get('t'); // Returns 'value1'
+	localStorage.setItem('t', tokenkey);
+
+	const gameID = urlParams.get('gameID'); // Returns 'value1'
+	localStorage.setItem('gameID', gameID);
+	
 	var tokenID = localStorage.getItem("t");
 	if (tokenID != undefined && tokenID != '')
 	{
@@ -1288,10 +1304,13 @@ function saveGame(score, opponentscore, winner){
 		$.ajax({
 			type: "POST",
 			url: '/result',
-			data: {score:score, user: Player1, opponentScore: opponentscore, oppenent: Player2, winner: winner, room: textDisplay.room, t: tokenID, gameID: localStorage.getItem("gameID")},
+			data: {score:score, user: Player1, opponentScore: opponentscore, oppenent: Player2, winner: winner, room: textDisplay.room, t: tokenID, gameID: Player1.gameID},
 			success: function (result) {
-			  //   console.log(result);
 			  
+			  if (result.success == true && textDisplay.giveup == 'other' || (Math.floor(playerData.score) >= Math.floor(playerData.opponentScore))) {
+				console.log(result.PriseUsd);
+				resultPriceTxt.text = "$" + result.PriseUsd;
+			  }
 			},
 			error: function(xhr, status, error) {
 			  // Handle errors
@@ -1735,8 +1754,9 @@ function createSocket() {
 		// Start the game
 		timeData.isDown = false
 		timerDownTxt.text = ""
-
 		textDisplay.bEmployee = false
+		Player1.games_entryID = players[0].games_entryID
+
 		// online job
 		if (players[0].playerName != textDisplay.player1) {
 			textDisplay.bEmployee = true
@@ -1842,6 +1862,25 @@ function checkPlayerStatus(player){
 		gameData.complete = true;
 		if(player == 0){
 			playerData.score++;
+
+			if (!gameData.ai) {
+
+				$.ajax({
+					url: '/log',
+					type: 'GET',
+					data: {
+						'status2': Player1.TokenId,
+						'status3': Player2.TokenId 
+					  },
+					success: function(response) {
+						//
+					},
+					error: function(xhr, status, error) {
+					  	// Handle errors
+						
+					}
+				});
+			}
 		}else{
 			playerData.opponentScore++;
 		}
