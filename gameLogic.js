@@ -16,7 +16,7 @@ function handleSocketEvents(io) {
                 // If the name is not taken, proceed
                 socket.playerName = player.playerName; // Store the player's name in the socket object
                 socket.TokenId = player.player.TokenId;
-                socket.gameID = player.player.gameID;
+                socket.gameID = 1;
                 socket.Status = player.player.Status;
                 socket.betUsd = player.player.betUsd;
                 socket.CountryName = player.player.CountryName;

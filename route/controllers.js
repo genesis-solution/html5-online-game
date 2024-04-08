@@ -7,8 +7,9 @@ const fs = require('fs');
 const path = require('path');
 
 async function login(req, res) {
-  const { t, gameID } = req.body;
+  const { t } = req.body;
 
+  var gameID = 1;
   try {
     const url = 'http://isapi.mekashron.com/SmartWinners/player1.dll/soap/IPlayer1';
     const func_name = "Entity_Get";
@@ -131,7 +132,9 @@ async function generateJWTtoken(req, res) {
 
 async function result(req, res) {
 
-    var { score, user, opponentScore, oppenent, room, winner, gameID } = req.body;
+    var { score, user, opponentScore, oppenent, room, winner } = req.body;
+
+    var gameID = 1;
 
     try {
         if (room == '') {
@@ -231,7 +234,8 @@ function getUserInfo(req, res) {
 }
 
 function getBotInfo(req, res) {
-  const { gameID, t } = req.query;
+  const { t } = req.query;
+  var gameID = 1;
 
   try {
     const url = 'http://isapi.mekashron.com/SmartWinners/player1.dll/soap/IPlayer1';

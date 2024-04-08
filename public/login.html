@@ -32,8 +32,7 @@
         const tokenkey = urlParams.get('t'); // Returns 'value1'
         localStorage.setItem('t', tokenkey);
 
-        const gameID = urlParams.get('gameID'); // Returns 'value1'
-        localStorage.setItem('gameID', gameID);
+        const gameID = 1
 
         const xhr = new XMLHttpRequest();
         xhr.open('POST', '/login');
@@ -44,7 +43,7 @@
                 document.getElementById('succ_alert').style.display = "block"
                 document.getElementById('responseMessage_succ').innerText = 'Login successful.';
 
-                redirectToWithAuth('/game', tokenkey, gameID);
+                redirectToWithAuth('/game', tokenkey, 1);
             } else {
                 document.getElementById('alert').style.display = "block"
                 document.getElementById('responseMessage').innerText = data.error;
@@ -55,7 +54,7 @@
             document.getElementById('alert').style.display = "block"
             document.getElementById('responseMessage').innerText = 'An error occurred. Please try again later.';
         };
-        xhr.send(JSON.stringify({ t: tokenkey, gameID: gameID }));
+        xhr.send(JSON.stringify({ t: tokenkey, gameID: 1 }));
     
       } catch (error) {
           console.error('Error:', error);
