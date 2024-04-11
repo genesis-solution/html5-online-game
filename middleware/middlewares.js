@@ -14,7 +14,7 @@ function authenticateToken(req, res, next) {
     tokenID = req.body.t;
   }
 
-  if (tokenID == null || gameID == null) return res.status(401).json({ error: 'Invalid credentials' });
+  if (tokenID == null) return res.status(401).json({ error: 'Invalid credentials' });
 
   
   // const tokenID = '{EAA59E46-E72C-49CE-8364-20E49FDAB436}'; {426CD192-9C91-4B3E-9753-33F8CE733CC2}

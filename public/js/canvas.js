@@ -90,6 +90,7 @@ function buildGameCanvas(response){
 	boardIconContainer = new createjs.Container();
 	resultContainer = new createjs.Container();
 	confirmContainer = new createjs.Container();
+	emojiContainer = new createjs.Container();
 	
 	
 	bg = new createjs.Bitmap(loader.getResult('background'));
@@ -253,6 +254,69 @@ function buildGameCanvas(response){
 	timerTxt.y = timerRedTxt.y = 13;
 
 	timerContainer.addChild(itemTimer, timerTxt, timerRedTxt);
+
+	emoji0Creator = new createjs.Bitmap(loader.getResult('buttonEmoji0'));
+	centerReg(emoji0Creator);
+	emoji1Creator = new createjs.Bitmap(loader.getResult('buttonEmoji1'));
+	centerReg(emoji1Creator);
+	emoji2Creator = new createjs.Bitmap(loader.getResult('buttonEmoji2'));
+	centerReg(emoji2Creator);
+	emoji3Creator = new createjs.Bitmap(loader.getResult('buttonEmoji3'));
+	centerReg(emoji3Creator);
+	emoji4Creator = new createjs.Bitmap(loader.getResult('buttonEmoji4'));
+	centerReg(emoji4Creator);
+	emoji5Creator = new createjs.Bitmap(loader.getResult('buttonEmoji5'));
+	centerReg(emoji5Creator);
+	emoji6Creator = new createjs.Bitmap(loader.getResult('buttonEmoji6'));
+	centerReg(emoji6Creator);
+	emoji7Creator = new createjs.Bitmap(loader.getResult('buttonEmoji7'));
+	centerReg(emoji7Creator);
+	emoji8Creator = new createjs.Bitmap(loader.getResult('buttonEmoji8'));
+	centerReg(emoji8Creator);
+	emoji9Creator = new createjs.Bitmap(loader.getResult('buttonEmoji9'));
+	centerReg(emoji9Creator);
+	emoji10Creator = new createjs.Bitmap(loader.getResult('buttonEmoji10'));
+	centerReg(emoji10Creator);
+
+	let emojiCreaters = [
+		emoji0Creator,
+		emoji1Creator,
+		emoji2Creator,
+		emoji3Creator,
+		emoji4Creator,
+		emoji5Creator,
+		emoji6Creator,
+		emoji7Creator,
+		emoji8Creator,
+		emoji9Creator,
+		emoji10Creator
+	]
+	// Define the positions of the images
+	var imageWidth = 40; // Width of each image
+	var imageHeight = 40; // Width of each image
+	var spacing = 10; // Spacing between images
+	var startX = 0;
+	// Create and position images
+	// for (var i = 0; i < emojiCreaters.length; i++) {
+	// 	var image = emojiCreaters[i]; // Replace with your image path
+	// 	image.x = 0 + (imageWidth + spacing) * i;
+	// 	image.y = 40; // Adjust Y position as needed
+	// 	emojiContainer.addChild(image);
+	// }
+
+	for (var i = 0; i < 2; i++) {
+        for (var j = 0; j < 5; j++) {
+            var index = i * 5 + j;
+            var image = emojiCreaters[index]; // emojiContainer.getChildAt(index);
+            image.x = startX + (imageWidth + spacing) * j;
+            image.y = startX + (imageHeight + spacing) * i;
+			image.textAlign = 'center';
+			emojiContainer.addChild(image);
+        }
+    }
+
+	// Adjust container width based on total width of images
+	emojiContainer.setBounds(0, 0, startX + (imageWidth + spacing) * emojiCreaters.length, imageHeight); // Adjust heigh
 
 	itemStatus = new createjs.Bitmap(loader.getResult('itemStatus'));
 	itemStatus.visible = false;
@@ -429,7 +493,7 @@ function buildGameCanvas(response){
 	buttonLocalContainer.addChild(buttonLocal, buttonOnline);
 	mainContainer.addChild(logo, logoP, buttonTypeContainer, buttonPlayerContainer, buttonLocalContainer, buttonStart);
 	boardContainer.addChild(boardDesignBackContainer, boardIconContainer, boardDesignContainer, boardColor, boardBorder, statusContainer);
-	gameContainer.addChild(boardContainer, timerContainer);
+	gameContainer.addChild(boardContainer, timerContainer, emojiContainer);
 	resultContainer.addChild(itemResult, itemResultP, buttonContinue, resultTitleTxt, resultDescTxt, resultPriceTxt);
 	
 	if(shareEnable){
@@ -814,6 +878,16 @@ function resizeCanvas(){
 			
 			timerContainer.x = offset.x + 80;
 			timerContainer.y = offset.y + 50;
+
+			if (window.innerWidth < 600) {
+				emojiContainer.x = offset.x + canvasW / 2 - 200;
+			} else if (window.innerWidth < 1200) {
+				emojiContainer.x = offset.x + canvasW / 2 - 105;
+			} else {
+				emojiContainer.x = offset.x + canvasW / 2 - 105;
+			}
+
+			emojiContainer.y = offset.y + 65;
 		}
 
 		resizeSocketLog();

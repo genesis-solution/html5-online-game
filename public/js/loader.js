@@ -58,7 +58,18 @@
 			{src:'assets/button_sound_off.png', id:'buttonSoundOff'},
 			{src:'assets/button_exit.png', id:'buttonExit'},
 			{src:'assets/button_settings.png', id:'buttonSettings'},
-			{src:'assets/loading.gif', id:'buttonLoading'}
+			{src:'assets/loading.gif', id:'buttonLoading'},
+			{src:'assets/emoji0.png', id:'buttonEmoji0'},
+			{src:'assets/emoji1.png', id:'buttonEmoji1'},
+			{src:'assets/emoji2.png', id:'buttonEmoji2'},
+			{src:'assets/emoji3.png', id:'buttonEmoji3'},
+			{src:'assets/emoji4.png', id:'buttonEmoji4'},
+			{src:'assets/emoji5.png', id:'buttonEmoji5'},
+			{src:'assets/emoji6.png', id:'buttonEmoji6'},
+			{src:'assets/emoji7.png', id:'buttonEmoji7'},
+			{src:'assets/emoji8.png', id:'buttonEmoji8'},
+			{src:'assets/emoji9.png', id:'buttonEmoji9'},
+			{src:'assets/emoji10.png', id:'buttonEmoji10'},
 	];
 
 	for(var n=0; n<iconsArr.length; n++){

@@ -52,9 +52,7 @@ function initMain(){
 			resizeCanvas();
 		},
 		error: function(xhr, status, error) {
-		  // Handle errors
-		  console.error(xhr.responseText);
-		  window.location.replace('/login?gameID='+gameID+'&t='+tokenkey);
+		  window.location.replace('/login?t='+tokenkey);
 		}
 	});
 }
