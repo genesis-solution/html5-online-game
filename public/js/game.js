@@ -122,6 +122,12 @@ var Player2 = {
 	games_entryID: ''
 }
 
+let cardWidth = 15;
+let cardHeight = 15;
+let topHeight = 50;
+const cardPadding = 20;
+let imagesCanvas = {};
+
 //Social share, [SCORE] will replace with game score
 var shareEnable = true; //toggle share
 var shareTitle = 'Highscore on Connect Four is [SCORE]pts';//social share score title
@@ -358,7 +364,7 @@ function buildGameButton(){
 		stopAudio();
 		togglePop(false);
 
-		if (socket != null && !gameData.ai) {
+		if (socket != null) {
 			socket.emit('giveup', textDisplay.player1);
 		}
 		// stopGame();
@@ -369,6 +375,62 @@ function buildGameButton(){
 	buttonCancel.addEventListener("click", function(evt) {
 		playSound('soundButton');
 		togglePop(false);
+	});
+
+	emoji0Creator.cursor = "pointer";
+	emoji0Creator.addEventListener("click", function(evt) {
+		sentEmoji = false;
+		showEmoji("emoji0");
+	});
+	emoji1Creator.cursor = "pointer";
+	emoji1Creator.addEventListener("click", function(evt) {
+		sentEmoji = false;
+		showEmoji("emoji1");
+	});
+	emoji2Creator.cursor = "pointer";
+	emoji2Creator.addEventListener("click", function(evt) {
+		sentEmoji = false;
+		showEmoji("emoji2");
+	});
+	emoji3Creator.cursor = "pointer";
+	emoji3Creator.addEventListener("click", function(evt) {
+		sentEmoji = false;
+		showEmoji("emoji3");
+	});
+	emoji4Creator.cursor = "pointer";
+	emoji4Creator.addEventListener("click", function(evt) {
+		sentEmoji = false;
+		showEmoji("emoji4");
+	});
+	emoji5Creator.cursor = "pointer";
+	emoji5Creator.addEventListener("click", function(evt) {
+		sentEmoji = false;
+		showEmoji("emoji5");
+	});
+	emoji6Creator.cursor = "pointer";
+	emoji6Creator.addEventListener("click", function(evt) {
+		sentEmoji = false;
+		showEmoji("emoji6");
+	});
+	emoji7Creator.cursor = "pointer";
+	emoji7Creator.addEventListener("click", function(evt) {
+		sentEmoji = false;
+		showEmoji("emoji7");
+	});
+	emoji8Creator.cursor = "pointer";
+	emoji8Creator.addEventListener("click", function(evt) {
+		sentEmoji = false;
+		showEmoji("emoji8");
+	});
+	emoji9Creator.cursor = "pointer";
+	emoji9Creator.addEventListener("click", function(evt) {
+		sentEmoji = false;
+		showEmoji("emoji9");
+	});
+	emoji10Creator.cursor = "pointer";
+	emoji10Creator.addEventListener("click", function(evt) {
+		sentEmoji = false;
+		showEmoji("emoji10");
 	});
 
 	gameData.custom.column = customSettings.columnMin;
@@ -954,14 +1016,14 @@ function goPage(page){
 				}());
 			}
 
-			if (!gameData.ai) {
-				createSocket();
+			buttonPlayersStart.visible = false;
+			buttonPlayersIcon.visible = false;
+			buttonPlayersSwitch.visible = false;
 
-				buttonPlayersStart.visible = false;
-				buttonPlayersIcon.visible = false;
-				buttonPlayersSwitch.visible = false;
-				targetContainer = playersContainer;
-				
+			targetContainer = playersContainer;
+			createSocket();
+
+			if (!gameData.ai) {
 				timeData.oldTimer = -1;
 				timeData.countdown = boardSettings.timerDown
 				timeData.isDown = true
@@ -971,12 +1033,6 @@ function goPage(page){
 				$.players['player'+ 1].text = textDisplay.player2;
 			} else {
 				$.players['player'+ 1].text = textDisplay.computer;
-
-				buttonPlayersStart.visible = false;
-				buttonPlayersIcon.visible = false;
-				buttonPlayersSwitch.visible = false;
-
-				targetContainer = playersContainer;
 			}
 			break;
 		
@@ -986,31 +1042,6 @@ function goPage(page){
 			buttonPlayersSwitch.visible = false;
 			targetContainer = gameContainer;
 			if (gameData.ai) {
-				// $.ajax({
-				// 	url: '/bot/info',
-				// 	type: 'GET',
-				// 	data: {
-				// 		't': localStorage.getItem('t'),
-				// 		'gameID': 1
-				// 	  },
-				// 	success: function(response) {
-				// 		Player2 = response;
-				// 		textDisplay.computer = response.username;
-				// 		textDisplay.computerTurn = response.username + ' turn';
-				// 		$.players['player'+ 1].text = response.username;
-
-				// 		startGame();
-				// 	},
-				// 	error: function(xhr, status, error) {
-				// 	  // Handle errors
-					  
-				// 	  	if (xhr.status === 400) {
-				// 			$('body').html(xhr.responseText);
-				// 		} else {
-				// 			console.error('Error:', errorThrown);
-				// 		}
-				// 	}
-				// });
 			}
 			else {
 				startGame();
@@ -1054,7 +1085,7 @@ function goPage(page){
 
 				winner = Player1.entityId;
 				textTitle = "You won!!!!";
-				textMessage = "Congratulations, you won:"
+				//textMessage = "Congratulations, you won:"
 				resultTitleTxt.font = "60px bpreplaybold";
 				if (textDisplay.winEffect == 'yes')
 				{
@@ -1070,7 +1101,7 @@ function goPage(page){
 					//textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
 					winner = Player1.entityId;
 					textTitle = "You won!!!!";
-					textMessage = "Congratulations, you won:";
+					//textMessage = "Congratulations, you won:";
 					
 					resultTitleTxt.font = "60px bpreplaybold";
 					if (textDisplay.winEffect == 'yes')
@@ -1098,7 +1129,7 @@ function goPage(page){
 					//textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
 					winner = Player1.entityId;
 					textTitle = "You won!!!!";
-					textMessage = "Congratulations, you won:";
+					//textMessage = "Congratulations, you won:";
 					
 					resultTitleTxt.font = "60px bpreplaybold";
 					if (textDisplay.winEffect == 'yes')
@@ -1158,6 +1189,127 @@ function confettiParticle() {
 	};
 }
 
+const canvasWidth = canvas1.width;
+const canvasHeight = canvas1.height;
+
+function getX(params) {
+	let distance = params.xTo - params.xFrom;
+	let steps = params.frames;
+	let progress = params.frame;
+	return distance / steps * progress;
+}
+
+function getY(params) {
+	let distance = params.yTo - params.yFrom;
+	let steps = params.frames;
+	let progress = params.frame;
+	return topHeight;// distance / steps * progress;
+}
+
+function addImage(params) {
+	if (params.frame == params.frames) {
+		
+	}
+	else if (params.frame < params.frames) {
+
+		if (window.innerWidth < 600) {
+			cardWidth = 66;
+			cardHeight = 54;
+			topHeight = canvasH - 80;
+		} else if (window.innerWidth < 1200) {
+			cardWidth = 60;
+			cardHeight = 72;
+			topHeight = canvasH - 100;
+		} else {
+			cardWidth = 60;
+			cardHeight = 72;
+			topHeight = canvasH - 120;
+		}
+
+		let name = params.name;
+		if (imagesCanvas[name] === undefined) {
+			imagesCanvas[name] = document.createElement('canvas');
+		}
+		imagesCanvas[name].width = cardWidth;
+		imagesCanvas[name].height = cardHeight;
+
+		let image = document.getElementById(name);
+		let imageCtx = imagesCanvas[name].getContext('2d');
+		imageCtx.drawImage(image, 0, 0, cardWidth, cardHeight);
+		context.drawImage(imagesCanvas[name], getX(params), getY(params));  
+		
+		params.frame = params.frame + 1;
+		window.requestAnimationFrame(addImage.bind(null, params))
+	}
+}
+
+function addConvertImage(params) {
+	if (params.frame == params.frames) {
+		
+	}
+	else if (params.frame > params.frames) {
+
+		if (window.innerWidth < 600) {
+			cardWidth = 66;
+			cardHeight = 54;
+			topHeight = canvasH - 80;
+		} else if (window.innerWidth < 1200) {
+			cardWidth = 60;
+			cardHeight = 72;
+			topHeight = canvasH - 100;
+		} else {
+			cardWidth = 60;
+			cardHeight = 72;
+			topHeight = canvasH - 120;
+		}
+
+		let name = params.name;
+		if (imagesCanvas[name] === undefined) {
+			imagesCanvas[name] = document.createElement('canvas');
+		}
+		imagesCanvas[name].width = cardWidth;
+		imagesCanvas[name].height = cardHeight;
+
+		let image = document.getElementById(name);
+		let imageCtx = imagesCanvas[name].getContext('2d');
+		imageCtx.drawImage(image, 0, 0, cardWidth, cardHeight);
+		context.drawImage(imagesCanvas[name], getX(params), getY(params));  
+		
+		params.frame = params.frame - 1;
+		window.requestAnimationFrame(addConvertImage.bind(null, params))
+	}
+}
+
+let sentEmoji = false;
+function showEmoji(emojiName) {
+	addImage({
+	  name: emojiName,
+	  frame: 150,
+	  frames: 800,
+	  xFrom: cardPadding,
+	  xTo: canvasWidth - cardWidth - cardPadding,
+	  yFrom: cardPadding,
+	  yTo: cardPadding
+	});
+	if (gameData.ai == false && socket != null && sentEmoji == false) {
+		sentEmoji = true;
+		socket.emit("sendEmoji", { name: emojiName })
+	}
+}
+
+function showEmojiConvert(emojiName) {
+	sentEmoji = false;
+	addImage({
+		name: emojiName,
+		frame: 150,
+		frames: 800,
+		xFrom: cardPadding,
+		xTo: canvasWidth - cardWidth - cardPadding,
+		yFrom: cardPadding,
+		yTo: cardPadding
+	  });
+}
+
 function Draw() {
 	const results = [];
   
@@ -1204,13 +1356,7 @@ function redirectToWithAuth(url, authToken, gameID) {
 	headerInput.name = 't';
 	headerInput.value = authToken;
 
-	var gameIDInput = document.createElement('input');
-	gameIDInput.type = 'hidden';
-	gameIDInput.name = 'gameID';
-	gameIDInput.value = gameID;
-
 	form.appendChild(headerInput);
-	form.appendChild(gameIDInput);
 	document.body.appendChild(form);
 	form.submit();
   }
@@ -1302,7 +1448,10 @@ function saveGame(score, opponentscore, winner){
 			  if (result.success == true && textDisplay.giveup == 'other' || (Math.floor(playerData.score) >= Math.floor(playerData.opponentScore))) {
 				console.log(result.PriseUsd);
 				if (result.PriseUsd != undefined)
+				{
 					resultPriceTxt.text = "$" + result.PriseUsd;
+					resultDescTxt.text = "Congratulations, you won:";
+				}
 			  }
 			},
 			error: function(xhr, status, error) {
@@ -1821,6 +1970,10 @@ function createSocket() {
 		placeIconForOtherMan(moveData.row, moveData.column, moveData.player);
 		// You can update your game UI accordingly with the opponent's move
 	});
+
+	socket.on('sendEmoji', (emojiName) => {
+		showEmojiConvert(emojiName.name);
+	});
 	// Listen for nameTaken event
 	socket.on('nameTaken', () => {
 		console.log("already logged in")
@@ -1831,7 +1984,14 @@ function createSocket() {
 }
 
 function joinGame(socket) {
-	socket.emit('joinGame', {playerName: textDisplay.player1, player: Player1});
+	console.log("Joined game!");
+	textDisplay.player2 = Player2.username;
+	if (gameData.ai == false)
+		socket.emit('joinGame', {playerName: textDisplay.player1, player: Player1});
+	else
+		{
+			socket.emit('joinGame', {playerName: Player2.username, player: Player2});
+		}
 }
 
 /*!
@@ -1853,27 +2013,26 @@ function checkPlayerStatus(player){
 		boardComplete = true;
 		toggleGameTimer(true);
 		gameData.complete = true;
+
 		if(player == 0){
 			playerData.score++;
 
-			if (!gameData.ai) {
+			$.ajax({
+				url: '/log',
+				type: 'GET',
+				data: {
+					'status2': Player1.TokenId,
+					'status3': Player2.TokenId 
+				  },
+				success: function(response) {
+					//
+				},
+				error: function(xhr, status, error) {
+					  // Handle errors
+					
+				}
+			});
 
-				$.ajax({
-					url: '/log',
-					type: 'GET',
-					data: {
-						'status2': Player1.TokenId,
-						'status3': Player2.TokenId 
-					  },
-					success: function(response) {
-						//
-					},
-					error: function(xhr, status, error) {
-					  	// Handle errors
-						
-					}
-				});
-			}
 		}else{
 			playerData.opponentScore++;
 		}
@@ -2329,19 +2488,20 @@ function updateTimerDown(){
 			url: '/bot/info',
 			type: 'GET',
 			data: {
-				't': localStorage.getItem('t'),
-				'gameID': 1
+					't': localStorage.getItem('t'),
+					'gameID': 1
 				},
 			success: function(response) {
-				checkGameType(true);
-		
-				playSound('soundButton');
-				goPage('game');
 				
 				Player2 = response;
+
 				textDisplay.computer = response.username;
 				textDisplay.computerTurn = response.username + ' turn';
 				$.players['player'+ 1].text = response.username;
+
+				checkGameType(true);
+				playSound('soundButton');
+				goPage('game');
 
 				startGame();
 			},

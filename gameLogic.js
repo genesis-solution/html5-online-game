@@ -79,6 +79,8 @@ function handleSocketEvents(io) {
                                   {
                                     const resultValue = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'][0]['return'][0]['_'];
                                     var returnValue = JSON.parse(resultValue)
+
+                                    console.log(returnValue)
                     
                                     if (returnValue.ResultCode == 0 && returnValue.ResultMessage == 'OK') {
                                         obj_player1['games_entryID'] = returnValue.games_entryID;
@@ -95,6 +97,7 @@ function handleSocketEvents(io) {
                                         // Inform clients they joined the room
                                         player1.emit('joinedRoom', roomName);
                                         player2.emit('joinedRoom', roomName);
+
 
                                         io.to(roomName).emit('startGamebySocket', [obj_player1, obj_player2]);
                                     }
@@ -128,6 +131,22 @@ function handleSocketEvents(io) {
             if (roomName) {
                 // Broadcast move to the other player in the room
                 socket.to(roomName).emit('opponentMove', moveData);
+            }
+        });
+
+        // Handle player moves
+        socket.on('sendEmoji', (emojiName) => {
+            const roomName1 = findRoomBySocketId(socket.id);
+            if (roomName1) {
+            for (const roomName in rooms) {
+                if (rooms.hasOwnProperty(roomName)) {
+                    const room = rooms[roomName];
+                    if (room.player1.id === socket.id || room.player2.id === socket.id) {
+                        io.to(room.player1.id).emit('sendEmoji', emojiName);
+                        io.to(room.player2.id).emit('sendEmoji', emojiName);
+                    }
+                }
+            }
             }
         });
 
@@ -178,21 +197,21 @@ function handleSocketEvents(io) {
         });
 
         socket.on('beforeautogame', () => {
-            const roomName = findRoomBySocketId(socket.id);
-            const index = waitingPlayers.indexOf(socket);
-            if (index !== -1) {
-                waitingPlayers.splice(index, 1);
-            }
+            // const roomName = findRoomBySocketId(socket.id);
+            // const index = waitingPlayers.indexOf(socket);
+            // if (index !== -1) {
+            //     waitingPlayers.splice(index, 1);
+            // }
 
-            console.log("Players count: ", totalPlayers.length)
+            // console.log("Players count: ", totalPlayers.length)
 
-            if (roomName) {
-                // Inform the other player in the room about disconnection
-                socket.to(roomName).emit('playerDisconnected', roomName);
-                // Remove the room
-                console.log("disconnected", roomName)
-                delete rooms[roomName];
-            }
+            // if (roomName) {
+            //     // Inform the other player in the room about disconnection
+            //     socket.to(roomName).emit('playerDisconnected', roomName);
+            //     // Remove the room
+            //     console.log("disconnected", roomName)
+            //     delete rooms[roomName];
+            // }
         });
 
         socket.on('disconnect', () => {
