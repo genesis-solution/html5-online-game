@@ -986,31 +986,31 @@ function goPage(page){
 			buttonPlayersSwitch.visible = false;
 			targetContainer = gameContainer;
 			if (gameData.ai) {
-				$.ajax({
-					url: '/bot/info',
-					type: 'GET',
-					data: {
-						't': localStorage.getItem('t'),
-						'gameID': 1
-					  },
-					success: function(response) {
-						Player2 = response;
-						textDisplay.computer = response.username;
-						textDisplay.computerTurn = response.username + ' turn';
-						$.players['player'+ 1].text = response.username;
+				// $.ajax({
+				// 	url: '/bot/info',
+				// 	type: 'GET',
+				// 	data: {
+				// 		't': localStorage.getItem('t'),
+				// 		'gameID': 1
+				// 	  },
+				// 	success: function(response) {
+				// 		Player2 = response;
+				// 		textDisplay.computer = response.username;
+				// 		textDisplay.computerTurn = response.username + ' turn';
+				// 		$.players['player'+ 1].text = response.username;
 
-						startGame();
-					},
-					error: function(xhr, status, error) {
-					  // Handle errors
+				// 		startGame();
+				// 	},
+				// 	error: function(xhr, status, error) {
+				// 	  // Handle errors
 					  
-					  	if (xhr.status === 400) {
-							$('body').html(xhr.responseText);
-						} else {
-							console.error('Error:', errorThrown);
-						}
-					}
-				});
+				// 	  	if (xhr.status === 400) {
+				// 			$('body').html(xhr.responseText);
+				// 		} else {
+				// 			console.error('Error:', errorThrown);
+				// 		}
+				// 	}
+				// });
 			}
 			else {
 				startGame();
@@ -2325,10 +2325,38 @@ function updateTimerDown(){
 		if (socket != null)
 			socket.emit('beforeautogame', {})
 
-		checkGameType(true);
+		$.ajax({
+			url: '/bot/info',
+			type: 'GET',
+			data: {
+				't': localStorage.getItem('t'),
+				'gameID': 1
+				},
+			success: function(response) {
+				checkGameType(true);
 		
-		playSound('soundButton');
-		goPage('game');
+				playSound('soundButton');
+				goPage('game');
+				
+				Player2 = response;
+				textDisplay.computer = response.username;
+				textDisplay.computerTurn = response.username + ' turn';
+				$.players['player'+ 1].text = response.username;
+
+				startGame();
+			},
+			error: function(xhr, status, error) {
+				// Handle errors
+				
+				// if (xhr.status === 400) {
+				// 	$('body').html(xhr.responseText);
+				// } else {
+				// 	console.error('Error:', errorThrown);
+				// }
+				location.reload();
+
+			}
+		});
 	}else{
 		if(Math.abs((timeData.oldTimer - timeData.timer)) > 1000){
 			if(timeData.timer < 1000){
