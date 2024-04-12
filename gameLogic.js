@@ -1,7 +1,7 @@
 const request = require('request');
 const xml2js = require('xml2js');
 
-let totalPlayers = [];
+let totalBotPlayers = [];
 let waitingPlayers = []; // Store players waiting to be matched
 let rooms = {}; // Store game rooms
 
@@ -12,7 +12,7 @@ function handleSocketEvents(io) {
 
         // Handle joinGame event
         socket.on('joinGame', (player) => {
-            if (player.player.entityId != '' && !isNameTaken(player.playerName) && !isRoomTaken(player.playerName) && !isNameTakenFromTotalPlayers(player.playerName)) {
+            if (player.player.entityId != '' && !isNameTaken(player.playerName) && !isRoomTaken(player.playerName)) { // && !isNameTakenFromTotalPlayers(player.playerName)
                 // If the name is not taken, proceed
                 socket.playerName = player.playerName; // Store the player's name in the socket object
                 socket.TokenId = player.player.TokenId;
@@ -23,7 +23,6 @@ function handleSocketEvents(io) {
                 socket.entityId = player.player.entityId;
 
                 waitingPlayers.push(socket); // Add the player to the waiting list
-                totalPlayers.push(socket);
 
                 // Try to match players when there are at least two waiting
                 if (waitingPlayers.length >= 2) {
@@ -85,6 +84,8 @@ function handleSocketEvents(io) {
                                     if (returnValue.ResultCode == 0 && returnValue.ResultMessage == 'OK') {
                                         obj_player1['games_entryID'] = returnValue.games_entryID;
                                         obj_player2['games_entryID'] = returnValue.games_entryID;
+                                        obj_player1['prizeUSD'] = returnValue.prizeUSD
+                                        obj_player2['prizeUSD'] = returnValue.prizeUSD
 
                                         rooms[roomName] = {
                                             player1: obj_player1,
@@ -203,8 +204,6 @@ function handleSocketEvents(io) {
             //     waitingPlayers.splice(index, 1);
             // }
 
-            // console.log("Players count: ", totalPlayers.length)
-
             // if (roomName) {
             //     // Inform the other player in the room about disconnection
             //     socket.to(roomName).emit('playerDisconnected', roomName);
@@ -222,11 +221,12 @@ function handleSocketEvents(io) {
                 waitingPlayers.splice(index, 1);
             }
 
-            const index2 = totalPlayers.indexOf(socket);
-            if (index2 !== -1) {
-            console.log('deleted')
-            totalPlayers.splice(index2, 1);
+            const index3 = waitingPlayers.indexOf(socket);
+            if (index3 !== -1) {
+                waitingPlayers.splice(index3, 1);
             }
+
+            console.log("waitingPlayers", waitingPlayers.length)
 
             if (roomName) {
                 // Inform the other player in the room about disconnection
@@ -263,7 +263,7 @@ function isNameTaken(playerName) {
   }
   
 function isNameTakenFromTotalPlayers(playerName) {
-    for (const player of totalPlayers) {
+    for (const player of totalBotPlayers) {
         if (player.playerName == playerName) {
             return true;
         }

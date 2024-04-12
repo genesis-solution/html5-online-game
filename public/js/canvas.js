@@ -29,7 +29,7 @@ function initGameCanvas(w,h){
 
 var guide = false;
 var canvasContainer, mainContainer, gameContainer, instructionContainer, resultContainer, moveContainer, confirmContainer;
-var guideline, bg, logo, buttonOk, result, shadowResult, buttonReplay, buttonFacebook, buttonTwitter, buttonWhatsapp, buttonFullscreen, buttonSoundOn, buttonSoundOff;
+var guideline, bg, logo, buttonOk, result, shadowResult, buttonReplay, buttonFacebook, buttonTwitter, buttonWhatsapp, buttonTiktok, buttonFullscreen, buttonSoundOn, buttonSoundOff;
 
 $.players = {};
 
@@ -90,6 +90,7 @@ function buildGameCanvas(response){
 	boardIconContainer = new createjs.Container();
 	resultContainer = new createjs.Container();
 	confirmContainer = new createjs.Container();
+	emojiSettingContainer = new createjs.Container();
 	emojiContainer = new createjs.Container();
 	
 	
@@ -278,6 +279,9 @@ function buildGameCanvas(response){
 	emoji10Creator = new createjs.Bitmap(loader.getResult('buttonEmoji10'));
 	centerReg(emoji10Creator);
 
+	emojiStarter = new createjs.Bitmap(loader.getResult('buttonEmojiStarter'));
+	centerReg(emojiStarter);
+
 	let emojiCreaters = [
 		emoji0Creator,
 		emoji1Creator,
@@ -315,8 +319,10 @@ function buildGameCanvas(response){
         }
     }
 
+	emojiSettingContainer.addChild(emojiStarter)
 	// Adjust container width based on total width of images
 	emojiContainer.setBounds(0, 0, startX + (imageWidth + spacing) * emojiCreaters.length, imageHeight); // Adjust heigh
+	emojiContainer.visible = false;
 
 	itemStatus = new createjs.Bitmap(loader.getResult('itemStatus'));
 	itemStatus.visible = false;
@@ -415,13 +421,16 @@ function buildGameCanvas(response){
 	buttonFacebook = new createjs.Bitmap(loader.getResult('buttonFacebook'));
 	buttonTwitter = new createjs.Bitmap(loader.getResult('buttonTwitter'));
 	buttonWhatsapp = new createjs.Bitmap(loader.getResult('buttonWhatsapp'));
-	centerReg(buttonFacebook);
-	createHitarea(buttonFacebook);
-	centerReg(buttonTwitter);
-	createHitarea(buttonTwitter);
+	buttonTiktok = new createjs.Bitmap(loader.getResult('buttonTiktok'));
 	centerReg(buttonWhatsapp);
 	createHitarea(buttonWhatsapp);
-	
+	centerReg(buttonFacebook);
+	createHitarea(buttonFacebook);
+	// centerReg(buttonTwitter);
+	// createHitarea(buttonTwitter);
+	centerReg(buttonTiktok);
+	createHitarea(buttonTiktok);
+	buttonTwitter.visible = false;
 	buttonFullscreen = new createjs.Bitmap(loader.getResult('buttonFullscreen'));
 	centerReg(buttonFullscreen);
 	buttonSoundOn = new createjs.Bitmap(loader.getResult('buttonSoundOn'));
@@ -493,11 +502,11 @@ function buildGameCanvas(response){
 	buttonLocalContainer.addChild(buttonLocal, buttonOnline);
 	mainContainer.addChild(logo, logoP, buttonTypeContainer, buttonPlayerContainer, buttonLocalContainer, buttonStart);
 	boardContainer.addChild(boardDesignBackContainer, boardIconContainer, boardDesignContainer, boardColor, boardBorder, statusContainer);
-	gameContainer.addChild(boardContainer, timerContainer, emojiContainer);
+	gameContainer.addChild(boardContainer, timerContainer, emojiContainer, emojiSettingContainer);
 	resultContainer.addChild(itemResult, itemResultP, buttonContinue, resultTitleTxt, resultDescTxt, resultPriceTxt);
 	
 	if(shareEnable){
-		resultContainer.addChild(resultShareTxt, buttonFacebook, buttonTwitter, buttonWhatsapp);
+		resultContainer.addChild(resultShareTxt, buttonFacebook, buttonTiktok, buttonWhatsapp);
 	}
 	
 	canvasContainer.addChild(bg, bgP, mainContainer, nameContainer, roomContainer, customContainer, playersContainer, gameContainer, gameLogsTxt, resultContainer, confirmContainer, optionsContainer, buttonSettings, guideline);
@@ -630,12 +639,13 @@ function changeCanvasViewport(){
 			itemResult.visible = true;
 			itemResultP.visible = false;
 			
-			buttonFacebook.x = canvasW/100*43;
-			buttonFacebook.y = canvasH/100*55;
-			buttonTwitter.x = canvasW/2;
-			buttonTwitter.y = canvasH/100*55;
-			buttonWhatsapp.x = canvasW/100*57;
+			buttonWhatsapp.x = canvasW/100*43;
 			buttonWhatsapp.y = canvasH/100*55;
+			buttonTiktok.x = canvasW/2;
+			buttonTiktok.y = canvasH/100*55;
+			buttonFacebook.x = canvasW/100*57;
+			buttonFacebook.y = canvasH/100*55;
+			
 			
 			buttonContinue.x = canvasW/2;
 			buttonContinue.y = canvasH/100 * 68;
@@ -879,15 +889,10 @@ function resizeCanvas(){
 			timerContainer.x = offset.x + 80;
 			timerContainer.y = offset.y + 50;
 
-			if (window.innerWidth < 600) {
-				emojiContainer.x = offset.x + canvasW / 2 - 200;
-			} else if (window.innerWidth < 1200) {
-				emojiContainer.x = offset.x + canvasW / 2 - 105;
-			} else {
-				emojiContainer.x = offset.x + canvasW / 2 - 105;
-			}
-
-			emojiContainer.y = offset.y + 65;
+			emojiContainer.x = canvasW / 2 - 100;
+			emojiContainer.y = offset.y + 95;
+			emojiSettingContainer.x = canvasW / 2 + 2;
+			emojiSettingContainer.y = offset.y + 50;
 		}
 
 		resizeSocketLog();

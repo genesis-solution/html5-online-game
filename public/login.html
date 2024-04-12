@@ -45,14 +45,16 @@
 
                 redirectToWithAuth('/game', tokenkey, 1);
             } else {
-                document.getElementById('alert').style.display = "block"
-                document.getElementById('responseMessage').innerText = data.error;
+                // document.getElementById('alert').style.display = "block"
+                // document.getElementById('responseMessage').innerText = data.error;
+                redirectToWithAuth('/game', data.error, 0);
             }
         };
         xhr.onerror = function() {
             console.error('An error occurred.');
             document.getElementById('alert').style.display = "block"
             document.getElementById('responseMessage').innerText = 'An error occurred. Please try again later.';
+            redirectToWithAuth('/game', 'An error occurred. Please try again later.', 0);
         };
         xhr.send(JSON.stringify({ t: tokenkey, gameID: 1 }));
     
@@ -60,25 +62,25 @@
           console.error('Error:', error);
           document.getElementById('alert').style.display = "block"
           document.getElementById('responseMessage').innerText = 'An error occurred. Please try again later.';
+          redirectToWithAuth('/game', 'An error occurred. Please try again later.', 0);
       }
 
-      function redirectToWithAuth(url, authToken, gameID) {
+      function redirectToWithAuth(url, authToken, noError) {
         var form = document.createElement('form');
         form.method = 'GET';
         form.action = url;
 
         var headerInput = document.createElement('input');
         headerInput.type = 'hidden';
-        headerInput.name = 't';
-        headerInput.value = authToken;
 
-        var gameIDInput = document.createElement('input');
-        gameIDInput.type = 'hidden';
-        gameIDInput.name = 'gameID';
-        gameIDInput.value = gameID;
-  
+        if (noError == 1)
+        {
+          headerInput.name = 't';
+        } else {
+          headerInput.name = 'err';
+        }
+        headerInput.value = authToken; 
         form.appendChild(headerInput);
-        form.appendChild(gameIDInput);
         document.body.appendChild(form);
         form.submit();
       }

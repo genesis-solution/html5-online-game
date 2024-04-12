@@ -24,37 +24,69 @@ function initMain(){
 
 	const urlParams = new URLSearchParams(window.location.search);
 
-	// Get the value of a specific parameter
-	const tokenkey = urlParams.get('t'); // Returns 'value1'
-	localStorage.setItem('t', tokenkey);
-	localStorage.setItem('gameID', 1);
-	$.ajax({
-		url: '/user/info',
-		type: 'GET',
-		data: {
-			't': localStorage.getItem('t'),
-			'gameID': localStorage.getItem('gameID')
-		  },
-		success: function(response) {
-			buildGameCanvas(response);
-			buildGameButton();
-			
-			if ( typeof buildScoreBoardCanvas == 'function' ) { 
-				buildScoreBoardCanvas();
+	const errMessage = urlParams.get('err')
+	const tokenkey = urlParams.get('t');
+
+	console.log("err", errMessage)
+	if (errMessage != undefined && errMessage != '') {
+		var errorHtml = `<!DOCTYPE html>
+		<html lang="en">
+		<head>
+			<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<title>`+errMessage+`</title>
+			<!-- Bootstrap CSS -->
+			<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+		</head>
+		<body style="background-color: none !important;">
+			<div class="container">
+				<div class="row mt-5">
+					<div class="col-md-6 offset-md-3">
+						<div class="alert alert-danger">
+							`+errMessage+`
+						</div>
+					</div>
+				</div>
+			</div>
+		</body>
+		</html>
+		`
+		$('body').css('background', 'none');
+		$('body').html(errorHtml);
+	} else if (tokenkey != undefined && tokenkey != '')
+	{
+		// Get the value of a specific parameter
+		const tokenkey = urlParams.get('t'); // Returns 'value1'
+		localStorage.setItem('t', tokenkey);
+		localStorage.setItem('gameID', 1);
+		$.ajax({
+			url: '/user/info',
+			type: 'GET',
+			data: {
+				't': localStorage.getItem('t'),
+				'gameID': localStorage.getItem('gameID')
+			},
+			success: function(response) {
+				buildGameCanvas(response);
+				buildGameButton();
+				
+				if ( typeof buildScoreBoardCanvas == 'function' ) { 
+					buildScoreBoardCanvas();
+				}
+				
+				goPage('main');
+				if ( typeof initSocket == 'function' && multiplayerSettings.enable) {
+					initSocket("connectfour");
+				}
+				
+				checkMobileOrientation();
+				resizeCanvas();
+			},
+			error: function(xhr, status, error) {
+			window.location.replace('/login?t='+tokenkey);
 			}
-			
-			goPage('main');
-			if ( typeof initSocket == 'function' && multiplayerSettings.enable) {
-				initSocket("connectfour");
-			}
-			
-			checkMobileOrientation();
-			resizeCanvas();
-		},
-		error: function(xhr, status, error) {
-		  window.location.replace('/login?t='+tokenkey);
-		}
-	});
+		});
+	}
 }
 
 var windowW=windowH=0;

@@ -14,7 +14,12 @@ function authenticateToken(req, res, next) {
     tokenID = req.body.t;
   }
 
-  if (tokenID == null) return res.status(401).json({ error: 'Invalid credentials' });
+  if (tokenID == null) {
+    const errorMessage = 'Token not found'; // userInfo.ResultMessage;
+    const errorHtml = fs.readFileSync(path.join(__dirname, '../public', 'error.html'), 'utf8');
+    const htmlWithErrorMessage = errorHtml.replace('{{ errorMessage }}', errorMessage);
+    return res.status(400).send(htmlWithErrorMessage);
+  }
 
   
   // const tokenID = '{EAA59E46-E72C-49CE-8364-20E49FDAB436}'; {426CD192-9C91-4B3E-9753-33F8CE733CC2}
@@ -54,7 +59,7 @@ function authenticateToken(req, res, next) {
           xml2js.parseString(_resp.body, async (err, result) => {
             if (err) {
                 console.error('Error parsing XML response:', err);
-                res.status(401).json({ error: 'Invalid credentials' });
+                res.status(200).json({ error: 'Invalid credentials' });
             } else {
               try {
                 const resultValue = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'][0]['return'][0]['_'];
@@ -80,21 +85,33 @@ function authenticateToken(req, res, next) {
                   return res.status(400).send(htmlWithErrorMessage);
                 }
               } catch (error_) {
-                res.status(401).json({ error: 'Invalid credentials' });
+                const errorMessage = 'Invalid Token'; // userInfo.ResultMessage;
+                const errorHtml = fs.readFileSync(path.join(__dirname, '../public', 'error.html'), 'utf8');
+                const htmlWithErrorMessage = errorHtml.replace('{{ errorMessage }}', errorMessage);
+                return res.status(400).send(htmlWithErrorMessage);
               }
             }
           });
         }
         else {
-          res.status(401).json({ error: 'Invalid credentials' });
+          const errorMessage = 'Invalid Token'; // userInfo.ResultMessage;
+          const errorHtml = fs.readFileSync(path.join(__dirname, '../public', 'error.html'), 'utf8');
+          const htmlWithErrorMessage = errorHtml.replace('{{ errorMessage }}', errorMessage);
+          return res.status(400).send(htmlWithErrorMessage);
         }
       } else {
         console.log(_err)
-        res.status(401).json({ error: 'Invalid credentials' });
+        const errorMessage = 'Invalid Token'; // userInfo.ResultMessage;
+        const errorHtml = fs.readFileSync(path.join(__dirname, '../public', 'error.html'), 'utf8');
+        const htmlWithErrorMessage = errorHtml.replace('{{ errorMessage }}', errorMessage);
+        return res.status(400).send(htmlWithErrorMessage);
       }
     });
   } catch (error) {
-    res.status(401).json({ error: 'Invalid credentials' });
+    const errorMessage = 'Invalid Token'; // userInfo.ResultMessage;
+    const errorHtml = fs.readFileSync(path.join(__dirname, '../public', 'error.html'), 'utf8');
+    const htmlWithErrorMessage = errorHtml.replace('{{ errorMessage }}', errorMessage);
+    return res.status(400).send(htmlWithErrorMessage);
   }
 
 }

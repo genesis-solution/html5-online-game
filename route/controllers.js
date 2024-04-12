@@ -134,98 +134,89 @@ async function result(req, res) {
 
     var { score, user, opponentScore, oppenent, room, winner } = req.body;
 
+    console.log("result", req.body)
+
     var gameID = 1;
 
     try {
-        if (room == '') {
-            room = 'Computer'
-        
-            res.json({success: false})
-        } else {
-          try {
-            const url = 'http://isapi.mekashron.com/SmartWinners/player1.dll/soap/IPlayer1';
-            const func_name = "Entity_Entry_Update";
-        
-            var soapOptions = {
-              uri: url,
-              headers: {
-                  'Content-Type': 'text/xml; charset=utf-8',
-                  'Connection': 'keep-alive'
-              },
-              method: 'POST',
-              body: `
-                  <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope" xmlns:ns1="urn:Player1.Intf-IPlayer1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:enc="http://www.w3.org/2003/05/soap-encoding" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns2="urn:CommonWSTypes">
-                  <env:Body>
-                  <ns1:`+func_name+` env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
-                  <TokenIds enc:itemType="xsd:string" enc:arraySize="2" xsi:type="ns2:ArrayOfString">
-                  <item xsi:type="xsd:string">`+user.TokenId+`</item>
-                  <item xsi:type="xsd:string">`+oppenent.TokenId+`</item>
-                  </TokenIds>
-                  <gameID xsi:type="xsd:int">`+gameID+`</gameID>
-                  <games_entryID xsi:type="xsd:int">`+oppenent.games_entryID+`</games_entryID>
-                  <NamesArray enc:itemType="xsd:string" enc:arraySize="1" xsi:type="ns2:ArrayOfString">
-                  <item xsi:type="xsd:string">won_EntityId</item>
-                  </NamesArray>
-                  <ValuesArray enc:itemType="xsd:string" enc:arraySize="1" xsi:type="ns2:ArrayOfString">
-                  <item xsi:type="xsd:string">`+winner+`</item>
-                  </ValuesArray>
-                  </ns1:Entity_Entry_Update>
-                  </env:Body>
-                  </env:Envelope>
-                  `
-            };
-        
-            
-            request(soapOptions, function(_err, _resp) {
-              if (_err == null) {
-                if (_resp.statusCode == 200)
+      const url = 'http://isapi.mekashron.com/SmartWinners/player1.dll/soap/IPlayer1';
+      const func_name = "Entity_Entry_Update";
+  
+      var soapOptions = {
+        uri: url,
+        headers: {
+            'Content-Type': 'text/xml; charset=utf-8',
+            'Connection': 'keep-alive'
+        },
+        method: 'POST',
+        body: `
+            <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope" xmlns:ns1="urn:Player1.Intf-IPlayer1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:enc="http://www.w3.org/2003/05/soap-encoding" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns2="urn:CommonWSTypes">
+            <env:Body>
+            <ns1:`+func_name+` env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
+            <TokenIds enc:itemType="xsd:string" enc:arraySize="2" xsi:type="ns2:ArrayOfString">
+            <item xsi:type="xsd:string">`+user.TokenId+`</item>
+            <item xsi:type="xsd:string">`+oppenent.TokenId+`</item>
+            </TokenIds>
+            <gameID xsi:type="xsd:int">`+gameID+`</gameID>
+            <games_entryID xsi:type="xsd:int">`+oppenent.games_entryID+`</games_entryID>
+            <NamesArray enc:itemType="xsd:string" enc:arraySize="1" xsi:type="ns2:ArrayOfString">
+            <item xsi:type="xsd:string">won_EntityId</item>
+            </NamesArray>
+            <ValuesArray enc:itemType="xsd:string" enc:arraySize="1" xsi:type="ns2:ArrayOfString">
+            <item xsi:type="xsd:string">`+winner+`</item>
+            </ValuesArray>
+            </ns1:Entity_Entry_Update>
+            </env:Body>
+            </env:Envelope>
+            `
+      };
+  
+      
+      request(soapOptions, function(_err, _resp) {
+        if (_err == null) {
+          if (_resp.statusCode == 200)
+          {
+            xml2js.parseString(_resp.body, async (err, result) => {
+              if (err) {
+                  console.error('Error parsing XML response:', err);
+                  res.status(401).json({ error: 'Invalid credentials' });
+              } else {
+                console.log("result response", result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'])
+                if (result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'] != undefined && result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'].length > 0)
                 {
-                  xml2js.parseString(_resp.body, async (err, result) => {
-                    if (err) {
-                        console.error('Error parsing XML response:', err);
-                        res.status(401).json({ error: 'Invalid credentials' });
-                    } else {
-                      if (result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'] != undefined && result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'].length > 0)
-                      {
-                        const resultValue = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'][0]['return'][0]['_'];
+                  const resultValue = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'][0]['return'][0]['_'];
 
-                        try {
-                          var returnValue = JSON.parse(resultValue)
-        
-                          if (returnValue.ResultCode == 0 && returnValue.ResultMessage == 'OK') {
-                            res.json({success: true, PriseUsd: returnValue.prizeUSD})
-                          }
-                          else {
-                            res.status(401).json({ error: returnValue.ResultMessage });
-                          }
-                        } catch (error_) {
-                          res.status(401).json({ error: error_ });
-                        }
-                      }
-                      else {
-                        res.status(401).json({ error: "Already joined" });
-                      }
+                  try {
+                    var returnValue = JSON.parse(resultValue)
+  
+                    if (returnValue.ResultCode == 0 && returnValue.ResultMessage == 'OK') {
+                      res.json({success: true, PriseUsd: returnValue.prizeUSD})
                     }
-                  });
+                    else {
+                      res.status(401).json({ error: returnValue.ResultMessage });
+                    }
+                  } catch (error_) {
+                    res.status(401).json({ error: error_ });
+                  }
                 }
                 else {
-                  res.status(401).json({ error: 'Invalid credentials' });
+                  
+                  res.status(401).json({ error: "Already joined" });
                 }
-              } else {
-                console.log(_err)
-                res.status(401).json({ error: 'Invalid credentials' });
               }
             });
-          } catch (error) {
-            console.error('Error:', error.message);
+          }
+          else {
             res.status(401).json({ error: 'Invalid credentials' });
           }
+        } else {
+          console.log(_err)
+          res.status(401).json({ error: 'Invalid credentials' });
         }
-        
+      });
     } catch (error) {
-        console.error('Error:', error.message);
-        
-        res.json({success: false})
+      console.error('Error:', error.message);
+      res.json({success: false})
     }
   }
 
@@ -234,7 +225,7 @@ function getUserInfo(req, res) {
 }
 
 function getBotInfo(req, res) {
-  const { t } = req.query;
+  const { t, betUsd } = req.query;
   var gameID = 1;
 
   try {
@@ -252,7 +243,7 @@ function getBotInfo(req, res) {
       <env:Body>
       <ns1:`+func_name+` env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
       <GameId xsi:type="xsd:int">`+gameID+`</GameId>
-      <betUSD xsi:type="xsd:double">0</betUSD>
+      <betUSD xsi:type="xsd:double">`+betUsd+`</betUSD>
       </ns1:`+func_name+`>
       </env:Body>
       </env:Envelope>
@@ -269,25 +260,35 @@ function getBotInfo(req, res) {
                 res.status(401).json({ error: 'Invalid credentials' });
             } else {
 
-              const resultValue = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'][0]['return'][0]['_'];
-              var userInfo = JSON.parse(resultValue)
+              if (result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'] != undefined && result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'].length > 0)
+              {
+                const resultValue = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'][0]['return'][0]['_'];
+                var userInfo = JSON.parse(resultValue)
 
-              if (userInfo.ResultCode == undefined && userInfo.ResultMessage == undefined) {
-                console.log(userInfo)
-                res.json({
-                  username: userInfo.Name,
-                  CountryName: userInfo.CountryName,
-                  TokenId: userInfo.TokenId,
-                  entityId: userInfo.entityId,
-                  betUsd: 0,
-                  Status: 0
-                })
-              }
-              else {
-                const errorMessage = userInfo.ResultMessage;
-                const errorHtml = fs.readFileSync(path.join(__dirname, '../public', 'error.html'), 'utf8');
-                const htmlWithErrorMessage = errorHtml.replace('{{ errorMessage }}', errorMessage);
-                return res.status(400).send(htmlWithErrorMessage);
+                if (userInfo.ResultCode == undefined && userInfo.ResultMessage == undefined) {
+                  console.log(userInfo)
+                  res.json({
+                    username: userInfo.Name,
+                    CountryName: userInfo.CountryName,
+                    TokenId: userInfo.TokenId,
+                    entityId: userInfo.entityId,
+                    betUsd: 0,
+                    Status: 0
+                  })
+                }
+                else {
+                  console.log(userInfo.ResultMessage)
+                  const errorMessage = 'No players available'; // userInfo.ResultMessage;
+                  const errorHtml = fs.readFileSync(path.join(__dirname, '../public', 'error.html'), 'utf8');
+                  const htmlWithErrorMessage = errorHtml.replace('{{ errorMessage }}', errorMessage);
+                  return res.status(400).send(htmlWithErrorMessage);
+                }
+              } else {
+                  console.log(userInfo.ResultMessage)
+                  const errorMessage = 'No players available'; // userInfo.ResultMessage;
+                  const errorHtml = fs.readFileSync(path.join(__dirname, '../public', 'error.html'), 'utf8');
+                  const htmlWithErrorMessage = errorHtml.replace('{{ errorMessage }}', errorMessage);
+                  return res.status(400).send(htmlWithErrorMessage);
               }
             }
           });
