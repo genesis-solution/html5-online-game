@@ -2099,11 +2099,15 @@ function checkPlayerStatusByTimeout(){
 	toggleGameTimer(true);
 	gameData.complete = true;
 
-	if($.players['gameTurn'+ 0].text == 'Your turn'){
+	if (gameData.ai == false) {
+		if($.players['gameTurn'+ 0].text == 'Your turn'){
+			playerData.opponentScore++;
+		}
+		else {
+			playerData.score++;
+		}
+	} else {
 		playerData.opponentScore++;
-	}
-	else {
-		playerData.score++;
 	}
 
 	displayPlayerScore();
