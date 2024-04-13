@@ -48,6 +48,7 @@
 			{src:'assets/button_facebook.png', id:'buttonFacebook'},
 			{src:'assets/button_twitter.png', id:'buttonTwitter'},
 			{src:'assets/button_whatsapp.png', id:'buttonWhatsapp'},
+			{src:'assets/button_tiktok.png', id:'buttonTiktok'},
 			{src:'assets/button_continue.png', id:'buttonContinue'},
 			{src:'assets/item_pop.png', id:'itemPop'},
 			{src:'assets/item_pop_p.png', id:'itemPopP'},
@@ -70,6 +71,8 @@
 			{src:'assets/emoji8.png', id:'buttonEmoji8'},
 			{src:'assets/emoji9.png', id:'buttonEmoji9'},
 			{src:'assets/emoji10.png', id:'buttonEmoji10'},
+			{src:'assets/emoji_starter.png', id:'buttonEmojiStarter'},
+			
 	];
 
 	for(var n=0; n<iconsArr.length; n++){

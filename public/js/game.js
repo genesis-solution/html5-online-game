@@ -108,7 +108,8 @@ var Player1 = {
 	TokenId: '',
 	entityId: '',
 	gameID: '',
-	games_entryID: ''
+	games_entryID: '',
+	prizeUSD: 0
 }
 
 var Player2 = {
@@ -119,7 +120,8 @@ var Player2 = {
 	TokenId: '',
 	entityId: '',
 	gameID: '',
-	games_entryID: ''
+	games_entryID: '',
+	prizeUSD: 0
 }
 
 let cardWidth = 15;
@@ -131,7 +133,8 @@ let imagesCanvas = {};
 //Social share, [SCORE] will replace with game score
 var shareEnable = true; //toggle share
 var shareTitle = 'Highscore on Connect Four is [SCORE]pts';//social share score title
-var shareMessage = '[SCORE]pts is mine new highscore on Connect Four game! Try it now!'; //social share score message
+var shareMessage = "I just won [SCORE] on Player1.win, Let’s play Connect Four with real money bets! Are you in? Join now."; //social share score message
+
 
 /*!
  *
@@ -309,9 +312,9 @@ function buildGameButton(){
 		share('facebook');
 	});
 	
-	buttonTwitter.cursor = "pointer";
-	buttonTwitter.addEventListener("click", function(evt) {
-		share('twitter');
+	buttonTiktok.cursor = "pointer";
+	buttonTiktok.addEventListener("click", function(evt) {
+		share('tiktok');
 	});
 	buttonWhatsapp.cursor = "pointer";
 	buttonWhatsapp.addEventListener("click", function(evt) {
@@ -377,6 +380,10 @@ function buildGameButton(){
 		togglePop(false);
 	});
 
+	emojiStarter.cursor = "pointer";
+	emojiStarter.addEventListener("click", function(evt) {
+		toggleEmoji();
+	});
 	emoji0Creator.cursor = "pointer";
 	emoji0Creator.addEventListener("click", function(evt) {
 		sentEmoji = false;
@@ -477,7 +484,6 @@ function toggleMainButton(con){
 
 		buttonPlayerContainer.visible = false;
 
-		playSound('soundButton');
 		checkGameType(false);
 	}
 }
@@ -1076,7 +1082,7 @@ function goPage(page){
 				resultTitleTxt.font = "20px bpreplaybold";
 				resultShareTxt.visible = false;
 				buttonFacebook.visible = false;
-				buttonTwitter.visible = false;
+				buttonTiktok.visible = false;
 				buttonWhatsapp.visible = false;
 				resultPriceTxt.visible = false;
 
@@ -1085,7 +1091,8 @@ function goPage(page){
 
 				winner = Player1.entityId;
 				textTitle = "You won!!!!";
-				//textMessage = "Congratulations, you won:"
+				textMessage = "Congratulations, you won:"
+				resultPriceTxt.text = "$" + Player1.prizeUSD;
 				resultTitleTxt.font = "60px bpreplaybold";
 				if (textDisplay.winEffect == 'yes')
 				{
@@ -1101,7 +1108,8 @@ function goPage(page){
 					//textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
 					winner = Player1.entityId;
 					textTitle = "You won!!!!";
-					//textMessage = "Congratulations, you won:";
+					textMessage = "Congratulations, you won:";
+					resultPriceTxt.text = "$" + Player1.prizeUSD;
 					
 					resultTitleTxt.font = "60px bpreplaybold";
 					if (textDisplay.winEffect == 'yes')
@@ -1122,6 +1130,7 @@ function goPage(page){
 					resultShareTxt.visible = false;
 					buttonFacebook.visible = false;
 					buttonTwitter.visible = false;
+					buttonTiktok.visible = false;
 					buttonWhatsapp.visible = false;
 					resultPriceTxt.visible = false;
 					//textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
@@ -1129,8 +1138,8 @@ function goPage(page){
 					//textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
 					winner = Player1.entityId;
 					textTitle = "You won!!!!";
-					//textMessage = "Congratulations, you won:";
-					
+					textMessage = "Congratulations, you won:";
+					resultPriceTxt.text = "$" + Player1.prizeUSD;
 					resultTitleTxt.font = "60px bpreplaybold";
 					if (textDisplay.winEffect == 'yes')
 					{
@@ -1282,6 +1291,7 @@ function addConvertImage(params) {
 
 let sentEmoji = false;
 function showEmoji(emojiName) {
+	toggleEmoji();
 	addImage({
 	  name: emojiName,
 	  frame: 150,
@@ -1781,7 +1791,7 @@ function placeMove(column) {
 		return;
 	}
 	
-	if (textDisplay.player2 != '') {
+	if (textDisplay.player2 != '' && gameData.ai == false) {
 
 		textDisplay.bEmployee = false;
 		var playerKey = textDisplay.bEmployee ? 1 : 0
@@ -1790,6 +1800,7 @@ function placeMove(column) {
 			textDisplay.firstGame = 'no'
 			placeIconForMy(firstEmptyRow, column, gameData.player)
 			gameData.moving = true;
+			if (gameData.ai == false)
 			socket.emit('move', {row: firstEmptyRow, column: column, player: 1});
 		}
 	} else {
@@ -1897,7 +1908,8 @@ function createSocket() {
 		timeData.isDown = false
 		timerDownTxt.text = ""
 		textDisplay.bEmployee = false
-		Player1.games_entryID = players[0].games_entryID
+		Player1.games_entryID = players[0].games_entryID;
+		Player1.prizeUSD = players[0].prizeUSD;
 
 		// online job
 		if (players[0].playerName != textDisplay.player1) {
@@ -1914,8 +1926,9 @@ function createSocket() {
 			Player2 = players[1]
 		}
 
-		playSound('soundButton');
-		goPage('game');
+		if (gameData.ai == false) {
+			goPage('game');
+		}
 		// online job
 		if (textDisplay.bEmployee) {
 			gameData.player = 0;
@@ -1966,8 +1979,10 @@ function createSocket() {
 	
 	socket.on('opponentMove', (moveData) => {
 		// Handle opponent's move
-		textDisplay.firstGame = 'no'
-		placeIconForOtherMan(moveData.row, moveData.column, moveData.player);
+		if (gameData.ai == false) {
+			textDisplay.firstGame = 'no'
+			placeIconForOtherMan(moveData.row, moveData.column, moveData.player);
+		}
 		// You can update your game UI accordingly with the opponent's move
 	});
 
@@ -1977,6 +1992,7 @@ function createSocket() {
 	// Listen for nameTaken event
 	socket.on('nameTaken', () => {
 		console.log("already logged in")
+		// if (localStorage.getItem('t') != '')
 		redirectToWithAuth('/login', "", "");
 	});
 
@@ -1987,10 +2003,10 @@ function joinGame(socket) {
 	console.log("Joined game!");
 	textDisplay.player2 = Player2.username;
 	if (gameData.ai == false)
-		socket.emit('joinGame', {playerName: textDisplay.player1, player: Player1});
+		socket.emit('joinGame', {playerName: textDisplay.player1, player: Player1, isBot: 0});
 	else
 		{
-			socket.emit('joinGame', {playerName: Player2.username, player: Player2});
+			socket.emit('joinGame', {playerName: Player2.username, player: Player2, isBot: 1});
 		}
 }
 
@@ -2071,10 +2087,6 @@ function checkPlayerStatus(player){
 
 	if (playerData.score >= 3 || playerData.opponentScore >= 3) {
 		endGame();
-		if (socket != null)
-		{
-			socket.disconnect();
-		}
 	}
 }
 
@@ -2087,11 +2099,15 @@ function checkPlayerStatusByTimeout(){
 	toggleGameTimer(true);
 	gameData.complete = true;
 
-	if($.players['gameTurn'+ 0].text == 'Your turn'){
+	if (gameData.ai == false) {
+		if($.players['gameTurn'+ 0].text == 'Your turn'){
+			playerData.opponentScore++;
+		}
+		else {
+			playerData.score++;
+		}
+	} else {
 		playerData.opponentScore++;
-	}
-	else {
-		playerData.score++;
 	}
 
 	displayPlayerScore();
@@ -2106,10 +2122,6 @@ function checkPlayerStatusByTimeout(){
 
 	if (playerData.score >= 3 || playerData.opponentScore >= 3) {
 		endGame();
-		if (socket != null)
-		{
-			socket.disconnect();
-		}
 	}
 }
 
@@ -2489,7 +2501,8 @@ function updateTimerDown(){
 			type: 'GET',
 			data: {
 					't': localStorage.getItem('t'),
-					'gameID': 1
+					'gameID': 1,
+					betUsd: Player1.betUsd
 				},
 			success: function(response) {
 				
@@ -2500,7 +2513,6 @@ function updateTimerDown(){
 				$.players['player'+ 1].text = response.username;
 
 				checkGameType(true);
-				playSound('soundButton');
 				goPage('game');
 
 				startGame();
@@ -2508,12 +2520,18 @@ function updateTimerDown(){
 			error: function(xhr, status, error) {
 				// Handle errors
 				
-				// if (xhr.status === 400) {
-				// 	$('body').html(xhr.responseText);
-				// } else {
-				// 	console.error('Error:', errorThrown);
-				// }
-				location.reload();
+				if (socket != null) {
+					socket.disconnect();
+				}
+				if (xhr.status === 400) {
+					$('body').css('background', 'none');
+					$('body').html(xhr.responseText);
+				} else {
+					console.error('Error:', errorThrown);
+					location.reload();
+				}
+				// if (gameData.paused == true)
+				// 	
 
 			}
 		});
@@ -2586,6 +2604,14 @@ function toggleOption(){
 	}
 }
 
+function toggleEmoji() {
+	if (emojiContainer.visible) {
+		emojiContainer.visible = false;
+	} else {
+		emojiContainer.visible = true;
+	}
+}
+
 
 /*!
  * 
@@ -2647,8 +2673,8 @@ function toggleFullScreen() {
 function share(action){
 	gtag('event','click',{'event_category':'share','event_label':action});
 	
-	var loc = location.href
-	loc = loc.substring(0, loc.lastIndexOf("/") + 1);
+	var loc = 'https://www.player1.win/games/1/connect-four'//location.href
+	//loc = loc.substring(0, loc.lastIndexOf("/") + 1);
 	
 	var title = '';
 	var text = '';
@@ -2658,14 +2684,14 @@ function share(action){
 	
 	var shareurl = '';
 	
-	if( action == 'twitter' ) {
-		shareurl = 'https://twitter.com/intent/tweet?url='+loc+'&text='+text;
+	if( action == 'tiktok' ) {
+		shareurl = 'https://www.tiktok.com/@exampleuser/video/1234567890123456789?text=' + encodeURIComponent(text) + " " + encodeURIComponent(loc);
 	}else if( action == 'facebook' ){
-		
+		shareurl = 'https://www.facebook.com/player1.wins/post?text=' + encodeURIComponent(text) + " " + encodeURIComponent(loc)
 	}else if( action == 'google' ){
 		shareurl = 'https://plus.google.com/share?url='+loc;
-	}else if( action == 'whatsapp' ){
-		shareurl = "whatsapp://send?text=" + encodeURIComponent(text) + " - " + encodeURIComponent(loc);
+	}else if( action == 'whatsapp' ) {
+		shareurl = "whatsapp://send?text=" + encodeURIComponent(text) + " " + encodeURIComponent(loc);
 	}
 	
 	window.open(shareurl);
