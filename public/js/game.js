@@ -133,7 +133,7 @@ let imagesCanvas = {};
 //Social share, [SCORE] will replace with game score
 var shareEnable = true; //toggle share
 var shareTitle = 'Highscore on Connect Four is [SCORE]pts';//social share score title
-var shareMessage = "I just won [SCORE] on Player1.win, Let’s play Connect Four with real money bets! Are you in? Join now."; //social share score message
+var shareMessage =  "I just won $[SCORE] on player1.win, Let’s play Connect Four with real money bets! Are you in? Join now."; //social share score message
 
 
 /*!
@@ -304,7 +304,7 @@ function buildGameButton(){
 	buttonContinue.cursor = "pointer";
 	buttonContinue.addEventListener("click", function(evt) {
 		playSound('soundButton');
-		window.location.href = 'https://www.player1.win';
+		window.location.href = 'https://beta2.player1.win/games/1/connect-four';
 	});
 	
 	buttonFacebook.cursor = "pointer";
@@ -1072,7 +1072,7 @@ function goPage(page){
 			var textMessage = '';
 			var textTitle = '';
 			var textPrice = '';
-			if (textDisplay.giveup == 'me') {
+			if (textDisplay.giveup == 'me' || Player1.prizeUSD == undefined) {
 				//textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
 
 				winner = Player2.entityId;
@@ -1086,7 +1086,7 @@ function goPage(page){
 				buttonWhatsapp.visible = false;
 				resultPriceTxt.visible = false;
 
-			} else if (textDisplay.giveup == 'other') {
+			} else if (textDisplay.giveup == 'other' && Player1.prizeUSD != undefined) {
 				//textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
 
 				winner = Player1.entityId;
@@ -1104,7 +1104,7 @@ function goPage(page){
 					Draw();
 				}
 			} else {
-				if (Math.floor(playerData.score) > Math.floor(playerData.opponentScore)) {
+				if (Math.floor(playerData.score) > Math.floor(playerData.opponentScore) && Player1.prizeUSD != undefined) {
 					//textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
 					winner = Player1.entityId;
 					textTitle = "You won!!!!";
@@ -1121,7 +1121,7 @@ function goPage(page){
 						}
 						Draw();
 					}
-				} else if (Math.floor(playerData.score) < Math.floor(playerData.opponentScore)) {
+				} else {
 					textTitle = "The outcome of this game favors the opponent.\n\n 🙁 \n\n";
 					textMessage = "\n\nOne more try,\nyou've got this!";
 
@@ -1134,23 +1134,6 @@ function goPage(page){
 					buttonWhatsapp.visible = false;
 					resultPriceTxt.visible = false;
 					//textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
-				} else {
-					//textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
-					winner = Player1.entityId;
-					textTitle = "You won!!!!";
-					textMessage = "Congratulations, you won:";
-					resultPriceTxt.text = "$" + Player1.prizeUSD;
-					resultTitleTxt.font = "60px bpreplaybold";
-					if (textDisplay.winEffect == 'yes')
-					{
-						textDisplay.winEffect = 'no';
-						particles = [];
-						for (var i = 0; i < maxConfettis; i++) {
-							particles.push(new confettiParticle());
-						}
-						Draw();
-					}
-					//textMessage = 'DRAW: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
 				}
 			}
 			
@@ -1290,6 +1273,7 @@ function addConvertImage(params) {
 }
 
 let sentEmoji = false;
+let myEmoji = false;
 function showEmoji(emojiName) {
 	toggleEmoji();
 	addImage({
@@ -1301,6 +1285,7 @@ function showEmoji(emojiName) {
 	  yFrom: cardPadding,
 	  yTo: cardPadding
 	});
+	myEmoji = true;
 	if (gameData.ai == false && socket != null && sentEmoji == false) {
 		sentEmoji = true;
 		socket.emit("sendEmoji", { name: emojiName })
@@ -1308,16 +1293,20 @@ function showEmoji(emojiName) {
 }
 
 function showEmojiConvert(emojiName) {
-	sentEmoji = false;
-	addImage({
-		name: emojiName,
-		frame: 150,
-		frames: 800,
-		xFrom: cardPadding,
-		xTo: canvasWidth - cardWidth - cardPadding,
-		yFrom: cardPadding,
-		yTo: cardPadding
-	  });
+	sentEmoji = false
+	if (myEmoji == false)
+	{
+		addImage({
+			name: emojiName,
+			frame: 150,
+			frames: 800,
+			xFrom: cardPadding,
+			xTo: canvasWidth - cardWidth - cardPadding,
+			yFrom: cardPadding,
+			yTo: cardPadding
+		  });
+	}
+	myEmoji = false;
 }
 
 function Draw() {
@@ -1460,7 +1449,15 @@ function saveGame(score, opponentscore, winner){
 				if (result.PriseUsd != undefined)
 				{
 					resultPriceTxt.text = "$" + result.PriseUsd;
-					resultDescTxt.text = "Congratulations, you won:";
+					// resultDescTxt.text = "Congratulations, you won:";
+				} else {
+					var textTitle = "The outcome of this game favors the opponent.\n\n 🙁 \n\n";
+					var textMessage = "\n\nOne more try,\nyou've got this!";
+
+					resultTitleTxt.font = "20px bpreplaybold";
+
+					resultTitleTxt.text = textTitle;
+					resultDescTxt.text = textMessage;
 				}
 			  }
 			},
@@ -1548,7 +1545,7 @@ function buildPlayers(){
  * 
  */
 function buildBoard(){
-	playSound('soundStart');
+	// playSound('soundStart');
 
 	boardDesignContainer.removeAllChildren();
 	boardDesignBackContainer.removeAllChildren();
@@ -2167,11 +2164,22 @@ function animateWinDim(obj){
  * AI MOVE - This is the function that runs for AI move
  * 
  */
-function makeAIMove() {
+async function makeAIMove() {
+
+	await randomSleep();
 	var bestColumn = getBestColumnForAI();
 	var firstEmptyRow = getFirstEmptyRow(bestColumn, gameData.board);
 
 	placeIcon(firstEmptyRow, bestColumn, gameData.player);
+}
+
+function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  
+async function randomSleep() {
+	const randomTime = Math.floor(Math.random() * 3000) + 1000; // Random time between 1000ms and 3000ms
+	await sleep(randomTime);
 }
 
 function getBestColumnForAI() {
@@ -2674,7 +2682,9 @@ function share(action){
 	gtag('event','click',{'event_category':'share','event_label':action});
 	
 	var loc = 'https://www.player1.win/games/1/connect-four'//location.href
-	//loc = loc.substring(0, loc.lastIndexOf("/") + 1);
+
+	var curr_loc = location.href
+	curr_loc = curr_loc.substring(0, curr_loc.lastIndexOf("/") + 1);
 	
 	var title = '';
 	var text = '';
@@ -2687,12 +2697,14 @@ function share(action){
 	if( action == 'tiktok' ) {
 		shareurl = 'https://www.tiktok.com/@exampleuser/video/1234567890123456789?text=' + encodeURIComponent(text) + " " + encodeURIComponent(loc);
 	}else if( action == 'facebook' ){
-		shareurl = 'https://www.facebook.com/player1.wins/post?text=' + encodeURIComponent(text) + " " + encodeURIComponent(loc)
+		//shareurl = 'https://www.facebook.com/dialog/share?href='+encodeURIComponent(loc)+'&quote='+encodeURIComponent(text) + encodeURIComponent(loc)
+		shareurl = 'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(curr_loc+'share?desc='+text+'&title='+title+'&url='+loc+'&thumb='+loc+'share.jpg&width=590&height=300');
 	}else if( action == 'google' ){
 		shareurl = 'https://plus.google.com/share?url='+loc;
 	}else if( action == 'whatsapp' ) {
 		shareurl = "whatsapp://send?text=" + encodeURIComponent(text) + " " + encodeURIComponent(loc);
 	}
 	
+	https://www.facebook.com/dialog/share?href=encodeURIComponent(loc)&quote='+encodeURIComponent(text) + encodeURIComponent(loc)
 	window.open(shareurl);
 }

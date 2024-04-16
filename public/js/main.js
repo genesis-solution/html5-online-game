@@ -24,10 +24,9 @@ function initMain(){
 
 	const urlParams = new URLSearchParams(window.location.search);
 
-	const errMessage = urlParams.get('err')
+	const errMessage = urlParams.get('e')
 	const tokenkey = urlParams.get('t');
 
-	console.log("err", errMessage)
 	if (errMessage != undefined && errMessage != '') {
 		var errorHtml = `<!DOCTYPE html>
 		<html lang="en">

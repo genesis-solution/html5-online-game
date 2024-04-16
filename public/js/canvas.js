@@ -781,12 +781,12 @@ function changeCanvasViewport(){
 			itemResult.visible = false;
 			itemResultP.visible = true;
 			
-			buttonFacebook.x = canvasW/100*39;
-			buttonFacebook.y = canvasH/100*54;
-			buttonTwitter.x = canvasW/2;
-			buttonTwitter.y = canvasH/100*54;
-			buttonWhatsapp.x = canvasW/100*61;
+			buttonWhatsapp.x = canvasW/100*39;
 			buttonWhatsapp.y = canvasH/100*54;
+			buttonTiktok.x = canvasW/2;
+			buttonTiktok.y = canvasH/100*54;
+			buttonFacebook.x = canvasW/100*61;
+			buttonFacebook.y = canvasH/100*54;
 			
 			buttonContinue.x = canvasW/2;
 			buttonContinue.y = canvasH/100 * 64;
