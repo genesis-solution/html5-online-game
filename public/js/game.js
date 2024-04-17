@@ -143,7 +143,7 @@ var shareMessage =  "I just won $[SCORE] on player1.win, Let’s play Connect Fo
  */
 $.editor = {enable:false};
 var playerData = {score:0, opponentScore:0};
-var gameData = {paused:true, moving:false, icon:0, iconSwitch:false, icons:['o','x'], type:'classic', custom:{row:0, column:0, connect:0}, settings:{}, turn:0, player:0, ai:false, aiMove:false, complete:false};
+var gameData = {paused:true, moving:false, icon:0, iconSwitch:false, icons:['o','x'], type:'classic', custom:{row:0, column:0, connect:0}, settings:{}, turn:0, player:0, startPlayer: 0, ai:false, aiMove:false, complete:false};
 var timeData = {enable:false, startDate:null, nowDate:null, timer:0, oldTimer:0, isDown: false};
 var strokeData = {x:0, y:0};
 var tweenData = {score:0, tweenScore:0};
@@ -304,7 +304,7 @@ function buildGameButton(){
 	buttonContinue.cursor = "pointer";
 	buttonContinue.addEventListener("click", function(evt) {
 		playSound('soundButton');
-		window.location.href = 'https://beta2.player1.win/games/1/connect-four';
+		window.location.href = 'https://www.player1.win/games/1/connect-four?rb=1'; // 'https://beta2.player1.win/games/1/connect-four';
 	});
 	
 	buttonFacebook.cursor = "pointer";
@@ -1931,6 +1931,7 @@ function createSocket() {
 			gameData.player = 0;
 			gameData.moving = false
 			gameData.turn = 1
+			gameData.startPlayer = 0;
 		}
 
 		displayPlayerTurn();
@@ -2049,10 +2050,12 @@ function checkPlayerStatus(player){
 		}else{
 			playerData.opponentScore++;
 		}
+		
 		displayPlayerScore();
 		animateConnect(connectLine);
 		playSound('soundComplete');
 	} else if (checkIsTie(gameData.board)) {
+		
 		boardComplete = true;
 		tweenTimer = 1.5;
 		toggleGameTimer(true);
@@ -2069,8 +2072,10 @@ function checkPlayerStatus(player){
 		displayPlayerTurn();
 	}else {
 		displayPlayerTurn();
+
 		gameData.turn = gameData.turn == 1 ? 0 : 1;
 		gameData.player = gameData.turn;
+
 		TweenMax.to(gameContainer, tweenTimer, {overwrite:true, onComplete:function(){
 			buildBoard();
 
@@ -2111,8 +2116,19 @@ function checkPlayerStatusByTimeout(){
 	playSound('soundComplete');
 	
 	displayPlayerTurn();
-	gameData.turn = gameData.turn == 1 ? 0 : 1;
-	gameData.player = gameData.turn;
+
+	if (gameData.ai == false) {
+		gameData.player = gameData.startPlayer;
+		gameData.turn = gameData.startPlayer;
+		gameData.startPlayer = gameData.startPlayer == 0 ? 1 : 0;
+	}
+	else {
+		gameData.turn = gameData.turn == 1 ? 0 : 1;
+		gameData.player = gameData.turn;
+	}
+
+	
+	
 	TweenMax.to(gameContainer, tweenTimer, {overwrite:true, onComplete:function(){
 		buildBoard();
 	}});
