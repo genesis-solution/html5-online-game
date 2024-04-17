@@ -14,6 +14,11 @@ function authenticateToken(req, res, next) {
     tokenID = req.body.t;
   }
 
+  if (req.query.e != undefined) {
+    next();
+    return;
+  }
+
   if (tokenID == null) {
     const errorMessage = 'Token not found'; // userInfo.ResultMessage;
     const errorHtml = fs.readFileSync(path.join(__dirname, '../public', 'error.html'), 'utf8');

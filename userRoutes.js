@@ -2,6 +2,7 @@ const express = require('express');
 const { login, register, result, logout, generateJWTtoken, getUserInfo, getBotInfo, setLog, getCurrentTime } = require('./route/controllers');
 const cors = require('cors');
 const { authenticateToken } = require('./middleware/middlewares');
+const { exec } = require('child_process');
 
 const loginRoutes = express.Router();
 const gameRoutes = express.Router();
@@ -15,6 +16,17 @@ loginRoutes.get('/', (req, res) => {
 });
 loginRoutes.get('/login', (req, res) => {
   res.sendFile(__dirname + '/public/login.html');
+});
+loginRoutes.get('/share', (req, res) => {
+  exec('php ' + __dirname + '/public/share.php', (error, stdout, stderr) => {
+    if (error) {
+        console.error(`exec error: ${error}`);
+        res.status(500).send('Internal Server Error');
+        return;
+    }
+    console.error(`stderr: ${stderr}`);
+    res.send(stdout);
+  });
 });
 loginRoutes.post('/login', login);
 loginRoutes.post('/register', register);

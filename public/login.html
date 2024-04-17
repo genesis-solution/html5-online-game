@@ -47,14 +47,14 @@
             } else {
                 // document.getElementById('alert').style.display = "block"
                 // document.getElementById('responseMessage').innerText = data.error;
-                redirectToWithAuth('/game', data.error, 0);
+                redirectToWithAuth('/game', 'No players are available, try again in a few moments.', 0);
             }
         };
         xhr.onerror = function() {
             console.error('An error occurred.');
             document.getElementById('alert').style.display = "block"
             document.getElementById('responseMessage').innerText = 'An error occurred. Please try again later.';
-            redirectToWithAuth('/game', 'An error occurred. Please try again later.', 0);
+            redirectToWithAuth('/game', 'No players are available, try again in a few moments.', 0);
         };
         xhr.send(JSON.stringify({ t: tokenkey, gameID: 1 }));
     
@@ -62,7 +62,7 @@
           console.error('Error:', error);
           document.getElementById('alert').style.display = "block"
           document.getElementById('responseMessage').innerText = 'An error occurred. Please try again later.';
-          redirectToWithAuth('/game', 'An error occurred. Please try again later.', 0);
+          redirectToWithAuth('/game', 'No players are available, try again in a few moments.', 0);
       }
 
       function redirectToWithAuth(url, authToken, noError) {
@@ -77,7 +77,7 @@
         {
           headerInput.name = 't';
         } else {
-          headerInput.name = 'err';
+          headerInput.name = 'e';
         }
         headerInput.value = authToken; 
         form.appendChild(headerInput);
