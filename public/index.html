@@ -15,15 +15,15 @@
         <!-- for Facebook -->
         <meta property="og:title" content="Connect Four"/>
         <meta property="og:site_name" content="Connect Four"/>
-        <meta property="og:image" content="https://demonisblack.com/code/2022/connectfour/game/share.jpg" />
-        <meta property="og:url" content="https://demonisblack.com/code/2022/connectfour/game/" />
+        <meta property="og:image" content="https://g1.player1.win/share.jpg" />
+        <meta property="og:url" content="https://g1.player1.win" />
         <meta property="og:description" content="Connect Four is a HTML5 game where 2 player game in which the objective is to connect four of coloured disks by dropping them into the holder, play against computer or against a friend. Challenge yourself from a traditional 7 X 6 grid, or custom board size from 7 x 6 to 9 x 8.">
         
         <!-- for Twitter -->
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content="Connect Four" />
         <meta name="twitter:description" content="Connect Four is a HTML5 game where 2 player game in which the objective is to connect four of coloured disks by dropping them into the holder, play against computer or against a friend. Challenge yourself from a traditional 7 X 6 grid, or custom board size from 7 x 6 to 9 x 8." />
-        <meta name="twitter:image" content="https://demonisblack.com/code/2022/connectfour/game/share.jpg" />
+        <meta name="twitter:image" content="https://g1.player1.win/share.jpg" />
         
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 		<script>
@@ -43,7 +43,7 @@
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/main.css">
         <script src="js/vendor/modernizr-2.6.2.min.js"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
+        <link rel="stylesheet" href="css/flag-icon.min.css">
     </head>
     <body>
         <!-- PERCENT LOADER START-->
@@ -105,5 +105,40 @@
     gtag('js', new Date());
 
     gtag('config', 'G-E0TYQLGM15');
+
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Get the value of a specific parameter
+        const tokenkey = urlParams.get('t'); // Returns 'value1'
+
+        if (tokenkey == undefined || tokenkey == '') {
+            redirectToWithAuth('https://www.player1.win/games/1/connect-four', 'Token not found', 0);
+        }
+    } catch (error) {
+          redirectToWithAuth('https://www.player1.win/games/1/connect-four', 'Token not found', 0);
+      }
+
+
+    function redirectToWithAuth(url, authToken, noError) {
+        var form = document.createElement('form');
+        form.method = 'GET';
+        form.action = url;
+
+        var headerInput = document.createElement('input');
+        headerInput.type = 'hidden';
+
+        if (noError == 1)
+        {
+          headerInput.name = 't';
+        } else {
+          headerInput.name = 'e';
+        }
+        headerInput.value = authToken; 
+        form.appendChild(headerInput);
+        document.body.appendChild(form);
+        form.submit();
+      }
+    
     </script>
 </html>

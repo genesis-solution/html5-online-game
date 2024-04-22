@@ -30,39 +30,45 @@
 
         // Get the value of a specific parameter
         const tokenkey = urlParams.get('t'); // Returns 'value1'
-        localStorage.setItem('t', tokenkey);
 
-        const gameID = 1
+        if (tokenkey != undefined && tokenkey != '')
+        {
+          localStorage.setItem('t', tokenkey);
 
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', '/login');
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.onload = function() {
-            const data = JSON.parse(xhr.responseText);
-            if (xhr.status === 200) {
-                document.getElementById('succ_alert').style.display = "block"
-                document.getElementById('responseMessage_succ').innerText = 'Login successful.';
+          const gameID = 1
 
-                redirectToWithAuth('/game', tokenkey, 1);
-            } else {
-                // document.getElementById('alert').style.display = "block"
-                // document.getElementById('responseMessage').innerText = data.error;
-                redirectToWithAuth('/game', 'No players are available, try again in a few moments.', 0);
-            }
-        };
-        xhr.onerror = function() {
-            console.error('An error occurred.');
-            document.getElementById('alert').style.display = "block"
-            document.getElementById('responseMessage').innerText = 'An error occurred. Please try again later.';
-            redirectToWithAuth('/game', 'No players are available, try again in a few moments.', 0);
-        };
-        xhr.send(JSON.stringify({ t: tokenkey, gameID: 1 }));
+          const xhr = new XMLHttpRequest();
+          xhr.open('POST', '/login');
+          xhr.setRequestHeader('Content-Type', 'application/json');
+          xhr.onload = function() {
+              const data = JSON.parse(xhr.responseText);
+              if (xhr.status === 200) {
+                  document.getElementById('succ_alert').style.display = "block"
+                  document.getElementById('responseMessage_succ').innerText = 'Login successful.';
+
+                  redirectToWithAuth('/game', tokenkey, 1);
+              } else {
+                  // document.getElementById('alert').style.display = "block"
+                  // document.getElementById('responseMessage').innerText = data.error;
+                  redirectToWithAuth('https://www.player1.win/games/1/connect-four', data.error, 0);
+              }
+          };
+          xhr.onerror = function() {
+              console.error('An error occurred.');
+              document.getElementById('alert').style.display = "block"
+              document.getElementById('responseMessage').innerText = 'An error occurred. Please try again later.';
+              redirectToWithAuth('https://www.player1.win/games/1/connect-four', 'You are already in the middle of another game. It is not permitted to play multiple games simultaneously.', 0);
+          };
+          xhr.send(JSON.stringify({ t: tokenkey, gameID: 1 }));
+        } else {
+          redirectToWithAuth('https://www.player1.win/games/1/connect-four', 'Token not found', 0);
+        }
     
       } catch (error) {
           console.error('Error:', error);
           document.getElementById('alert').style.display = "block"
           document.getElementById('responseMessage').innerText = 'An error occurred. Please try again later.';
-          redirectToWithAuth('/game', 'No players are available, try again in a few moments.', 0);
+          redirectToWithAuth('https://www.player1.win/games/1/connect-four', 'You are already in the middle of another game. It is not permitted to play multiple games simultaneously.', 0);
       }
 
       function redirectToWithAuth(url, authToken, noError) {
