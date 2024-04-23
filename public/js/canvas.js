@@ -82,7 +82,6 @@ function buildGameCanvas(response){
 	customContainer = new createjs.Container();
 	playersContainer = new createjs.Container();
 	gameContainer = new createjs.Container();
-	timerContainer = new createjs.Container();
 	statusContainer = new createjs.Container();
 	boardContainer = new createjs.Container();
 	boardDesignBackContainer = new createjs.Container();
@@ -90,6 +89,7 @@ function buildGameCanvas(response){
 	boardIconContainer = new createjs.Container();
 	resultContainer = new createjs.Container();
 	confirmContainer = new createjs.Container();
+	timerContainer = new createjs.Container();
 	emojiSettingContainer = new createjs.Container();
 	emojiContainer = new createjs.Container();
 	

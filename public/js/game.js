@@ -1378,25 +1378,25 @@ function Draw() {
 	return results;
   }
 
-  function redirectToWithAuth(url, authToken, noError) {
-	var form = document.createElement('form');
-	form.method = 'GET';
-	form.action = url;
+function redirectToWithAuth(url, authToken, noError) {
+var form = document.createElement('form');
+form.method = 'GET';
+form.action = url;
 
-	var headerInput = document.createElement('input');
-	headerInput.type = 'hidden';
+var headerInput = document.createElement('input');
+headerInput.type = 'hidden';
 
-	if (noError == 1)
-	{
-	  headerInput.name = 't';
-	} else {
-	  headerInput.name = 'e';
-	}
-	headerInput.value = authToken; 
-	form.appendChild(headerInput);
-	document.body.appendChild(form);
-	form.submit();
-  }
+if (noError == 1)
+{
+	headerInput.name = 't';
+} else {
+	headerInput.name = 'e';
+}
+headerInput.value = authToken; 
+form.appendChild(headerInput);
+document.body.appendChild(form);
+form.submit();
+}
 /*!
  * 
  * START GAME - This is the function that runs to start game
@@ -1531,6 +1531,7 @@ function buildPlayers(){
 		}
 
 		$.players['gameTurn'+ n].text = '';
+		$.players['gameTimer'+ n].text = millisecondsToTimeGame(0);
 
 		var iconID = 'icon'+gameData.icon+gameData.icons[n];
 		$.players['gameIcon'+ n] = new createjs.Bitmap(loader.getResult(iconID));
@@ -1580,8 +1581,6 @@ function buildPlayers(){
 			}($.players['gameFlagContainer'+ n], n, gameData.ai); 
 		}
 	}
-
-	console.log($.players['gameFlagContainer0'].regY, $.players['gameFlagContainer'+ 1].regY)
 
 	playerData.score = 0;
 	playerData.opponentScore = 0;
