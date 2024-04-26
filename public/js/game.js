@@ -922,9 +922,18 @@ function togglePop(con){
 document.addEventListener('keydown', function(event) {
     if (event.key === 'F5' || (event.key === 'r' && event.ctrlKey)) {
 		
-		event.preventDefault();
-		preventRefresh(event);
+		if (socket != null) {
+			socket.emit('giveup', textDisplay.player1);
+		} else {
+			if (playerName == textDisplay.player1) {
+				textDisplay.giveup = 'me';
+			}
+			else {
+				textDisplay.giveup = 'other';
+			}
+		}
 		
+		goPage('result_no');
     }
 });
 
@@ -1175,7 +1184,32 @@ function goPage(page){
 			resultDescTxt.text = textMessage; // textDisplay.resultDesc.replace('[NUMBER]', Math.floor(tweenData.tweenScore)).replace('[SCORE]', Math.floor(playerData.score)).replace('[OPPONENTSCORE]', Math.floor(playerData.opponentScore));
 
 			saveGame(playerData.score, playerData.opponentScore, winner);
+			
 		break;
+		case 'result_no':
+			stopGame();
+			var winner = '';
+			
+			if (textDisplay.giveup == 'me' || Player1.prizeUSD == undefined) {
+				//textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+				winner = Player2.entityId;
+			} else if (textDisplay.giveup == 'other' && Player1.prizeUSD != undefined) {
+				winner = Player1.entityId;
+			} else {
+				if (Math.floor(playerData.score) > Math.floor(playerData.opponentScore) && Player1.prizeUSD != undefined) {
+					//textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
+					winner = Player1.entityId;
+				} else if (Math.floor(playerData.score) < 3 &&  Math.floor(playerData.opponentScore) < 3 && Player1.prizeUSD != undefined) {
+					winner = Player1.entityId;
+				}
+				else {
+					winner = Player2.entityId;
+				}
+			}
+			
+			saveGame(playerData.score, playerData.opponentScore, winner);
+			
+			break;
 	}
 	
 	if(targetContainer != null){
@@ -1378,25 +1412,25 @@ function Draw() {
 	return results;
   }
 
-function redirectToWithAuth(url, authToken, noError) {
-var form = document.createElement('form');
-form.method = 'GET';
-form.action = url;
+  function redirectToWithAuth(url, authToken, noError) {
+	var form = document.createElement('form');
+	form.method = 'GET';
+	form.action = url;
 
-var headerInput = document.createElement('input');
-headerInput.type = 'hidden';
+	var headerInput = document.createElement('input');
+	headerInput.type = 'hidden';
 
-if (noError == 1)
-{
-	headerInput.name = 't';
-} else {
-	headerInput.name = 'e';
-}
-headerInput.value = authToken; 
-form.appendChild(headerInput);
-document.body.appendChild(form);
-form.submit();
-}
+	if (noError == 1)
+	{
+	  headerInput.name = 't';
+	} else {
+	  headerInput.name = 'e';
+	}
+	headerInput.value = authToken; 
+	form.appendChild(headerInput);
+	document.body.appendChild(form);
+	form.submit();
+  }
 /*!
  * 
  * START GAME - This is the function that runs to start game
@@ -1531,7 +1565,6 @@ function buildPlayers(){
 		}
 
 		$.players['gameTurn'+ n].text = '';
-		$.players['gameTimer'+ n].text = millisecondsToTimeGame(0);
 
 		var iconID = 'icon'+gameData.icon+gameData.icons[n];
 		$.players['gameIcon'+ n] = new createjs.Bitmap(loader.getResult(iconID));
@@ -1581,6 +1614,8 @@ function buildPlayers(){
 			}($.players['gameFlagContainer'+ n], n, gameData.ai); 
 		}
 	}
+
+	console.log($.players['gameFlagContainer0'].regY, $.players['gameFlagContainer'+ 1].regY)
 
 	playerData.score = 0;
 	playerData.opponentScore = 0;
@@ -2038,8 +2073,21 @@ function createSocket() {
 	// Listen for nameTaken event
 	socket.on('nameTaken', () => {
 		console.log("already logged in")
+
+		if (socket != null) {
+			socket.emit('giveup', textDisplay.player1);
+		} else {
+			if (playerName == textDisplay.player1) {
+				textDisplay.giveup = 'me';
+			}
+			else {
+				textDisplay.giveup = 'other';
+			}
+		}
+
+		goPage('result_no');
 		// if (localStorage.getItem('t') != '')
-		redirectToWithAuth('/login', "", "");
+		redirectToWithAuth('/login', "You are already playing", "");
 	});
 
 	joinGame(socket)

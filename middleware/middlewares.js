@@ -70,6 +70,7 @@ function authenticateToken(req, res, next) {
                 var userInfo = JSON.parse(resultValue)
     
                 if (userInfo.ResultCode == undefined && userInfo.ResultMessage == undefined) {
+                  
                   req.user = {
                     username: userInfo.Name, // userInfo.Name,
                     betUsd: userInfo.betUsd,

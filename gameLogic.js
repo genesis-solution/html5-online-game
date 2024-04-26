@@ -13,7 +13,7 @@ function handleSocketEvents(io) {
 
         // Handle joinGame event
         socket.on('joinGame', (player) => {
-            if (player.player.entityId != '' && !isNameTaken(player.playerName) && !isRoomTaken(player.playerName)) { // && !isNameTakenFromTotalPlayers(player.playerName)
+            if (player.player.entityId != '' && !isNameTaken(player.player.entityId) && !isRoomTaken(player.player.entityId)) { // && !isNameTakenFromTotalPlayers(player.playerName)
                 // If the name is not taken, proceed
                 socket.playerName = player.playerName; // Store the player's name in the socket object
                 socket.TokenId = player.player.TokenId;
@@ -218,12 +218,12 @@ function handleSocketEvents(io) {
         socket.on('disconnect', () => {
             const roomName1 = findRoomBySocketId(socket.id);
 
-            const index = waitingPlayers.indexOf(socket);
+            const index = waitingPlayers.findIndex(obj => obj.id == socket.id);
             if (index !== -1) {
                 waitingPlayers.splice(index, 1);
             }
 
-            const index3 = waitingPlayers.indexOf(socket);
+            const index3 = waitingPlayers.findIndex(obj => obj.id == socket.id);
             if (index3 !== -1) {
                 waitingPlayers.splice(index3, 1);
             }
@@ -309,12 +309,12 @@ function handleSocketEvents(io) {
         socket.on('disconnect_game', () => {
             const roomName1 = findRoomBySocketId(socket.id);
 
-            const index = waitingPlayers.indexOf(socket);
+            const index = waitingPlayers.findIndex(obj => obj.id == socket.id);
             if (index !== -1) {
                 waitingPlayers.splice(index, 1);
             }
 
-            const index3 = waitingPlayers.indexOf(socket);
+            const index3 = waitingPlayers.findIndex(obj => obj.id == socket.id);
             if (index3 !== -1) {
                 waitingPlayers.splice(index3, 1);
             }
@@ -346,9 +346,9 @@ function findRoomBySocketId(socketId) {
   }
   
   // Helper function to check if the name is already taken
-function isNameTaken(playerName) {
+function isNameTaken(playerName) { // player.player.entityId
     for (const player of waitingPlayers) {
-        if (player.playerName == playerName) {
+        if (player.entityId == playerName) {
             return true;
         }
     }
@@ -357,7 +357,7 @@ function isNameTaken(playerName) {
   
 function isNameTakenFromTotalPlayers(playerName) {
     for (const player of totalBotPlayers) {
-        if (player.playerName == playerName) {
+        if (player.entityId == playerName) {
             return true;
         }
     }
@@ -368,7 +368,7 @@ function isNameTakenFromTotalPlayers(playerName) {
     for (const roomName in rooms) {
       if (rooms.hasOwnProperty(roomName)) {
           const room = rooms[roomName];
-          if (room.player1.name === playerName || room.player1.id === playerName) {
+          if (room.player1.entityId === playerName || room.player2.entityId === playerName) {
             return true;
           }
       }
