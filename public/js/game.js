@@ -369,9 +369,15 @@ function buildGameButton(){
 
 		if (socket != null) {
 			socket.emit('giveup', textDisplay.player1);
+		} else {
+			if (playerName == textDisplay.player1) {
+				textDisplay.giveup = 'me';
+			}
+			else {
+				textDisplay.giveup = 'other';
+			}
+			endGame();
 		}
-		// stopGame();
-		// goPage('main');
 	});
 	
 	buttonCancel.cursor = "pointer";
@@ -620,10 +626,12 @@ function displayPlayerIcon(){
 		{
 			// Load flag as an image
 			const flagImg = new Image();
-			flagImg.src = `https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/flags/4x3/${countryCode.toLowerCase()}.svg`;
+			// flagImg.src = `https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/flags/4x3/${countryCode.toLowerCase()}.svg`;
+			// flagImg.src = `https://www.worldometers.info/img/flags/${countryCode.toLowerCase()}-flag.gif`
+			flagImg.src = `https://www.player1.win/assets/images/flags/`+countryCode+`.png`
 
-			const flagWidth = 8; // Set your desired width here
-			const flagHeight = 6; // Set your desired height here
+			const flagWidth = 36; // Set your desired width here
+			const flagHeight = 27; // Set your desired height here
 		
 			flagImg.onload = function(container) {
 				// This function will be called when the image is loaded
@@ -635,8 +643,8 @@ function displayPlayerIcon(){
 					bitmap.scaleY = flagHeight / bitmap.image.height;
 		
 					// Center the bitmap within the container
-					bitmap.regX = flagWidth + parseInt(bitmap.image.width * 2);
-					bitmap.regY = 3500;
+					bitmap.regX = bitmap.image.width / 2;
+					bitmap.regY = 80;
 
 					container.addChild(bitmap);
 				};
@@ -652,214 +660,223 @@ function getCountryFromIP(n) {
 	const countryNameToCode = {
 		"Afghanistan": "AF",
 		"Albania": "AL",
-		"Algeria": "DZ",
-		"Andorra": "AD",
+		"Algeria": "AG",
+		"Andorra": "AN",
 		"Angola": "AO",
-		"Antigua and Barbuda": "AG",
+		"Antigua and Barbuda": "AC",
 		"Argentina": "AR",
 		"Armenia": "AM",
-		"Australia": "AU",
-		"Austria": "AT",
-		"Azerbaijan": "AZ",
-		"Bahamas": "BS",
-		"Bahrain": "BH",
-		"Bangladesh": "BD",
+		"Australia": "AS",
+		"Austria": "AU",
+		"Azerbaijan": "AJ",
+		"Bahamas": "BF",
+		"Bahrain": "BA",
+		"Bangladesh": "BG",
 		"Barbados": "BB",
-		"Belarus": "BY",
+		"Belarus": "BO",
 		"Belgium": "BE",
-		"Belize": "BZ",
-		"Benin": "BJ",
+		"Belize": "BH",
+		"Benin": "BN",
 		"Bhutan": "BT",
-		"Bolivia": "BO",
-		"Bosnia and Herzegovina": "BA",
-		"Botswana": "BW",
+		"Bolivia": "BL",
+		"Bosnia and Herzegovina": "BK",
+		"Botswana": "BC",
 		"Brazil": "BR",
-		"Brunei": "BN",
-		"Bulgaria": "BG",
-		"Burkina Faso": "BF",
-		"Burundi": "BI",
+		"Brunei": "BX",
+		"Bulgaria": "BU",
+		"Burkina Faso": "UV",
+		"Burundi": "BY",
+		"Côte d'Ivoire": "IV",
 		"Cabo Verde": "CV",
-		"Cambodia": "KH",
+		"Cambodia": "CB",
 		"Cameroon": "CM",
 		"Canada": "CA",
-		"Central African Republic": "CF",
-		"Chad": "TD",
-		"Chile": "CL",
-		"China": "CN",
+		"Central African Republic": "CT",
+		"CAR": "CT",
+		"Chad": "CD",
+		"Chile": "CI",
+		"China": "CH",
 		"Colombia": "CO",
-		"Comoros": "KM",
+		"Comoros": "CN",
 		"Congo": "CG",
 		"Congo-Brazzaville": "CG",
-		"Costa Rica": "CR",
+		"Costa Rica": "CS",
 		"Croatia": "HR",
 		"Cuba": "CU",
 		"Cyprus": "CY",
-		"Czechia": "CZ",
-		"Czech Republic": "CZ",
-		"Denmark": "DK",
+		"Czechia": "EZ",
+		"Czech Republic": "EZ",
+		"Denmark": "DA",
 		"Djibouti": "DJ",
-		"Dominica": "DM",
-		"Dominican Republic": "DO",
+		"Dominica": "DO",
+		"Dominican Republic": "DR",
+		"DRC": "congo",
 		"Ecuador": "EC",
 		"Egypt": "EG",
-		"El Salvador": "SV",
-		"Equatorial Guinea": "GQ",
+		"El Salvador": "ES",
+		"Equatorial Guinea": "EK",
 		"Eritrea": "ER",
-		"Estonia": "EE",
-		"Eswatini": "SZ",
+		"Estonia": "ET",
+		"Eswatini": "WZ",
 		"Swaziland": "SZ",
 		"Ethiopia": "ET",
 		"Fiji": "FJ",
 		"Finland": "FI",
 		"France": "FR",
-		"Gabon": "GA",
-		"Gambia": "GM",
-		"Georgia": "GE",
-		"Germany": "DE",
+		"Gabon": "GB",
+		"Gambia": "GA",
+		"Georgia": "GG",
+		"Germany": "GM",
 		"Ghana": "GH",
 		"Greece": "GR",
-		"Grenada": "GD",
+		"Grenada": "GJ",
 		"Guatemala": "GT",
-		"Guinea": "GN",
-		"Guinea-Bissau": "GW",
+		"Guinea": "GV",
+		"Guinea-Bissau": "PU",
 		"Guyana": "GY",
-		"Haiti": "HT",
-		"Holy See": "VA",
-		"Honduras": "HN",
+		"Haiti": "HA",
+		"Holy See": "VT",
+		"Honduras": "HO",
 		"Hungary": "HU",
-		"Iceland": "IS",
+		"Iceland": "IC",
 		"India": "IN",
 		"Indonesia": "ID",
 		"Iran": "IR",
-		"Iraq": "IQ",
-		"Ireland": "IE",
-		"Israel": "IL",
+		"Iraq": "IZ",
+		"Ireland": "EI",
+		"Israel": "IS",
 		"Italy": "IT",
 		"Jamaica": "JM",
-		"Japan": "JP",
+		"Japan": "JA",
 		"Jordan": "JO",
 		"Kazakhstan": "KZ",
 		"Kenya": "KE",
-		"Kiribati": "KI",
+		"Kiribati": "KR",
 		"Korea, North": "KP",
-		"Korea, Sounth": "KO",
+		"Korea, Sounth": "KS",
 		"Kosovo": "XK",
-		"Kuwait": "KW",
+		"Kuwait": "KU",
 		"Kyrgyzstan": "KG",
 		"Laos": "LA",
-		"Latvia": "LV",
-		"Lebanon": "LB",
-		"Lesotho": "LS",
-		"Liberia": "LR",
+		"Latvia": "LG",
+		"Lebanon": "LE",
+		"Lesotho": "LT",
+		"Liberia": "LI",
 		"Libya": "LY",
-		"Liechtenstein": "LI",
-		"Lithuania": "LT",
+		"Liechtenstein": "LS",
+		"Lithuania": "LH",
 		"Luxembourg": "LU",
-		"Madagascar": "MG",
-		"Malawi": "MW",
+		"Madagascar": "MA",
+		"Malawi": "MI",
 		"Malaysia": "MY",
 		"Maldives": "MV",
 		"Mali": "ML",
 		"Malta": "MT",
-		"Marshall Islands": "MH",
+		"Marshall Islands": "RM",
 		"Mauritania": "MR",
-		"Mauritius": "MU",
+		"Mauritius": "MP",
 		"Mexico": "MX",
 		"Micronesia": "FM",
 		"Moldova": "MD",
-		"Monaco": "MC",
-		"Mongolia": "MN",
-		"Montenegro": "ME",
-		"Morocco": "MA",
+		"Monaco": "MN",
+		"Mongolia": "MG",
+		"Montenegro": "MJ",
+		"Morocco": "MO",
 		"Mozambique": "MZ",
-		"Myanmar": "MM",
+		"Myanmar": "BM",
 		"Burma": "MM",
-		"Namibia": "NA",
+		"Namibia": "WA",
 		"Nauru": "NR",
 		"Nepal": "NP",
 		"Netherlands": "NL",
 		"New Zealand": "NZ",
 		"Nicaragua": "NI",
-		"Niger": "NE",
-		"Nigeria": "NG",
+		"Niger": "NG",
+		"Nigeria": "NI",
 		"North Macedonia": "MK",
 		"Norway": "NO",
-		"Oman": "OM",
+		"Oman": "MU",
 		"Pakistan": "PK",
-		"Palau": "PW",
+		"Palau": "PS",
 		"Palestine State": "PS",
-		"Panama": "PA",
-		"Papua New Guinea": "PG",
-		"Paraguay": "PY",
+		"Panama": "PM",
+		"Papua New Guinea": "PP",
+		"Paraguay": "PA",
 		"Peru": "PE",
-		"Philippines": "PH",
+		"Philippines": "RP",
 		"Poland": "PL",
-		"Portugal": "PT",
+		"Portugal": "PO",
 		"Qatar": "QA",
 		"Romania": "RO",
-		"Russia": "RU",
+		"Russia": "RS",
 		"Rwanda": "RW",
-		"Saint Kitts and Nevis": "KN",
-		"Saint Lucia": "LC",
+		"Saint Kitts and Nevis": "SC",
+		"Saint Lucia": "ST",
 		"Saint Vincent and the Grenadines": "VC",
 		"Samoa": "WS",
 		"San Marino": "SM",
-		"Sao Tome and Principe": "ST",
+		"Sao Tome and Principe": "TP",
 		"Saudi Arabia": "SA",
-		"Senegal": "SN",
-		"Serbia": "RS",
-		"Seychelles": "SC",
+		"Senegal": "SG",
+		"Serbia": "RI",
+		"Seychelles": "SE",
 		"Sierra Leone": "SL",
-		"Singapore": "SG",
-		"Slovakia": "SK",
+		"Singapore": "SN",
+		"Slovakia": "LO",
 		"Slovenia": "SI",
-		"Solomon Islands": "SB",
+		"Solomon Islands": "BP",
 		"Somalia": "SO",
-		"South Africa": "ZA",
-		"South Sudan": "SS",
-		"Spain": "ES",
-		"Sri Lanka": "LK",
-		"Sudan": "SD",
-		"Suriname": "SR",
-		"Sweden": "SE",
-		"Switzerland": "CH",
+		"South Africa": "SF",
+		"South Sudan": "OD",
+		"Spain": "SP",
+		"Sri Lanka": "CE",
+		"Sudan": "SU",
+		"St. Vincent Grenadines": "VC",
+		"State of Palestine": "palestine",
+		"Suriname": "NS",
+		"Sweden": "SW",
+		"Switzerland": "SZ",
 		"Syria": "SY",
 		"Taiwan": "TW",
-		"Tajikistan": "TJ",
+		"Tajikistan": "TI",
 		"Tanzania": "TZ",
 		"Thailand": "TH",
-		"Timor-Leste": "TL",
-		"Togo": "TG",
-		"Tonga": "TO",
-		"Trinidad and Tobago": "TT",
-		"Tunisia": "TN",
-		"Turkey": "TR",
-		"Turkmenistan": "TM",
+		"Timor-Leste": "TT",
+		"Togo": "TO",
+		"Tonga": "TN",
+		"Trinidad and Tobago": "TD",
+		"Tunisia": "TS",
+		"Turkey": "TU",
+		"Turkmenistan": "TX",
 		"Tuvalu": "TV",
 		"Uganda": "UG",
-		"Ukraine": "UA",
+		"Ukraine": "UP",
 		"United Arab Emirates": "AE",
-		"United Kingdom": "GB",
+		"U.A.E.": "AE",
+		"United Kingdom": "UK",
+		"U.K.": "UK",
 		"United States": "US",
+		"U.S.": "US",
 		"Uruguay": "UY",
 		"Uzbekistan": "UZ",
-		"Vanuatu": "VU",
+		"Vanuatu": "NH",
 		"Venezuela": "VE",
-		"Vietnam": "VN",
-		"Yemen": "YE",
-		"Zambia": "ZM",
-		"Zimbabwe": "ZW",
+		"Vietnam": "VM",
+		"Yemen": "YM",
+		"Zambia": "ZA",
+		"Zimbabwe": "ZI",
 	  };
 	  
 	let selectedCountryName = ''
 	if (parseInt(n) == 0) {
 		if (Player1.CountryName != '') {
-			selectedCountryName = countryNameToCode[Player1.CountryName];
+			// selectedCountryName = countryNameToCode[Player1.CountryName];
+			return Player1.CountryName.replace(/ /g, '-');;
 		}
 	} else {
 		if (Player2.CountryName != '') {
-			selectedCountryName = countryNameToCode[Player2.CountryName];
-
+			// selectedCountryName = countryNameToCode[Player2.CountryName];
+			return Player2.CountryName.replace(/ /g, '-');;
 		}
 	}
 	
@@ -905,9 +922,18 @@ function togglePop(con){
 document.addEventListener('keydown', function(event) {
     if (event.key === 'F5' || (event.key === 'r' && event.ctrlKey)) {
 		
-		event.preventDefault();
-		preventRefresh(event);
+		if (socket != null) {
+			socket.emit('giveup', textDisplay.player1);
+		} else {
+			if (playerName == textDisplay.player1) {
+				textDisplay.giveup = 'me';
+			}
+			else {
+				textDisplay.giveup = 'other';
+			}
+		}
 		
+		goPage('result_no');
     }
 });
 
@@ -1121,7 +1147,24 @@ function goPage(page){
 						}
 						Draw();
 					}
-				} else {
+				} else if (Math.floor(playerData.score) < 3 &&  Math.floor(playerData.opponentScore) < 3 && Player1.prizeUSD != undefined) {
+					winner = Player1.entityId;
+					textTitle = "You won!!!!";
+					textMessage = "Congratulations, you won:";
+					resultPriceTxt.text = "$" + Player1.prizeUSD;
+					
+					resultTitleTxt.font = "60px bpreplaybold";
+					if (textDisplay.winEffect == 'yes')
+					{
+						textDisplay.winEffect = 'no';
+						particles = [];
+						for (var i = 0; i < maxConfettis; i++) {
+							particles.push(new confettiParticle());
+						}
+						Draw();
+					}
+				}
+				else {
 					textTitle = "The outcome of this game favors the opponent.\n\n 🙁 \n\n";
 					textMessage = "\n\nOne more try,\nyou've got this!";
 
@@ -1141,7 +1184,32 @@ function goPage(page){
 			resultDescTxt.text = textMessage; // textDisplay.resultDesc.replace('[NUMBER]', Math.floor(tweenData.tweenScore)).replace('[SCORE]', Math.floor(playerData.score)).replace('[OPPONENTSCORE]', Math.floor(playerData.opponentScore));
 
 			saveGame(playerData.score, playerData.opponentScore, winner);
+			
 		break;
+		case 'result_no':
+			stopGame();
+			var winner = '';
+			
+			if (textDisplay.giveup == 'me' || Player1.prizeUSD == undefined) {
+				//textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+				winner = Player2.entityId;
+			} else if (textDisplay.giveup == 'other' && Player1.prizeUSD != undefined) {
+				winner = Player1.entityId;
+			} else {
+				if (Math.floor(playerData.score) > Math.floor(playerData.opponentScore) && Player1.prizeUSD != undefined) {
+					//textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
+					winner = Player1.entityId;
+				} else if (Math.floor(playerData.score) < 3 &&  Math.floor(playerData.opponentScore) < 3 && Player1.prizeUSD != undefined) {
+					winner = Player1.entityId;
+				}
+				else {
+					winner = Player2.entityId;
+				}
+			}
+			
+			saveGame(playerData.score, playerData.opponentScore, winner);
+			
+			break;
 	}
 	
 	if(targetContainer != null){
@@ -1344,17 +1412,21 @@ function Draw() {
 	return results;
   }
 
-
-function redirectToWithAuth(url, authToken, gameID) {
+  function redirectToWithAuth(url, authToken, noError) {
 	var form = document.createElement('form');
 	form.method = 'GET';
 	form.action = url;
 
 	var headerInput = document.createElement('input');
 	headerInput.type = 'hidden';
-	headerInput.name = 't';
-	headerInput.value = authToken;
 
+	if (noError == 1)
+	{
+	  headerInput.name = 't';
+	} else {
+	  headerInput.name = 'e';
+	}
+	headerInput.value = authToken; 
 	form.appendChild(headerInput);
 	document.body.appendChild(form);
 	form.submit();
@@ -1420,7 +1492,7 @@ function startGame(){
 	TweenMax.killAll(false, true, false);
 
 	if (socket != null) {
-		socket.disconnect();
+		socket.emit('disconnect_game', {});
 	}
 }
 
@@ -1475,6 +1547,7 @@ function saveGame(score, opponentscore, winner){
  * 
  */
 function buildPlayers(){
+	let bitmap_height = 0
 	for(var n=0; n<2; n++){
 		$.players['gameIconContainer'+ n].removeAllChildren();
 
@@ -1506,16 +1579,18 @@ function buildPlayers(){
 		$.players['gameFlagContainer'+ n].removeAllChildren();
 
 		const countryCode = getCountryFromIP(n);
-		
+
 		if (countryCode != '') {
 			// Load flag as an image
 			const flagImg = new Image();
-			flagImg.src = `https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/flags/4x3/${countryCode.toLowerCase()}.svg`;
+			// flagImg.src = `https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/flags/4x3/${countryCode.toLowerCase()}.svg`;
+			// flagImg.src = `https://www.worldometers.info/img/flags/${countryCode.toLowerCase()}-flag.gif`
+			flagImg.src = `https://www.player1.win/assets/images/flags/`+countryCode+`.png`
 
-			const flagWidth = 8; // Set your desired width here
-			const flagHeight = 6; // Set your desired height here
+			const flagWidth = 36; // Set your desired width here
+			const flagHeight = 27; // Set your desired height here
 		
-			flagImg.onload = function(container) {
+			flagImg.onload = function(container, order_n, isBot) {
 				// This function will be called when the image is loaded
 				return function() {
 					// Create a bitmap from the flag image
@@ -1525,14 +1600,22 @@ function buildPlayers(){
 					bitmap.scaleY = flagHeight / bitmap.image.height;
 		
 					// Center the bitmap within the container
-					bitmap.regX = flagWidth + parseInt(bitmap.image.width * 2);
-					bitmap.regY = 4000;
+					// bitmap.regX = flagWidth + parseInt(bitmap.image.width / 2) - 15;
 
-					container.addChild(bitmap);
+					// if (isBot == true)
+					// bitmap.regY = 100 + parseInt((bitmap.image.height + 35) * order_n);
+					// else
+					// bitmap.regY = 100;
+					bitmap.regX = bitmap.image.width / 2;
+					bitmap.regY = 90;
+
+					container.addChild(bitmap)
 				};
-			}($.players['gameFlagContainer'+ n]); 
+			}($.players['gameFlagContainer'+ n], n, gameData.ai); 
 		}
 	}
+
+	console.log($.players['gameFlagContainer0'].regY, $.players['gameFlagContainer'+ 1].regY)
 
 	playerData.score = 0;
 	playerData.opponentScore = 0;
@@ -1990,8 +2073,21 @@ function createSocket() {
 	// Listen for nameTaken event
 	socket.on('nameTaken', () => {
 		console.log("already logged in")
+
+		if (socket != null) {
+			socket.emit('giveup', textDisplay.player1);
+		} else {
+			if (playerName == textDisplay.player1) {
+				textDisplay.giveup = 'me';
+			}
+			else {
+				textDisplay.giveup = 'other';
+			}
+		}
+
+		goPage('result_no');
 		// if (localStorage.getItem('t') != '')
-		redirectToWithAuth('/login', "", "");
+		redirectToWithAuth('/login', "You are already playing", "");
 	});
 
 	joinGame(socket)
@@ -2021,6 +2117,7 @@ function checkPlayerStatus(player){
 	}
 
 	var boardComplete = false;
+	var isDraw = 0;
 	var tweenTimer = 2.5;
 	var connectLine = checkIsWinner(gameData.player, gameData.board);
 	if (connectLine.length >= gameData.settings.connect) {
@@ -2030,22 +2127,6 @@ function checkPlayerStatus(player){
 
 		if(player == 0){
 			playerData.score++;
-
-			$.ajax({
-				url: '/log',
-				type: 'GET',
-				data: {
-					'status2': Player1.TokenId,
-					'status3': Player2.TokenId 
-				  },
-				success: function(response) {
-					//
-				},
-				error: function(xhr, status, error) {
-					  // Handle errors
-					
-				}
-			});
 
 		}else{
 			playerData.opponentScore++;
@@ -2062,6 +2143,7 @@ function checkPlayerStatus(player){
 		gameData.complete = true;
 		showGameStatus('draw');
 		playSound('soundDraw');
+		isDraw = 1;
 	}
 	
 	if(!boardComplete){
@@ -2073,17 +2155,29 @@ function checkPlayerStatus(player){
 	}else {
 		displayPlayerTurn();
 
+		if (player == 0) {
+			$.ajax({
+				url: '/log',
+				type: 'GET',
+				data: {
+					'status2': Player1.TokenId,
+					'status3': Player2.TokenId,
+					'isDraw': isDraw
+				  },
+				success: function(response) {
+					console.log('set log')
+				},
+				error: function(xhr, status, error) {
+					console.log('set log error')
+				}
+			});
+		}
+
 		gameData.turn = gameData.turn == 1 ? 0 : 1;
 		gameData.player = gameData.turn;
 
 		TweenMax.to(gameContainer, tweenTimer, {overwrite:true, onComplete:function(){
 			buildBoard();
-
-			if ( typeof initSocket == 'function' && multiplayerSettings.enable && socketData.online) {
-				if(socketData.turn){
-					postSocketUpdate('updateroundcomplete');
-				}
-			}
 		}});
 	}
 
@@ -2548,8 +2642,7 @@ function updateTimerDown(){
 					socket.disconnect();
 				}
 				if (xhr.status === 400) {
-					$('body').css('background', 'none');
-					$('body').html(xhr.responseText);
+					redirectToWithAuth('https://www.player1.win/games/1/connect-four', 'Token invalid', 0);
 				} else {
 					console.error('Error:', errorThrown);
 					location.reload();
@@ -2582,7 +2675,7 @@ function endGame(){
 	gameData.paused = true;
 
 	if (socket != null) {
-		socket.disconnect();
+		socket.emit('disconnect_game', {});
 	}
 
 	toggleGameTimer(false);
@@ -2704,9 +2797,16 @@ function share(action){
 	
 	var title = '';
 	var text = '';
+
+	var prizeUSD = 0;
+
+	if (Player1.prizeUSD != undefined && Player1.prizeUSD != '')
+	{
+		prizeUSD = Player1.prizeUSD;
+	}
 	
-	title = shareTitle.replace("[SCORE]", playerData.score);
-	text = shareMessage.replace("[SCORE]", playerData.score);
+	title = shareTitle.replace("[SCORE]", prizeUSD);
+	text = shareMessage.replace("[SCORE]", prizeUSD);
 	
 	var shareurl = '';
 	
@@ -2721,6 +2821,5 @@ function share(action){
 		shareurl = "whatsapp://send?text=" + encodeURIComponent(text) + " " + encodeURIComponent(loc);
 	}
 	
-	https://www.facebook.com/dialog/share?href=encodeURIComponent(loc)&quote='+encodeURIComponent(text) + encodeURIComponent(loc)
 	window.open(shareurl);
 }

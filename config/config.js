@@ -9,5 +9,6 @@ const dbConfig = {
 
 const serverPort = process.env.SERVER_PORT || 9000;
 const secretKey = process.env.SECRET_KEY || 'html5_game_by_alex';
+const server_url = process.env.SERVER_URL || 'http://isapi.smart-winners.com/player1.dll/soap/IPlayer1' // 'http://isapi.mekashron.com/SmartWinners/player1.dll/soap/IPlayer1';
 
-module.exports = { dbConfig, serverPort, secretKey };
+module.exports = { dbConfig, serverPort, secretKey, server_url };

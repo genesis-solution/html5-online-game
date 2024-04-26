@@ -1,5 +1,5 @@
 const { getConnectionFromPool, queryDatabase } = require('../config/database');
-const { secretKey } = require('../config/config');
+const { secretKey, server_url } = require('../config/config');
 const jwt = require('jsonwebtoken');
 const request = require('request');
 const xml2js = require('xml2js');
@@ -11,7 +11,7 @@ async function login(req, res) {
 
   var gameID = 1;
   try {
-    const url = 'http://isapi.mekashron.com/SmartWinners/player1.dll/soap/IPlayer1';
+    const url = server_url;
     const func_name = "Entity_Get";
 
     var soapOptions = {
@@ -30,7 +30,6 @@ async function login(req, res) {
           <Fields enc:itemType="xsd:string" enc:arraySize="3" xsi:type="ns2:ArrayOfString">
           <item xsi:type="xsd:string">e.EntityId</item>
           <item xsi:type="xsd:string">c.countryname</item>
-          <item xsi:type="xsd:string">ef.fileData</item>
           </Fields>
           </ns1:`+func_name+`>
           </env:Body>
@@ -139,7 +138,7 @@ async function result(req, res) {
     var gameID = 1;
 
     try {
-      const url = 'http://isapi.mekashron.com/SmartWinners/player1.dll/soap/IPlayer1';
+      const url = server_url;
       const func_name = "Entity_Entry_Update";
   
       var soapOptions = {
@@ -229,7 +228,7 @@ function getBotInfo(req, res) {
   var gameID = 1;
 
   try {
-    const url = 'http://isapi.mekashron.com/SmartWinners/player1.dll/soap/IPlayer1';
+    const url = server_url;
     const func_name = "Bot_Get";
 
     var soapOptions = {
@@ -278,14 +277,14 @@ function getBotInfo(req, res) {
                 }
                 else {
                   console.log(userInfo.ResultMessage)
-                  const errorMessage = 'No players available'; // userInfo.ResultMessage;
+                  const errorMessage = 'https://www.player1.win/games/1/connect-four?e=' + 'No players available'; // userInfo.ResultMessage;
                   const errorHtml = fs.readFileSync(path.join(__dirname, '../public', 'error.html'), 'utf8');
                   const htmlWithErrorMessage = errorHtml.replace('{{ errorMessage }}', errorMessage);
                   return res.status(400).send(htmlWithErrorMessage);
                 }
               } else {
                   console.log(userInfo.ResultMessage)
-                  const errorMessage = 'No players available'; // userInfo.ResultMessage;
+                  const errorMessage = 'https://www.player1.win/games/1/connect-four?e=' + 'No players available'; // userInfo.ResultMessage;
                   const errorHtml = fs.readFileSync(path.join(__dirname, '../public', 'error.html'), 'utf8');
                   const htmlWithErrorMessage = errorHtml.replace('{{ errorMessage }}', errorMessage);
                   return res.status(400).send(htmlWithErrorMessage);
@@ -308,11 +307,14 @@ function getBotInfo(req, res) {
 }
 
 function setLog(req, res) {
-  const { status2, status3 } = req.query;
+  const { status2, status3, isDraw } = req.query;
 
   try {
-    const url = 'http://isapi.mekashron.com/SmartWinners/player1.dll/soap/IPlayer1';
+    const url = server_url;
     const func_name = "Entity_Entry_Log";
+    let game_result = 2;
+
+    if (isDraw == 1) game_result = 4;
 
     var soapOptions = {
       uri: url,
@@ -326,7 +328,7 @@ function setLog(req, res) {
         <env:Body>
         <ns1:`+func_name+` env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
         <tokenID xsi:type="xsd:string">`+status2+`</tokenID>
-        <status xsi:type="xsd:int">2</status>
+        <status xsi:type="xsd:int">`+ game_result +`</status>
         </ns1:Entity_Entry_Log>
         </env:Body>
         </env:Envelope>
