@@ -2614,7 +2614,7 @@ function animateWinDim(obj) {
  *
  */
 async function makeAIMove() {
-  await randomSleep();
+//  await randomSleep();
 //   var bestColumn = getBestColumnForAI();
   var bestColumn = bestMove();
   var firstEmptyRow = getFirstEmptyRow(bestColumn, gameData.board);
