@@ -3,126 +3,190 @@
 ////////////////////////////////////////////////////////////
 
 /*!
- * 
+ *
  * GAME SETTING CUSTOMIZATION START
- * 
+ *
  */
+
+let alpha = -Infinity;
+let beta = Infinity;
+let scores = {
+    r: 100,
+    y: -100,
+    tie: 0
+};
 
 //icons array
 var iconsArr = [
-	{o:'assets/icon_o_1.png', x:'assets/icon_x_1.png', board:{color:'#7661d1', winColor:'#321699', shadowColor:'#2a27a0', borderColor:'#28159b'}},
-	{o:'assets/icon_o_2.png', x:'assets/icon_x_2.png', board:{color:'#7661d1', winColor:'#321699', shadowColor:'#2a27a0', borderColor:'#28159b'}},
-	{o:'assets/icon_o_3.png', x:'assets/icon_x_3.png', board:{color:'#7661d1', winColor:'#321699', shadowColor:'#2a27a0', borderColor:'#28159b'}},
-	{o:'assets/icon_o_4.png', x:'assets/icon_x_4.png', board:{color:'#7661d1', winColor:'#321699', shadowColor:'#2a27a0', borderColor:'#28159b'}},
-	{o:'assets/icon_o_6.png', x:'assets/icon_x_6.png', board:{color:'#7661d1', winColor:'#321699', shadowColor:'#2a27a0', borderColor:'#28159b'}},
-	{o:'assets/icon_5.png', x:'assets/icon_5.png', board:{color:'#7661d1', winColor:'#321699', shadowColor:'#2a27a0', borderColor:'#28159b'}},
-]
+  {
+    o: "assets/icon_o_1.png",
+    x: "assets/icon_x_1.png",
+    board: {
+      color: "#7661d1",
+      winColor: "#321699",
+      shadowColor: "#2a27a0",
+      borderColor: "#28159b",
+    },
+  },
+  {
+    o: "assets/icon_o_2.png",
+    x: "assets/icon_x_2.png",
+    board: {
+      color: "#7661d1",
+      winColor: "#321699",
+      shadowColor: "#2a27a0",
+      borderColor: "#28159b",
+    },
+  },
+  {
+    o: "assets/icon_o_3.png",
+    x: "assets/icon_x_3.png",
+    board: {
+      color: "#7661d1",
+      winColor: "#321699",
+      shadowColor: "#2a27a0",
+      borderColor: "#28159b",
+    },
+  },
+  {
+    o: "assets/icon_o_4.png",
+    x: "assets/icon_x_4.png",
+    board: {
+      color: "#7661d1",
+      winColor: "#321699",
+      shadowColor: "#2a27a0",
+      borderColor: "#28159b",
+    },
+  },
+  {
+    o: "assets/icon_o_6.png",
+    x: "assets/icon_x_6.png",
+    board: {
+      color: "#7661d1",
+      winColor: "#321699",
+      shadowColor: "#2a27a0",
+      borderColor: "#28159b",
+    },
+  },
+  {
+    o: "assets/icon_5.png",
+    x: "assets/icon_5.png",
+    board: {
+      color: "#7661d1",
+      winColor: "#321699",
+      shadowColor: "#2a27a0",
+      borderColor: "#28159b",
+    },
+  },
+];
 
 const possibleColors = [
-	"DodgerBlue",
-	"OliveDrab",
-	"Gold",
-	"Pink",
-	"SlateBlue",
-	"LightBlue",
-	"Gold",
-	"Violet",
-	"PaleGreen",
-	"SteelBlue",
-	"SandyBrown",
-	"Chocolate",
-	"Crimson"
-  ];
+  "DodgerBlue",
+  "OliveDrab",
+  "Gold",
+  "Pink",
+  "SlateBlue",
+  "LightBlue",
+  "Gold",
+  "Violet",
+  "PaleGreen",
+  "SteelBlue",
+  "SandyBrown",
+  "Chocolate",
+  "Crimson",
+];
 
 const maxConfettis = 150;
 let particles = [];
 
 //classic settings
 var defaultSettings = {
-	twoPlayer:true,
-	row:6,
-	column:7,
-	connect:4
+  twoPlayer: true,
+  row: 6,
+  column: 7,
+  connect: 4,
+  depth: 7,
 };
 
 //custom settings
 var customSettings = {
-	enable:true,
-	twoPlayer:true,
-	rowMin:6,
-	rowMax:8,
-	columnMin:7,
-	columnMax:9,
-	connectMin:4,
-	connectMax:6,
+  enable: true,
+  twoPlayer: true,
+  rowMin: 6,
+  rowMax: 8,
+  columnMin: 7,
+  columnMax: 9,
+  connectMin: 4,
+  connectMax: 6,
+  depth: 7,
 };
 
 //board settings
 var boardSettings = {
-	radius:35,
-	margin:10,
-	winAlpha:.5,
-	shadowOffsetX:0,
-	shadowOffsetY:-10,
-	borderStroke:10,
-	borderRadius:20,
-	borderMargin:10,
-	timer:90000,
-	timerDown: 15000
+  radius: 35,
+  margin: 10,
+  winAlpha: 0.5,
+  shadowOffsetX: 0,
+  shadowOffsetY: -10,
+  borderStroke: 10,
+  borderRadius: 20,
+  borderMargin: 10,
+  timer: 90000,
+  timerDown: 15000,
 };
 
 //game text display
 var textDisplay = {
-	customTitle:'Custom Board',
-	customSize:'[COLUMN] x [ROW] size',
-	customWin:'connect [NUMBER]',
-	vs:'VS',
-	player1:'',
-	player2:'',
-	computer:'',
-	userTurn:'Your turn',
-	playerTurn:'[NAME] turn',
-	computerTurn:'Turn',
-	gameWin:'[NUMBER] win',
-	draw:'Draw',
-	timeUp:'Time\'s Up',
-	exitTitle:'Exit Game',
-	exitMessage:'Are you sure you want\nto quit game?',
-	share:'Share your score:',
-	resultTitle:'Game Over',
-	resultDesc:'you won [NUMBER], [SCORE]:[OPPONENTSCORE]',
-	bEmployee: false,
-	room: '',
-	firstGame: 'yes',
-	currentTurn: 'me',
-	giveup: '',
-	winEffect: 'no',
-	effectduration: ''
-}
+  customTitle: "Custom Board",
+  customSize: "[COLUMN] x [ROW] size",
+  customWin: "connect [NUMBER]",
+  vs: "VS",
+  player1: "",
+  player2: "",
+  computer: "",
+  userTurn: "Your turn",
+  playerTurn: "[NAME] turn",
+  computerTurn: "Turn",
+  gameWin: "[NUMBER] win",
+  draw: "Draw",
+  timeUp: "Time's Up",
+  exitTitle: "Exit Game",
+  exitMessage: "Are you sure you want\nto quit game?",
+  share: "Share your score:",
+  resultTitle: "Game Over",
+  resultDesc: "you won [NUMBER], [SCORE]:[OPPONENTSCORE]",
+  bEmployee: false,
+  room: "",
+  firstGame: "yes",
+  currentTurn: "me",
+  giveup: "",
+  winEffect: "no",
+  effectduration: "",
+};
 
 var Player1 = {
-	username: '',
-	betUsd: '',
-	Status: '',
-	CountryName: '',
-	TokenId: '',
-	entityId: '',
-	gameID: '',
-	games_entryID: '',
-	prizeUSD: 0
-}
+  username: "",
+  betUsd: "",
+  Status: "",
+  CountryName: "",
+  TokenId: "",
+  entityId: "",
+  gameID: "",
+  games_entryID: "",
+  prizeUSD: 0,
+};
 
 var Player2 = {
-	username: '',
-	betUsd: '',
-	Status: '',
-	CountryName: '',
-	TokenId: '',
-	entityId: '',
-	gameID: '',
-	games_entryID: '',
-	prizeUSD: 0
-}
+  username: "",
+  betUsd: "",
+  Status: "",
+  CountryName: "",
+  TokenId: "",
+  entityId: "",
+  gameID: "",
+  games_entryID: "",
+  prizeUSD: 0,
+};
 
 let cardWidth = 15;
 let cardHeight = 15;
@@ -132,1848 +196,2103 @@ let imagesCanvas = {};
 
 //Social share, [SCORE] will replace with game score
 var shareEnable = true; //toggle share
-var shareTitle = 'Highscore on Connect Four is [SCORE]pts';//social share score title
-var shareMessage =  "I just won $[SCORE] on player1.win, Let’s play Connect Four with real money bets! Are you in? Join now."; //social share score message
-
+var shareTitle = "Highscore on Connect Four is [SCORE]pts"; //social share score title
+var shareMessage =
+  "I just won $[SCORE] on player1.win, Let’s play Connect Four with real money bets! Are you in? Join now."; //social share score message
 
 /*!
  *
  * GAME SETTING CUSTOMIZATION END
  *
  */
-$.editor = {enable:false};
-var playerData = {score:0, opponentScore:0};
-var gameData = {paused:true, moving:false, icon:0, iconSwitch:false, icons:['o','x'], type:'classic', custom:{row:0, column:0, connect:0}, settings:{}, turn:0, player:0, startPlayer: 0, ai:false, aiMove:false, complete:false};
-var timeData = {enable:false, startDate:null, nowDate:null, timer:0, oldTimer:0, isDown: false};
-var strokeData = {x:0, y:0};
-var tweenData = {score:0, tweenScore:0};
+$.editor = { enable: false };
+var playerData = { score: 0, opponentScore: 0 };
+var gameData = {
+  paused: true,
+  moving: false,
+  icon: 0,
+  iconSwitch: false,
+  icons: ["o", "x"],
+  type: "classic",
+  custom: { row: 0, column: 0, connect: 0 },
+  settings: {},
+  turn: 0,
+  player: 0,
+  startPlayer: 0,
+  ai: false,
+  aiMove: false,
+  complete: false,
+};
+var timeData = {
+  enable: false,
+  startDate: null,
+  nowDate: null,
+  timer: 0,
+  oldTimer: 0,
+  isDown: false,
+};
+var strokeData = { x: 0, y: 0 };
+var tweenData = { score: 0, tweenScore: 0 };
 
 /*!
- * 
+ *
  * GAME BUTTONS - This is the function that runs to setup button event
- * 
+ *
  */
-function buildGameButton(){
-	$(window).focus(function() {
-		if(!buttonSoundOn.visible){
-			toggleSoundInMute(false);
-		}
+function buildGameButton() {
+  $(window).focus(function () {
+    if (!buttonSoundOn.visible) {
+      toggleSoundInMute(false);
+    }
 
-		if (typeof buttonMusicOn != "undefined") {
-			if(!buttonMusicOn.visible){
-				toggleMusicInMute(false);
-			}
-		}
-	});
-	
-	$(window).blur(function() {
-		if(!buttonSoundOn.visible){
-			toggleSoundInMute(true);
-		}
+    if (typeof buttonMusicOn != "undefined") {
+      if (!buttonMusicOn.visible) {
+        toggleMusicInMute(false);
+      }
+    }
+  });
 
-		if (typeof buttonMusicOn != "undefined") {
-			if(!buttonMusicOn.visible){
-				toggleMusicInMute(true);
-			}
-		}
-	});
-	buttonClassic.cursor = "pointer";
-	buttonClassic.addEventListener("click", function(evt) {
-		playSound('soundButton');
-		gameData.type = 'classic';
-		toggleMainButton('players');
-	});
+  $(window).blur(function () {
+    if (!buttonSoundOn.visible) {
+      toggleSoundInMute(true);
+    }
 
-	buttonCustom.cursor = "pointer";
-	buttonCustom.addEventListener("click", function(evt) {
-		playSound('soundButton');
-		gameData.type = 'custom';
-		toggleMainButton('players');
-	});
+    if (typeof buttonMusicOn != "undefined") {
+      if (!buttonMusicOn.visible) {
+        toggleMusicInMute(true);
+      }
+    }
+  });
+  buttonClassic.cursor = "pointer";
+  buttonClassic.addEventListener("click", function (evt) {
+    playSound("soundButton");
+    gameData.type = "classic";
+    toggleMainButton("players");
+  });
 
-	buttonOnePlayer.cursor = "pointer";
-	buttonOnePlayer.addEventListener("click", function(evt) {
-		playSound('soundButton');
-		checkGameType(true);
-	});
+  buttonCustom.cursor = "pointer";
+  buttonCustom.addEventListener("click", function (evt) {
+    playSound("soundButton");
+    gameData.type = "custom";
+    toggleMainButton("players");
+  });
 
-	buttonTwoPlayer.cursor = "pointer";
-	buttonTwoPlayer.addEventListener("click", function(evt) {
-		playSound('soundButton');
-		checkGameType(false);
-	});
+  buttonOnePlayer.cursor = "pointer";
+  buttonOnePlayer.addEventListener("click", function (evt) {
+    playSound("soundButton");
+    checkGameType(true);
+  });
 
-	buttonLocal.cursor = "pointer";
-	buttonLocal.addEventListener("click", function(evt) {
-		playSound('soundButton');
-		socketData.online = false;
-		toggleMainButton('default');
-	});
+  buttonTwoPlayer.cursor = "pointer";
+  buttonTwoPlayer.addEventListener("click", function (evt) {
+    playSound("soundButton");
+    checkGameType(false);
+  });
 
-	buttonOnline.cursor = "pointer";
-	buttonOnline.addEventListener("click", function(evt) {
-		playSound('soundButton');
-		checkQuickGameMode();
-	});
+  buttonLocal.cursor = "pointer";
+  buttonLocal.addEventListener("click", function (evt) {
+    playSound("soundButton");
+    socketData.online = false;
+    toggleMainButton("default");
+  });
 
-	buttonStart.cursor = "pointer";
-	buttonStart.addEventListener("click", function(evt) {
-		playSound('soundButton');
-		if ( typeof initSocket == 'function' && multiplayerSettings.enable) {
-			if(multiplayerSettings.localPlay){
-				toggleMainButton('local');
-			}else{
-				checkQuickGameMode();
-			}
-		}else{
-			goPage('select');
-		}
-	});
+  buttonOnline.cursor = "pointer";
+  buttonOnline.addEventListener("click", function (evt) {
+    playSound("soundButton");
+    checkQuickGameMode();
+  });
 
-	buttonRowL.cursor = "pointer";
-	buttonRowL.addEventListener("click", function(evt) {
-		playSound('soundButton2');
-		toggleCustomRow(false);
-	});
+  buttonStart.cursor = "pointer";
+  buttonStart.addEventListener("click", function (evt) {
+    playSound("soundButton");
+    if (typeof initSocket == "function" && multiplayerSettings.enable) {
+      if (multiplayerSettings.localPlay) {
+        toggleMainButton("local");
+      } else {
+        checkQuickGameMode();
+      }
+    } else {
+      goPage("select");
+    }
+  });
 
-	buttonRowR.cursor = "pointer";
-	buttonRowR.addEventListener("click", function(evt) {
-		playSound('soundButton2');
-		toggleCustomRow(true);
-	});
+  buttonRowL.cursor = "pointer";
+  buttonRowL.addEventListener("click", function (evt) {
+    playSound("soundButton2");
+    toggleCustomRow(false);
+  });
 
-	buttonColumnL.cursor = "pointer";
-	buttonColumnL.addEventListener("click", function(evt) {
-		playSound('soundButton2');
-		toggleCustomColumn(false);
-	});
+  buttonRowR.cursor = "pointer";
+  buttonRowR.addEventListener("click", function (evt) {
+    playSound("soundButton2");
+    toggleCustomRow(true);
+  });
 
-	buttonColumnR.cursor = "pointer";
-	buttonColumnR.addEventListener("click", function(evt) {
-		playSound('soundButton2');
-		toggleCustomColumn(true);
-	});
+  buttonColumnL.cursor = "pointer";
+  buttonColumnL.addEventListener("click", function (evt) {
+    playSound("soundButton2");
+    toggleCustomColumn(false);
+  });
 
-	buttonWinL.cursor = "pointer";
-	buttonWinL.addEventListener("click", function(evt) {
-		playSound('soundButton2');
-		toggleCustomConnect(false);
-	});
+  buttonColumnR.cursor = "pointer";
+  buttonColumnR.addEventListener("click", function (evt) {
+    playSound("soundButton2");
+    toggleCustomColumn(true);
+  });
 
-	buttonWinR.cursor = "pointer";
-	buttonWinR.addEventListener("click", function(evt) {
-		playSound('soundButton2');
-		toggleCustomConnect(true);
-	});
+  buttonWinL.cursor = "pointer";
+  buttonWinL.addEventListener("click", function (evt) {
+    playSound("soundButton2");
+    toggleCustomConnect(false);
+  });
 
-	buttonCustomStart.cursor = "pointer";
-	buttonCustomStart.addEventListener("click", function(evt) {
-		playSound('soundButton');
-		if ( typeof initSocket == 'function' && multiplayerSettings.enable && socketData.online) {
-			postSocketUpdate('players');
-		}else{
-			goPage('players');
-		}
-	});
+  buttonWinR.cursor = "pointer";
+  buttonWinR.addEventListener("click", function (evt) {
+    playSound("soundButton2");
+    toggleCustomConnect(true);
+  });
 
-	buttonPlayersIcon.cursor = "pointer";
-	buttonPlayersIcon.addEventListener("click", function(evt) {
-		playSound('soundButton2');
-		toggleGameIcon();
-	});
+  buttonCustomStart.cursor = "pointer";
+  buttonCustomStart.addEventListener("click", function (evt) {
+    playSound("soundButton");
+    if (
+      typeof initSocket == "function" &&
+      multiplayerSettings.enable &&
+      socketData.online
+    ) {
+      postSocketUpdate("players");
+    } else {
+      goPage("players");
+    }
+  });
 
-	buttonPlayersSwitch.cursor = "pointer";
-	buttonPlayersSwitch.addEventListener("click", function(evt) {
-		playSound('soundButton2');
-		toggleGameIconSide();
-	});
+  buttonPlayersIcon.cursor = "pointer";
+  buttonPlayersIcon.addEventListener("click", function (evt) {
+    playSound("soundButton2");
+    toggleGameIcon();
+  });
 
-	buttonPlayersStart.cursor = "pointer";
-	buttonPlayersStart.addEventListener("click", function(evt) {
-		playSound('soundButton');
-		if ( typeof initSocket == 'function' && multiplayerSettings.enable && socketData.online) {
-			postSocketUpdate('start');
-		}else{
-			goPage('game');
-		}
-	});
-	
-	itemExit.addEventListener("click", function(evt) {
-	});
-	
-	buttonContinue.cursor = "pointer";
-	buttonContinue.addEventListener("click", function(evt) {
-		playSound('soundButton');
-		window.location.href = 'https://www.player1.win/games/1/connect-four?rb=1'; // 'https://beta2.player1.win/games/1/connect-four';
-	});
-	
-	buttonFacebook.cursor = "pointer";
-	buttonFacebook.addEventListener("click", function(evt) {
-		share('facebook');
-	});
-	
-	buttonTiktok.cursor = "pointer";
-	buttonTiktok.addEventListener("click", function(evt) {
-		share('tiktok');
-	});
-	buttonWhatsapp.cursor = "pointer";
-	buttonWhatsapp.addEventListener("click", function(evt) {
-		share('whatsapp');
-	});
-	
-	buttonSoundOff.cursor = "pointer";
-	buttonSoundOff.addEventListener("click", function(evt) {
-		toggleSoundMute(true);
-	});
-	
-	buttonSoundOn.cursor = "pointer";
-	buttonSoundOn.addEventListener("click", function(evt) {
-		toggleSoundMute(false);
-	});
+  buttonPlayersSwitch.cursor = "pointer";
+  buttonPlayersSwitch.addEventListener("click", function (evt) {
+    playSound("soundButton2");
+    toggleGameIconSide();
+  });
 
-	if (typeof buttonMusicOff != "undefined") {
-		buttonMusicOff.cursor = "pointer";
-		buttonMusicOff.addEventListener("click", function(evt) {
-			toggleMusicMute(true);
-		});
-	}
-	
-	if (typeof buttonMusicOn != "undefined") {
-		buttonMusicOn.cursor = "pointer";
-		buttonMusicOn.addEventListener("click", function(evt) {
-			toggleMusicMute(false);
-		});
-	}
-	
-	buttonFullscreen.cursor = "pointer";
-	buttonFullscreen.addEventListener("click", function(evt) {
-		toggleFullScreen();
-	});
-	
-	buttonExit.cursor = "pointer";
-	buttonExit.addEventListener("click", function(evt) {
-		togglePop(true);
-		toggleOption();
-	});
-	
-	buttonSettings.cursor = "pointer";
-	buttonSettings.addEventListener("click", function(evt) {
-		toggleOption();
-	});
-	
-	buttonConfirm.cursor = "pointer";
-	buttonConfirm.addEventListener("click", function(evt) {
-		playSound('soundButton');
-		stopAudio();
-		togglePop(false);
+  buttonPlayersStart.cursor = "pointer";
+  buttonPlayersStart.addEventListener("click", function (evt) {
+    playSound("soundButton");
+    if (
+      typeof initSocket == "function" &&
+      multiplayerSettings.enable &&
+      socketData.online
+    ) {
+      postSocketUpdate("start");
+    } else {
+      goPage("game");
+    }
+  });
 
-		if (socket != null) {
-			socket.emit('giveup', textDisplay.player1);
-		} else {
-			if (playerName == textDisplay.player1) {
-				textDisplay.giveup = 'me';
-			}
-			else {
-				textDisplay.giveup = 'other';
-			}
-			endGame();
-		}
-	});
-	
-	buttonCancel.cursor = "pointer";
-	buttonCancel.addEventListener("click", function(evt) {
-		playSound('soundButton');
-		togglePop(false);
-	});
+  itemExit.addEventListener("click", function (evt) {});
 
-	emojiStarter.cursor = "pointer";
-	emojiStarter.addEventListener("click", function(evt) {
-		toggleEmoji();
-	});
-	emoji0Creator.cursor = "pointer";
-	emoji0Creator.addEventListener("click", function(evt) {
-		sentEmoji = false;
-		showEmoji("emoji0");
-	});
-	emoji1Creator.cursor = "pointer";
-	emoji1Creator.addEventListener("click", function(evt) {
-		sentEmoji = false;
-		showEmoji("emoji1");
-	});
-	emoji2Creator.cursor = "pointer";
-	emoji2Creator.addEventListener("click", function(evt) {
-		sentEmoji = false;
-		showEmoji("emoji2");
-	});
-	emoji3Creator.cursor = "pointer";
-	emoji3Creator.addEventListener("click", function(evt) {
-		sentEmoji = false;
-		showEmoji("emoji3");
-	});
-	emoji4Creator.cursor = "pointer";
-	emoji4Creator.addEventListener("click", function(evt) {
-		sentEmoji = false;
-		showEmoji("emoji4");
-	});
-	emoji5Creator.cursor = "pointer";
-	emoji5Creator.addEventListener("click", function(evt) {
-		sentEmoji = false;
-		showEmoji("emoji5");
-	});
-	emoji6Creator.cursor = "pointer";
-	emoji6Creator.addEventListener("click", function(evt) {
-		sentEmoji = false;
-		showEmoji("emoji6");
-	});
-	emoji7Creator.cursor = "pointer";
-	emoji7Creator.addEventListener("click", function(evt) {
-		sentEmoji = false;
-		showEmoji("emoji7");
-	});
-	emoji8Creator.cursor = "pointer";
-	emoji8Creator.addEventListener("click", function(evt) {
-		sentEmoji = false;
-		showEmoji("emoji8");
-	});
-	emoji9Creator.cursor = "pointer";
-	emoji9Creator.addEventListener("click", function(evt) {
-		sentEmoji = false;
-		showEmoji("emoji9");
-	});
-	emoji10Creator.cursor = "pointer";
-	emoji10Creator.addEventListener("click", function(evt) {
-		sentEmoji = false;
-		showEmoji("emoji10");
-	});
+  buttonContinue.cursor = "pointer";
+  buttonContinue.addEventListener("click", function (evt) {
+    playSound("soundButton");
+    window.location.href = "https://www.player1.win/games/1/connect-four?rb=1"; // 'https://beta2.player1.win/games/1/connect-four';
+  });
 
-	gameData.custom.column = customSettings.columnMin;
-	gameData.custom.row = customSettings.rowMin;
-	gameData.custom.connect = customSettings.connectMin;
-	checkCustomSettings();
-	displayPlayerIcon();
+  buttonFacebook.cursor = "pointer";
+  buttonFacebook.addEventListener("click", function (evt) {
+    share("facebook");
+  });
+
+  buttonTiktok.cursor = "pointer";
+  buttonTiktok.addEventListener("click", function (evt) {
+    share("tiktok");
+  });
+  buttonWhatsapp.cursor = "pointer";
+  buttonWhatsapp.addEventListener("click", function (evt) {
+    share("whatsapp");
+  });
+
+  buttonSoundOff.cursor = "pointer";
+  buttonSoundOff.addEventListener("click", function (evt) {
+    toggleSoundMute(true);
+  });
+
+  buttonSoundOn.cursor = "pointer";
+  buttonSoundOn.addEventListener("click", function (evt) {
+    toggleSoundMute(false);
+  });
+
+  if (typeof buttonMusicOff != "undefined") {
+    buttonMusicOff.cursor = "pointer";
+    buttonMusicOff.addEventListener("click", function (evt) {
+      toggleMusicMute(true);
+    });
+  }
+
+  if (typeof buttonMusicOn != "undefined") {
+    buttonMusicOn.cursor = "pointer";
+    buttonMusicOn.addEventListener("click", function (evt) {
+      toggleMusicMute(false);
+    });
+  }
+
+  buttonFullscreen.cursor = "pointer";
+  buttonFullscreen.addEventListener("click", function (evt) {
+    toggleFullScreen();
+  });
+
+  buttonExit.cursor = "pointer";
+  buttonExit.addEventListener("click", function (evt) {
+    togglePop(true);
+    toggleOption();
+  });
+
+  buttonSettings.cursor = "pointer";
+  buttonSettings.addEventListener("click", function (evt) {
+    toggleOption();
+  });
+
+  buttonConfirm.cursor = "pointer";
+  buttonConfirm.addEventListener("click", function (evt) {
+    playSound("soundButton");
+    stopAudio();
+    togglePop(false);
+
+    if (socket != null) {
+      socket.emit("giveup", textDisplay.player1);
+    } else {
+      if (playerName == textDisplay.player1) {
+        textDisplay.giveup = "me";
+      } else {
+        textDisplay.giveup = "other";
+      }
+      endGame();
+    }
+  });
+
+  buttonCancel.cursor = "pointer";
+  buttonCancel.addEventListener("click", function (evt) {
+    playSound("soundButton");
+    togglePop(false);
+  });
+
+  emojiStarter.cursor = "pointer";
+  emojiStarter.addEventListener("click", function (evt) {
+    toggleEmoji();
+  });
+  emoji0Creator.cursor = "pointer";
+  emoji0Creator.addEventListener("click", function (evt) {
+    sentEmoji = false;
+    showEmoji("emoji0");
+  });
+  emoji1Creator.cursor = "pointer";
+  emoji1Creator.addEventListener("click", function (evt) {
+    sentEmoji = false;
+    showEmoji("emoji1");
+  });
+  emoji2Creator.cursor = "pointer";
+  emoji2Creator.addEventListener("click", function (evt) {
+    sentEmoji = false;
+    showEmoji("emoji2");
+  });
+  emoji3Creator.cursor = "pointer";
+  emoji3Creator.addEventListener("click", function (evt) {
+    sentEmoji = false;
+    showEmoji("emoji3");
+  });
+  emoji4Creator.cursor = "pointer";
+  emoji4Creator.addEventListener("click", function (evt) {
+    sentEmoji = false;
+    showEmoji("emoji4");
+  });
+  emoji5Creator.cursor = "pointer";
+  emoji5Creator.addEventListener("click", function (evt) {
+    sentEmoji = false;
+    showEmoji("emoji5");
+  });
+  emoji6Creator.cursor = "pointer";
+  emoji6Creator.addEventListener("click", function (evt) {
+    sentEmoji = false;
+    showEmoji("emoji6");
+  });
+  emoji7Creator.cursor = "pointer";
+  emoji7Creator.addEventListener("click", function (evt) {
+    sentEmoji = false;
+    showEmoji("emoji7");
+  });
+  emoji8Creator.cursor = "pointer";
+  emoji8Creator.addEventListener("click", function (evt) {
+    sentEmoji = false;
+    showEmoji("emoji8");
+  });
+  emoji9Creator.cursor = "pointer";
+  emoji9Creator.addEventListener("click", function (evt) {
+    sentEmoji = false;
+    showEmoji("emoji9");
+  });
+  emoji10Creator.cursor = "pointer";
+  emoji10Creator.addEventListener("click", function (evt) {
+    sentEmoji = false;
+    showEmoji("emoji10");
+  });
+
+  gameData.custom.column = customSettings.columnMin;
+  gameData.custom.row = customSettings.rowMin;
+  gameData.custom.connect = customSettings.connectMin;
+  checkCustomSettings();
+  displayPlayerIcon();
 }
 
 /*!
- * 
+ *
  * TOGGLE GAME TYPE - This is the function that runs to toggle game type
- * 
+ *
  */
-function toggleMainButton(con){
-	if ( typeof initSocket == 'function' && multiplayerSettings.enable) {
-		gameLogsTxt.visible = true;
-		gameLogsTxt.text = '';
-	}
+function toggleMainButton(con) {
+  if (typeof initSocket == "function" && multiplayerSettings.enable) {
+    gameLogsTxt.visible = true;
+    gameLogsTxt.text = "";
+  }
 
-	buttonStart.visible = false;
-	buttonTypeContainer.visible = false;
-	buttonPlayerContainer.visible = false;
-	buttonLocalContainer.visible = false;
+  buttonStart.visible = false;
+  buttonTypeContainer.visible = false;
+  buttonPlayerContainer.visible = false;
+  buttonLocalContainer.visible = false;
 
-	if(con == 'default'){
-		//buttonTypeContainer.visible = true;
-	}else if(con == 'start'){
-		//buttonStart.visible = true;
-	}else if(con == 'local'){
-	 	//buttonLocalContainer.visible = true;
-	}else if(con == 'players'){
-		if(gameData.type == 'classic'){
-			if(!defaultSettings.twoPlayer){
-				checkGameType(true);
-				return;
-			}
-		}else{
-			if(!customSettings.twoPlayer){
-				checkGameType(true);
-				return;
-			}
-		}
+  if (con == "default") {
+    //buttonTypeContainer.visible = true;
+  } else if (con == "start") {
+    //buttonStart.visible = true;
+  } else if (con == "local") {
+    //buttonLocalContainer.visible = true;
+  } else if (con == "players") {
+    if (gameData.type == "classic") {
+      if (!defaultSettings.twoPlayer) {
+        checkGameType(true);
+        return;
+      }
+    } else {
+      if (!customSettings.twoPlayer) {
+        checkGameType(true);
+        return;
+      }
+    }
 
-		buttonPlayerContainer.visible = false;
+    buttonPlayerContainer.visible = false;
 
-		checkGameType(false);
-	}
+    checkGameType(false);
+  }
 }
 
-function checkGameType(con){
-	gameData.ai = con;
-	if(gameData.type == 'classic'){
-		goPage('players');
-	}else{
-		goPage('custom');
-	}
+function checkGameType(con) {
+  gameData.ai = con;
+  if (gameData.type == "classic") {
+    goPage("players");
+  } else {
+    goPage("custom");
+  }
 }
 
-function checkQuickGameMode(){
-	socketData.online = true;
-	if(!multiplayerSettings.enterName){
-		buttonStart.visible = false;
-		buttonTypeContainer.visible = false;
-		buttonPlayerContainer.visible = false;
-		buttonLocalContainer.visible = false;
+function checkQuickGameMode() {
+  socketData.online = true;
+  if (!multiplayerSettings.enterName) {
+    buttonStart.visible = false;
+    buttonTypeContainer.visible = false;
+    buttonPlayerContainer.visible = false;
+    buttonLocalContainer.visible = false;
 
-		addSocketRandomUser();
-	}else{
-		goPage('name');
-	}
+    addSocketRandomUser();
+  } else {
+    goPage("name");
+  }
 }
 
-function toggleCustomRow(con){
-	if(con){
-		gameData.custom.row++;
-		gameData.custom.row = gameData.custom.row > customSettings.rowMax ? customSettings.rowMax : gameData.custom.row;
-	}else{
-		gameData.custom.row--;
-		gameData.custom.row = gameData.custom.row < customSettings.rowMin ? customSettings.rowMin : gameData.custom.row;
-	}
+function toggleCustomRow(con) {
+  if (con) {
+    gameData.custom.row++;
+    gameData.custom.row =
+      gameData.custom.row > customSettings.rowMax
+        ? customSettings.rowMax
+        : gameData.custom.row;
+  } else {
+    gameData.custom.row--;
+    gameData.custom.row =
+      gameData.custom.row < customSettings.rowMin
+        ? customSettings.rowMin
+        : gameData.custom.row;
+  }
 
-	gameData.custom.connect = gameData.custom.connect > gameData.custom.row ? gameData.custom.row : gameData.custom.connect;
-	gameData.custom.connect = gameData.custom.connect > gameData.custom.column ? gameData.custom.column : gameData.custom.connect;
-	gameData.custom.connect = gameData.custom.connect < customSettings.connectMin ? customSettings.connectMin : gameData.custom.connect;
+  gameData.custom.connect =
+    gameData.custom.connect > gameData.custom.row
+      ? gameData.custom.row
+      : gameData.custom.connect;
+  gameData.custom.connect =
+    gameData.custom.connect > gameData.custom.column
+      ? gameData.custom.column
+      : gameData.custom.connect;
+  gameData.custom.connect =
+    gameData.custom.connect < customSettings.connectMin
+      ? customSettings.connectMin
+      : gameData.custom.connect;
 
-	checkCustomSettings();
-	if ( typeof initSocket == 'function' && multiplayerSettings.enable && socketData.online) {
-		postSocketUpdate('updatecustom', {row:gameData.custom.row, column:gameData.custom.column, connect:gameData.custom.connect}, true);
-	}
+  checkCustomSettings();
+  if (
+    typeof initSocket == "function" &&
+    multiplayerSettings.enable &&
+    socketData.online
+  ) {
+    postSocketUpdate(
+      "updatecustom",
+      {
+        row: gameData.custom.row,
+        column: gameData.custom.column,
+        connect: gameData.custom.connect,
+      },
+      true
+    );
+  }
 }
 
-function toggleCustomColumn(con){
-	if(con){
-		gameData.custom.column++;
-		gameData.custom.column = gameData.custom.column > customSettings.columnMax ? customSettings.columnMax : gameData.custom.column;
-	}else{
-		gameData.custom.column--;
-		gameData.custom.column = gameData.custom.column < customSettings.columnMin ? customSettings.columnMin : gameData.custom.column;
-	}
+function toggleCustomColumn(con) {
+  if (con) {
+    gameData.custom.column++;
+    gameData.custom.column =
+      gameData.custom.column > customSettings.columnMax
+        ? customSettings.columnMax
+        : gameData.custom.column;
+  } else {
+    gameData.custom.column--;
+    gameData.custom.column =
+      gameData.custom.column < customSettings.columnMin
+        ? customSettings.columnMin
+        : gameData.custom.column;
+  }
 
-	gameData.custom.connect = gameData.custom.connect > gameData.custom.row ? gameData.custom.row : gameData.custom.connect;
-	gameData.custom.connect = gameData.custom.connect > gameData.custom.column ? gameData.custom.column : gameData.custom.connect;
-	gameData.custom.connect = gameData.custom.connect < customSettings.connectMin ? customSettings.connectMin : gameData.custom.connect;
+  gameData.custom.connect =
+    gameData.custom.connect > gameData.custom.row
+      ? gameData.custom.row
+      : gameData.custom.connect;
+  gameData.custom.connect =
+    gameData.custom.connect > gameData.custom.column
+      ? gameData.custom.column
+      : gameData.custom.connect;
+  gameData.custom.connect =
+    gameData.custom.connect < customSettings.connectMin
+      ? customSettings.connectMin
+      : gameData.custom.connect;
 
-	checkCustomSettings();
-	if ( typeof initSocket == 'function' && multiplayerSettings.enable && socketData.online) {
-		postSocketUpdate('updatecustom', {row:gameData.custom.row, column:gameData.custom.column, connect:gameData.custom.connect}, true);
-	}
+  checkCustomSettings();
+  if (
+    typeof initSocket == "function" &&
+    multiplayerSettings.enable &&
+    socketData.online
+  ) {
+    postSocketUpdate(
+      "updatecustom",
+      {
+        row: gameData.custom.row,
+        column: gameData.custom.column,
+        connect: gameData.custom.connect,
+      },
+      true
+    );
+  }
 }
 
-function toggleCustomConnect(con){
-	if(con){
-		gameData.custom.connect++;
-		gameData.custom.connect = gameData.custom.connect > gameData.custom.row ? gameData.custom.row : gameData.custom.connect;
-		gameData.custom.connect = gameData.custom.connect > gameData.custom.column ? gameData.custom.column : gameData.custom.connect;
-		gameData.custom.connect = gameData.custom.connect > customSettings.connectMax ? customSettings.connectMax : gameData.custom.connect;
-	}else{
-		gameData.custom.connect--;
-		gameData.custom.connect = gameData.custom.connect < customSettings.connectMin ? customSettings.connectMin : gameData.custom.connect;
-	}
+function toggleCustomConnect(con) {
+  if (con) {
+    gameData.custom.connect++;
+    gameData.custom.connect =
+      gameData.custom.connect > gameData.custom.row
+        ? gameData.custom.row
+        : gameData.custom.connect;
+    gameData.custom.connect =
+      gameData.custom.connect > gameData.custom.column
+        ? gameData.custom.column
+        : gameData.custom.connect;
+    gameData.custom.connect =
+      gameData.custom.connect > customSettings.connectMax
+        ? customSettings.connectMax
+        : gameData.custom.connect;
+  } else {
+    gameData.custom.connect--;
+    gameData.custom.connect =
+      gameData.custom.connect < customSettings.connectMin
+        ? customSettings.connectMin
+        : gameData.custom.connect;
+  }
 
-	checkCustomSettings();
-	if ( typeof initSocket == 'function' && multiplayerSettings.enable && socketData.online) {
-		postSocketUpdate('updatecustom', {row:gameData.custom.row, column:gameData.custom.column, connect:gameData.custom.connect}, true);
-	}
+  checkCustomSettings();
+  if (
+    typeof initSocket == "function" &&
+    multiplayerSettings.enable &&
+    socketData.online
+  ) {
+    postSocketUpdate(
+      "updatecustom",
+      {
+        row: gameData.custom.row,
+        column: gameData.custom.column,
+        connect: gameData.custom.connect,
+      },
+      true
+    );
+  }
 }
 
-function checkCustomSettings(){
-	var customSize = textDisplay.customSize.replace('[COLUMN]', gameData.custom.column);
-	customSize = customSize.replace('[ROW]', gameData.custom.row);
+function checkCustomSettings() {
+  var customSize = textDisplay.customSize.replace(
+    "[COLUMN]",
+    gameData.custom.column
+  );
+  customSize = customSize.replace("[ROW]", gameData.custom.row);
 
-	sizeTxt.text = customSize;
-	connectTxt.text = textDisplay.customWin.replace('[NUMBER]', gameData.custom.connect);
+  sizeTxt.text = customSize;
+  connectTxt.text = textDisplay.customWin.replace(
+    "[NUMBER]",
+    gameData.custom.connect
+  );
 }
 
-function toggleGameIcon(){
-	gameData.icon++;
-	gameData.icon = gameData.icon > iconsArr.length-1 ? 0 : gameData.icon;
+function toggleGameIcon() {
+  gameData.icon++;
+  gameData.icon = gameData.icon > iconsArr.length - 1 ? 0 : gameData.icon;
 
-	displayPlayerIcon();
-	if ( typeof initSocket == 'function' && multiplayerSettings.enable && socketData.online) {
-		postSocketUpdate('updateplayers', {icon:gameData.icon, switch:gameData.iconSwitch, icons:gameData.icons}, true);
-	}
+  displayPlayerIcon();
+  if (
+    typeof initSocket == "function" &&
+    multiplayerSettings.enable &&
+    socketData.online
+  ) {
+    postSocketUpdate(
+      "updateplayers",
+      {
+        icon: gameData.icon,
+        switch: gameData.iconSwitch,
+        icons: gameData.icons,
+      },
+      true
+    );
+  }
 }
 
-function toggleGameIconSide(){
-	gameData.iconSwitch = gameData.iconSwitch == true ? false : true;
-	if(gameData.iconSwitch){
-		gameData.icons = ['x','o'];
-	}else{
-		gameData.icons = ['o','x'];
-	}
+function toggleGameIconSide() {
+  gameData.iconSwitch = gameData.iconSwitch == true ? false : true;
+  if (gameData.iconSwitch) {
+    gameData.icons = ["x", "o"];
+  } else {
+    gameData.icons = ["o", "x"];
+  }
 
-	displayPlayerIcon();
-	if ( typeof initSocket == 'function' && multiplayerSettings.enable && socketData.online) {
-		postSocketUpdate('updateplayers', {icon:gameData.icon, switch:gameData.iconSwitch, icons:gameData.icons}, true);
-	}
+  displayPlayerIcon();
+  if (
+    typeof initSocket == "function" &&
+    multiplayerSettings.enable &&
+    socketData.online
+  ) {
+    postSocketUpdate(
+      "updateplayers",
+      {
+        icon: gameData.icon,
+        switch: gameData.iconSwitch,
+        icons: gameData.icons,
+      },
+      true
+    );
+  }
 }
 
-function displayPlayerIcon(){
-	for(var n=0; n<2; n++){
-		$.players['playerIconContainer'+ n].removeAllChildren();
-		
-		var iconID = 'icon'+gameData.icon+gameData.icons[n];
-		$.players['playerIcon'+ n] = new createjs.Bitmap(loader.getResult(iconID));
-		centerReg($.players['playerIcon'+ n]);
+function displayPlayerIcon() {
+  for (var n = 0; n < 2; n++) {
+    $.players["playerIconContainer" + n].removeAllChildren();
 
-		$.players['playerIcon'+ n].y = -20;
-		$.players['playerIcon'+ n].scaleX = $.players['playerIcon'+ n].scaleY = 1.3;
+    var iconID = "icon" + gameData.icon + gameData.icons[n];
+    $.players["playerIcon" + n] = new createjs.Bitmap(loader.getResult(iconID));
+    centerReg($.players["playerIcon" + n]);
 
-		$.players['playerIconContainer'+ n].addChild($.players['playerIcon'+ n]);
+    $.players["playerIcon" + n].y = -20;
+    $.players["playerIcon" + n].scaleX = $.players[
+      "playerIcon" + n
+    ].scaleY = 1.3;
 
-		//playerFlagContainer
-		$.players['playerFlagContainer'+ n].removeAllChildren();
+    $.players["playerIconContainer" + n].addChild($.players["playerIcon" + n]);
 
-		const countryCode = getCountryFromIP(n);
+    //playerFlagContainer
+    $.players["playerFlagContainer" + n].removeAllChildren();
 
-		if (countryCode != '')
-		{
-			// Load flag as an image
-			const flagImg = new Image();
-			// flagImg.src = `https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/flags/4x3/${countryCode.toLowerCase()}.svg`;
-			// flagImg.src = `https://www.worldometers.info/img/flags/${countryCode.toLowerCase()}-flag.gif`
-			flagImg.src = `https://www.player1.win/assets/images/flags/`+countryCode+`.png`
+    const countryCode = getCountryFromIP(n);
 
-			const flagWidth = 36; // Set your desired width here
-			const flagHeight = 27; // Set your desired height here
-		
-			flagImg.onload = function(container) {
-				// This function will be called when the image is loaded
-				return function() {
-					// Create a bitmap from the flag image
-					const bitmap = new createjs.Bitmap(flagImg);
-					// Set static width and height of the bitmap
-					bitmap.scaleX = flagWidth / bitmap.image.width;
-					bitmap.scaleY = flagHeight / bitmap.image.height;
-		
-					// Center the bitmap within the container
-					bitmap.regX = bitmap.image.width / 2;
-					bitmap.regY = 80;
+    if (countryCode != "") {
+      // Load flag as an image
+      const flagImg = new Image();
+      // flagImg.src = `https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/flags/4x3/${countryCode.toLowerCase()}.svg`;
+      // flagImg.src = `https://www.worldometers.info/img/flags/${countryCode.toLowerCase()}-flag.gif`
+      flagImg.src =
+        `https://www.player1.win/assets/images/flags/` + countryCode + `.png`;
 
-					container.addChild(bitmap);
-				};
-			}($.players['playerFlagContainer'+ n]); 
-		}
-	}
+      const flagWidth = 36; // Set your desired width here
+      const flagHeight = 27; // Set your desired height here
+
+      flagImg.onload = (function (container) {
+        // This function will be called when the image is loaded
+        return function () {
+          // Create a bitmap from the flag image
+          const bitmap = new createjs.Bitmap(flagImg);
+          // Set static width and height of the bitmap
+          bitmap.scaleX = flagWidth / bitmap.image.width;
+          bitmap.scaleY = flagHeight / bitmap.image.height;
+
+          // Center the bitmap within the container
+          bitmap.regX = bitmap.image.width / 2;
+          bitmap.regY = 80;
+
+          container.addChild(bitmap);
+        };
+      })($.players["playerFlagContainer" + n]);
+    }
+  }
 }
 
 function getCountryFromIP(n) {
-    // Dummy implementation, you should replace this with actual logic
-    // This could involve using a Geolocation API or querying a database
-    // For demonstration purposes, let's just return a random country
-	const countryNameToCode = {
-		"Afghanistan": "AF",
-		"Albania": "AL",
-		"Algeria": "AG",
-		"Andorra": "AN",
-		"Angola": "AO",
-		"Antigua and Barbuda": "AC",
-		"Argentina": "AR",
-		"Armenia": "AM",
-		"Australia": "AS",
-		"Austria": "AU",
-		"Azerbaijan": "AJ",
-		"Bahamas": "BF",
-		"Bahrain": "BA",
-		"Bangladesh": "BG",
-		"Barbados": "BB",
-		"Belarus": "BO",
-		"Belgium": "BE",
-		"Belize": "BH",
-		"Benin": "BN",
-		"Bhutan": "BT",
-		"Bolivia": "BL",
-		"Bosnia and Herzegovina": "BK",
-		"Botswana": "BC",
-		"Brazil": "BR",
-		"Brunei": "BX",
-		"Bulgaria": "BU",
-		"Burkina Faso": "UV",
-		"Burundi": "BY",
-		"Côte d'Ivoire": "IV",
-		"Cabo Verde": "CV",
-		"Cambodia": "CB",
-		"Cameroon": "CM",
-		"Canada": "CA",
-		"Central African Republic": "CT",
-		"CAR": "CT",
-		"Chad": "CD",
-		"Chile": "CI",
-		"China": "CH",
-		"Colombia": "CO",
-		"Comoros": "CN",
-		"Congo": "CG",
-		"Congo-Brazzaville": "CG",
-		"Costa Rica": "CS",
-		"Croatia": "HR",
-		"Cuba": "CU",
-		"Cyprus": "CY",
-		"Czechia": "EZ",
-		"Czech Republic": "EZ",
-		"Denmark": "DA",
-		"Djibouti": "DJ",
-		"Dominica": "DO",
-		"Dominican Republic": "DR",
-		"DRC": "congo",
-		"Ecuador": "EC",
-		"Egypt": "EG",
-		"El Salvador": "ES",
-		"Equatorial Guinea": "EK",
-		"Eritrea": "ER",
-		"Estonia": "ET",
-		"Eswatini": "WZ",
-		"Swaziland": "SZ",
-		"Ethiopia": "ET",
-		"Fiji": "FJ",
-		"Finland": "FI",
-		"France": "FR",
-		"Gabon": "GB",
-		"Gambia": "GA",
-		"Georgia": "GG",
-		"Germany": "GM",
-		"Ghana": "GH",
-		"Greece": "GR",
-		"Grenada": "GJ",
-		"Guatemala": "GT",
-		"Guinea": "GV",
-		"Guinea-Bissau": "PU",
-		"Guyana": "GY",
-		"Haiti": "HA",
-		"Holy See": "VT",
-		"Honduras": "HO",
-		"Hungary": "HU",
-		"Iceland": "IC",
-		"India": "IN",
-		"Indonesia": "ID",
-		"Iran": "IR",
-		"Iraq": "IZ",
-		"Ireland": "EI",
-		"Israel": "IS",
-		"Italy": "IT",
-		"Jamaica": "JM",
-		"Japan": "JA",
-		"Jordan": "JO",
-		"Kazakhstan": "KZ",
-		"Kenya": "KE",
-		"Kiribati": "KR",
-		"Korea, North": "KP",
-		"Korea, Sounth": "KS",
-		"Kosovo": "XK",
-		"Kuwait": "KU",
-		"Kyrgyzstan": "KG",
-		"Laos": "LA",
-		"Latvia": "LG",
-		"Lebanon": "LE",
-		"Lesotho": "LT",
-		"Liberia": "LI",
-		"Libya": "LY",
-		"Liechtenstein": "LS",
-		"Lithuania": "LH",
-		"Luxembourg": "LU",
-		"Madagascar": "MA",
-		"Malawi": "MI",
-		"Malaysia": "MY",
-		"Maldives": "MV",
-		"Mali": "ML",
-		"Malta": "MT",
-		"Marshall Islands": "RM",
-		"Mauritania": "MR",
-		"Mauritius": "MP",
-		"Mexico": "MX",
-		"Micronesia": "FM",
-		"Moldova": "MD",
-		"Monaco": "MN",
-		"Mongolia": "MG",
-		"Montenegro": "MJ",
-		"Morocco": "MO",
-		"Mozambique": "MZ",
-		"Myanmar": "BM",
-		"Burma": "MM",
-		"Namibia": "WA",
-		"Nauru": "NR",
-		"Nepal": "NP",
-		"Netherlands": "NL",
-		"New Zealand": "NZ",
-		"Nicaragua": "NI",
-		"Niger": "NG",
-		"Nigeria": "NI",
-		"North Macedonia": "MK",
-		"Norway": "NO",
-		"Oman": "MU",
-		"Pakistan": "PK",
-		"Palau": "PS",
-		"Palestine State": "PS",
-		"Panama": "PM",
-		"Papua New Guinea": "PP",
-		"Paraguay": "PA",
-		"Peru": "PE",
-		"Philippines": "RP",
-		"Poland": "PL",
-		"Portugal": "PO",
-		"Qatar": "QA",
-		"Romania": "RO",
-		"Russia": "RS",
-		"Rwanda": "RW",
-		"Saint Kitts and Nevis": "SC",
-		"Saint Lucia": "ST",
-		"Saint Vincent and the Grenadines": "VC",
-		"Samoa": "WS",
-		"San Marino": "SM",
-		"Sao Tome and Principe": "TP",
-		"Saudi Arabia": "SA",
-		"Senegal": "SG",
-		"Serbia": "RI",
-		"Seychelles": "SE",
-		"Sierra Leone": "SL",
-		"Singapore": "SN",
-		"Slovakia": "LO",
-		"Slovenia": "SI",
-		"Solomon Islands": "BP",
-		"Somalia": "SO",
-		"South Africa": "SF",
-		"South Sudan": "OD",
-		"Spain": "SP",
-		"Sri Lanka": "CE",
-		"Sudan": "SU",
-		"St. Vincent Grenadines": "VC",
-		"State of Palestine": "palestine",
-		"Suriname": "NS",
-		"Sweden": "SW",
-		"Switzerland": "SZ",
-		"Syria": "SY",
-		"Taiwan": "TW",
-		"Tajikistan": "TI",
-		"Tanzania": "TZ",
-		"Thailand": "TH",
-		"Timor-Leste": "TT",
-		"Togo": "TO",
-		"Tonga": "TN",
-		"Trinidad and Tobago": "TD",
-		"Tunisia": "TS",
-		"Turkey": "TU",
-		"Turkmenistan": "TX",
-		"Tuvalu": "TV",
-		"Uganda": "UG",
-		"Ukraine": "UP",
-		"United Arab Emirates": "AE",
-		"U.A.E.": "AE",
-		"United Kingdom": "UK",
-		"U.K.": "UK",
-		"United States": "US",
-		"U.S.": "US",
-		"Uruguay": "UY",
-		"Uzbekistan": "UZ",
-		"Vanuatu": "NH",
-		"Venezuela": "VE",
-		"Vietnam": "VM",
-		"Yemen": "YM",
-		"Zambia": "ZA",
-		"Zimbabwe": "ZI",
-	  };
-	  
-	let selectedCountryName = ''
-	if (parseInt(n) == 0) {
-		if (Player1.CountryName != '') {
-			// selectedCountryName = countryNameToCode[Player1.CountryName];
-			return Player1.CountryName.replace(/ /g, '-');;
-		}
-	} else {
-		if (Player2.CountryName != '') {
-			// selectedCountryName = countryNameToCode[Player2.CountryName];
-			return Player2.CountryName.replace(/ /g, '-');;
-		}
-	}
-	
-	if (selectedCountryName != undefined && selectedCountryName != '')
-		return selectedCountryName;
-	else return '';
+  // Dummy implementation, you should replace this with actual logic
+  // This could involve using a Geolocation API or querying a database
+  // For demonstration purposes, let's just return a random country
+  const countryNameToCode = {
+    Afghanistan: "AF",
+    Albania: "AL",
+    Algeria: "AG",
+    Andorra: "AN",
+    Angola: "AO",
+    "Antigua and Barbuda": "AC",
+    Argentina: "AR",
+    Armenia: "AM",
+    Australia: "AS",
+    Austria: "AU",
+    Azerbaijan: "AJ",
+    Bahamas: "BF",
+    Bahrain: "BA",
+    Bangladesh: "BG",
+    Barbados: "BB",
+    Belarus: "BO",
+    Belgium: "BE",
+    Belize: "BH",
+    Benin: "BN",
+    Bhutan: "BT",
+    Bolivia: "BL",
+    "Bosnia and Herzegovina": "BK",
+    Botswana: "BC",
+    Brazil: "BR",
+    Brunei: "BX",
+    Bulgaria: "BU",
+    "Burkina Faso": "UV",
+    Burundi: "BY",
+    "Côte d'Ivoire": "IV",
+    "Cabo Verde": "CV",
+    Cambodia: "CB",
+    Cameroon: "CM",
+    Canada: "CA",
+    "Central African Republic": "CT",
+    CAR: "CT",
+    Chad: "CD",
+    Chile: "CI",
+    China: "CH",
+    Colombia: "CO",
+    Comoros: "CN",
+    Congo: "CG",
+    "Congo-Brazzaville": "CG",
+    "Costa Rica": "CS",
+    Croatia: "HR",
+    Cuba: "CU",
+    Cyprus: "CY",
+    Czechia: "EZ",
+    "Czech Republic": "EZ",
+    Denmark: "DA",
+    Djibouti: "DJ",
+    Dominica: "DO",
+    "Dominican Republic": "DR",
+    DRC: "congo",
+    Ecuador: "EC",
+    Egypt: "EG",
+    "El Salvador": "ES",
+    "Equatorial Guinea": "EK",
+    Eritrea: "ER",
+    Estonia: "ET",
+    Eswatini: "WZ",
+    Swaziland: "SZ",
+    Ethiopia: "ET",
+    Fiji: "FJ",
+    Finland: "FI",
+    France: "FR",
+    Gabon: "GB",
+    Gambia: "GA",
+    Georgia: "GG",
+    Germany: "GM",
+    Ghana: "GH",
+    Greece: "GR",
+    Grenada: "GJ",
+    Guatemala: "GT",
+    Guinea: "GV",
+    "Guinea-Bissau": "PU",
+    Guyana: "GY",
+    Haiti: "HA",
+    "Holy See": "VT",
+    Honduras: "HO",
+    Hungary: "HU",
+    Iceland: "IC",
+    India: "IN",
+    Indonesia: "ID",
+    Iran: "IR",
+    Iraq: "IZ",
+    Ireland: "EI",
+    Israel: "IS",
+    Italy: "IT",
+    Jamaica: "JM",
+    Japan: "JA",
+    Jordan: "JO",
+    Kazakhstan: "KZ",
+    Kenya: "KE",
+    Kiribati: "KR",
+    "Korea, North": "KP",
+    "Korea, Sounth": "KS",
+    Kosovo: "XK",
+    Kuwait: "KU",
+    Kyrgyzstan: "KG",
+    Laos: "LA",
+    Latvia: "LG",
+    Lebanon: "LE",
+    Lesotho: "LT",
+    Liberia: "LI",
+    Libya: "LY",
+    Liechtenstein: "LS",
+    Lithuania: "LH",
+    Luxembourg: "LU",
+    Madagascar: "MA",
+    Malawi: "MI",
+    Malaysia: "MY",
+    Maldives: "MV",
+    Mali: "ML",
+    Malta: "MT",
+    "Marshall Islands": "RM",
+    Mauritania: "MR",
+    Mauritius: "MP",
+    Mexico: "MX",
+    Micronesia: "FM",
+    Moldova: "MD",
+    Monaco: "MN",
+    Mongolia: "MG",
+    Montenegro: "MJ",
+    Morocco: "MO",
+    Mozambique: "MZ",
+    Myanmar: "BM",
+    Burma: "MM",
+    Namibia: "WA",
+    Nauru: "NR",
+    Nepal: "NP",
+    Netherlands: "NL",
+    "New Zealand": "NZ",
+    Nicaragua: "NI",
+    Niger: "NG",
+    Nigeria: "NI",
+    "North Macedonia": "MK",
+    Norway: "NO",
+    Oman: "MU",
+    Pakistan: "PK",
+    Palau: "PS",
+    "Palestine State": "PS",
+    Panama: "PM",
+    "Papua New Guinea": "PP",
+    Paraguay: "PA",
+    Peru: "PE",
+    Philippines: "RP",
+    Poland: "PL",
+    Portugal: "PO",
+    Qatar: "QA",
+    Romania: "RO",
+    Russia: "RS",
+    Rwanda: "RW",
+    "Saint Kitts and Nevis": "SC",
+    "Saint Lucia": "ST",
+    "Saint Vincent and the Grenadines": "VC",
+    Samoa: "WS",
+    "San Marino": "SM",
+    "Sao Tome and Principe": "TP",
+    "Saudi Arabia": "SA",
+    Senegal: "SG",
+    Serbia: "RI",
+    Seychelles: "SE",
+    "Sierra Leone": "SL",
+    Singapore: "SN",
+    Slovakia: "LO",
+    Slovenia: "SI",
+    "Solomon Islands": "BP",
+    Somalia: "SO",
+    "South Africa": "SF",
+    "South Sudan": "OD",
+    Spain: "SP",
+    "Sri Lanka": "CE",
+    Sudan: "SU",
+    "St. Vincent Grenadines": "VC",
+    "State of Palestine": "palestine",
+    Suriname: "NS",
+    Sweden: "SW",
+    Switzerland: "SZ",
+    Syria: "SY",
+    Taiwan: "TW",
+    Tajikistan: "TI",
+    Tanzania: "TZ",
+    Thailand: "TH",
+    "Timor-Leste": "TT",
+    Togo: "TO",
+    Tonga: "TN",
+    "Trinidad and Tobago": "TD",
+    Tunisia: "TS",
+    Turkey: "TU",
+    Turkmenistan: "TX",
+    Tuvalu: "TV",
+    Uganda: "UG",
+    Ukraine: "UP",
+    "United Arab Emirates": "AE",
+    "U.A.E.": "AE",
+    "United Kingdom": "UK",
+    "U.K.": "UK",
+    "United States": "US",
+    "U.S.": "US",
+    Uruguay: "UY",
+    Uzbekistan: "UZ",
+    Vanuatu: "NH",
+    Venezuela: "VE",
+    Vietnam: "VM",
+    Yemen: "YM",
+    Zambia: "ZA",
+    Zimbabwe: "ZI",
+  };
+
+  let selectedCountryName = "";
+  if (parseInt(n) == 0) {
+    if (Player1.CountryName != "") {
+      // selectedCountryName = countryNameToCode[Player1.CountryName];
+      return Player1.CountryName.replace(/ /g, "-");
+    }
+  } else {
+    if (Player2.CountryName != "") {
+      // selectedCountryName = countryNameToCode[Player2.CountryName];
+      return Player2.CountryName.replace(/ /g, "-");
+    }
+  }
+
+  if (selectedCountryName != undefined && selectedCountryName != "")
+    return selectedCountryName;
+  else return "";
 }
 
-function resizeSocketLog(){
-	gameLogsTxt.font = "30px bpreplaybold";
-	gameLogsTxt.textAlign = "center";
-	gameLogsTxt.color = "#ccc";
+function resizeSocketLog() {
+  gameLogsTxt.font = "30px bpreplaybold";
+  gameLogsTxt.textAlign = "center";
+  gameLogsTxt.color = "#ccc";
 
-	if(curPage == 'main'){
-		if(viewport.isLandscape){
-			gameLogsTxt.x = canvasW/2;
-			gameLogsTxt.y = canvasH/100 * 75;
-		}else{
-			gameLogsTxt.x = canvasW/2;
-			gameLogsTxt.y = canvasH/100 * 75;
-		}
-	}else if(curPage == 'custom'){
-		if(viewport.isLandscape){
-			gameLogsTxt.x = canvasW/2;
-			gameLogsTxt.y = canvasH/100 * 67;
-		}else{
-			gameLogsTxt.x = canvasW/2;
-			gameLogsTxt.y = canvasH/100 * 65;
-		}
-	}
+  if (curPage == "main") {
+    if (viewport.isLandscape) {
+      gameLogsTxt.x = canvasW / 2;
+      gameLogsTxt.y = (canvasH / 100) * 75;
+    } else {
+      gameLogsTxt.x = canvasW / 2;
+      gameLogsTxt.y = (canvasH / 100) * 75;
+    }
+  } else if (curPage == "custom") {
+    if (viewport.isLandscape) {
+      gameLogsTxt.x = canvasW / 2;
+      gameLogsTxt.y = (canvasH / 100) * 67;
+    } else {
+      gameLogsTxt.x = canvasW / 2;
+      gameLogsTxt.y = (canvasH / 100) * 65;
+    }
+  }
 }
 
 /*!
- * 
+ *
  * TOGGLE POP - This is the function that runs to toggle popup overlay
- * 
+ *
  */
-function togglePop(con){
-	confirmContainer.visible = con;
+function togglePop(con) {
+  confirmContainer.visible = con;
 }
 
 // Disable F5 and Ctrl+R
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'F5' || (event.key === 'r' && event.ctrlKey)) {
-		
-		if (socket != null) {
-			socket.emit('giveup', textDisplay.player1);
-		} else {
-			if (playerName == textDisplay.player1) {
-				textDisplay.giveup = 'me';
-			}
-			else {
-				textDisplay.giveup = 'other';
-			}
-		}
-		
-		goPage('result_no');
+document.addEventListener("keydown", function (event) {
+  if (event.key === "F5" || (event.key === "r" && event.ctrlKey)) {
+    if (socket != null) {
+      socket.emit("giveup", textDisplay.player1);
+    } else {
+      if (playerName == textDisplay.player1) {
+        textDisplay.giveup = "me";
+      } else {
+        textDisplay.giveup = "other";
+      }
     }
+
+    goPage("result_no");
+  }
 });
 
 // Disable context menu "Reload"
-document.addEventListener('contextmenu', function(event) {
-	event.preventDefault();
-	preventRefresh(event);
+document.addEventListener("contextmenu", function (event) {
+  event.preventDefault();
+  preventRefresh(event);
 });
 
 function preventRefresh(event) {
-	if (!gameData.paused)
-	{
-		togglePop(true);
-	}
+  if (!gameData.paused) {
+    togglePop(true);
+  }
 
-	// Show your own confirmation dialog
-    var confirmationMessage = 'Are you sure you want to reload this page? Current result will be submitted by other member.';
-    event.returnValue = confirmationMessage; // For older browsers
+  // Show your own confirmation dialog
+  var confirmationMessage =
+    "Are you sure you want to reload this page? Current result will be submitted by other member.";
+  event.returnValue = confirmationMessage; // For older browsers
 
-    return confirmationMessage; // For modern browsers
+  return confirmationMessage; // For modern browsers
 }
 
 /*!
- * 
+ *
  * DISPLAY PAGES - This is the function that runs to display pages
- * 
+ *
  */
-var curPage=''
-function goPage(page){
-	curPage=page;
+var curPage = "";
+function goPage(page) {
+  curPage = page;
 
-	$('#roomWrapper').hide();
-	$('#roomWrapper .innerContent').hide();
-	gameLogsTxt.visible = false;
-	
-	mainContainer.visible = false;
-	nameContainer.visible = false;
-	roomContainer.visible = false;
-	customContainer.visible = false;
-	playersContainer.visible = false;
-	gameContainer.visible = false;
-	resultContainer.visible = false;
-	
-	var targetContainer = null;
-	switch(page){
-		case 'main':
-			// targetContainer = mainContainer;
-			// if ( typeof initSocket == 'function' && multiplayerSettings.enable) {
-			// 	toggleMainButton('start');
-			// }else{
-			// 	toggleMainButton('default');
-			// }
-			// Push new confetti objects to `particles[]`
-			toggleMainButton('players');
-		break;
+  $("#roomWrapper").hide();
+  $("#roomWrapper .innerContent").hide();
+  gameLogsTxt.visible = false;
 
-		case 'name':
-			targetContainer = nameContainer;
-			$('#roomWrapper').show();
-			$('#roomWrapper .nameContent').show();
-			$('#roomWrapper .fontNameError').html('');
-			$('#enterName').show();
-		break;
-			
-		case 'room':
-			targetContainer = roomContainer;
-			$('#roomWrapper').show();
-			$('#roomWrapper .roomContent').show();
-			switchSocketRoomContent('lists');
-		break;
+  mainContainer.visible = false;
+  nameContainer.visible = false;
+  roomContainer.visible = false;
+  customContainer.visible = false;
+  playersContainer.visible = false;
+  gameContainer.visible = false;
+  resultContainer.visible = false;
 
-		case 'custom':
-			targetContainer = customContainer;
+  var targetContainer = null;
+  switch (page) {
+    case "main":
+      // targetContainer = mainContainer;
+      // if ( typeof initSocket == 'function' && multiplayerSettings.enable) {
+      // 	toggleMainButton('start');
+      // }else{
+      // 	toggleMainButton('default');
+      // }
+      // Push new confetti objects to `particles[]`
+      toggleMainButton("players");
+      break;
 
-			buttonCustomStart.visible = true;
-			buttonRowL.visible = buttonRowR.visible = true;
-			buttonColumnL.visible = buttonColumnR.visible = true;
-			buttonWinL.visible = buttonWinR.visible = true;
-			
-			if ( typeof initSocket == 'function' && multiplayerSettings.enable && socketData.online) {
-				if(!socketData.host){
-					buttonCustomStart.visible = false;
-					buttonRowL.visible = buttonRowR.visible = false;
-					buttonColumnL.visible = buttonColumnR.visible = false;
-					buttonWinL.visible = buttonWinR.visible = false;
-				}
-			}
-		break;
+    case "name":
+      targetContainer = nameContainer;
+      $("#roomWrapper").show();
+      $("#roomWrapper .nameContent").show();
+      $("#roomWrapper .fontNameError").html("");
+      $("#enterName").show();
+      break;
 
-		case 'players':
-			if (textDisplay.effectduration == '') {
-				textDisplay.effectduration = 15 * 1000;
-				var end = Date.now() + textDisplay.effectduration;
+    case "room":
+      targetContainer = roomContainer;
+      $("#roomWrapper").show();
+      $("#roomWrapper .roomContent").show();
+      switchSocketRoomContent("lists");
+      break;
 
-				(function frame() {
-					// launch a few confetti from the left edge
-					confetti({
-						particleCount: 3,
-						angle: 60,
-						spread: 180,
-						startVelocity: 80,
-						origin: { x: 0.5, y: 1 }
-						// origin: {
-						//     x: Math.random(),
-						//     // since they fall down, start a bit higher than random
-						//     y: Math.random() - 0.2
-						// }
-					});
-					if (Date.now() < end && gameData.paused) {
-						requestAnimationFrame(frame);
-					}
-				}());
-			}
+    case "custom":
+      targetContainer = customContainer;
 
-			buttonPlayersStart.visible = false;
-			buttonPlayersIcon.visible = false;
-			buttonPlayersSwitch.visible = false;
+      buttonCustomStart.visible = true;
+      buttonRowL.visible = buttonRowR.visible = true;
+      buttonColumnL.visible = buttonColumnR.visible = true;
+      buttonWinL.visible = buttonWinR.visible = true;
 
-			targetContainer = playersContainer;
-			createSocket();
+      if (
+        typeof initSocket == "function" &&
+        multiplayerSettings.enable &&
+        socketData.online
+      ) {
+        if (!socketData.host) {
+          buttonCustomStart.visible = false;
+          buttonRowL.visible = buttonRowR.visible = false;
+          buttonColumnL.visible = buttonColumnR.visible = false;
+          buttonWinL.visible = buttonWinR.visible = false;
+        }
+      }
+      break;
 
-			if (!gameData.ai) {
-				timeData.oldTimer = -1;
-				timeData.countdown = boardSettings.timerDown
-				timeData.isDown = true
-				toggleGameTimer(true);
-				timerDownTxt.text = millisecondsToTimeGame(timeData.countdown);
+    case "players":
+      if (textDisplay.effectduration == "") {
+        textDisplay.effectduration = 15 * 1000;
+        var end = Date.now() + textDisplay.effectduration;
 
-				$.players['player'+ 1].text = textDisplay.player2;
-			} else {
-				$.players['player'+ 1].text = textDisplay.computer;
-			}
-			break;
-		
-		case 'game':
-			buttonPlayersStart.visible = false;
-			buttonPlayersIcon.visible = false;
-			buttonPlayersSwitch.visible = false;
-			targetContainer = gameContainer;
-			if (gameData.ai) {
-			}
-			else {
-				startGame();
-			}
-		break;
-		
-		case 'result':
-			targetContainer = resultContainer;
+        (function frame() {
+          // launch a few confetti from the left edge
+          confetti({
+            particleCount: 3,
+            angle: 60,
+            spread: 180,
+            startVelocity: 80,
+            origin: { x: 0.5, y: 1 },
+            // origin: {
+            //     x: Math.random(),
+            //     // since they fall down, start a bit higher than random
+            //     y: Math.random() - 0.2
+            // }
+          });
+          if (Date.now() < end && gameData.paused) {
+            requestAnimationFrame(frame);
+          }
+        })();
+      }
 
-			stopGame();
-			togglePop(false);
-			
-			playSound('soundResult');
+      buttonPlayersStart.visible = false;
+      buttonPlayersIcon.visible = false;
+      buttonPlayersSwitch.visible = false;
 
-			var winner = '';
-			
-			textDisplay.gameWin.replace('[NUMBER]', playerData.score);
-			// TweenMax.to(tweenData, .5, {tweenScore:playerData.score, overwrite:true, onUpdate: function(){
-				
-			// }});
+      targetContainer = playersContainer;
+      createSocket();
 
-			var textMessage = '';
-			var textTitle = '';
-			var textPrice = '';
-			if (textDisplay.giveup == 'me' || Player1.prizeUSD == undefined) {
-				//textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+      if (!gameData.ai) {
+        timeData.oldTimer = -1;
+        timeData.countdown = boardSettings.timerDown;
+        timeData.isDown = true;
+        toggleGameTimer(true);
+        timerDownTxt.text = millisecondsToTimeGame(timeData.countdown);
 
-				winner = Player2.entityId;
-				textTitle = "The outcome of this game favors the opponent.\n\n 🙁  \n\n"
-				textMessage = "\n\nOne more try,\nyou've got this!";
+        $.players["player" + 1].text = textDisplay.player2;
+      } else {
+        $.players["player" + 1].text = textDisplay.computer;
+      }
+      break;
 
-				resultTitleTxt.font = "20px bpreplaybold";
-				resultShareTxt.visible = false;
-				buttonFacebook.visible = false;
-				buttonTiktok.visible = false;
-				buttonWhatsapp.visible = false;
-				resultPriceTxt.visible = false;
+    case "game":
+      buttonPlayersStart.visible = false;
+      buttonPlayersIcon.visible = false;
+      buttonPlayersSwitch.visible = false;
+      targetContainer = gameContainer;
+      if (gameData.ai) {
+      } else {
+        startGame();
+      }
+      break;
 
-			} else if (textDisplay.giveup == 'other' && Player1.prizeUSD != undefined) {
-				//textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
+    case "result":
+      targetContainer = resultContainer;
 
-				winner = Player1.entityId;
-				textTitle = "You won!!!!";
-				textMessage = "Congratulations, you won:"
-				resultPriceTxt.text = "$" + Player1.prizeUSD;
-				resultTitleTxt.font = "60px bpreplaybold";
-				if (textDisplay.winEffect == 'yes')
-				{
-					textDisplay.winEffect = 'no';
-					particles = [];
-					for (var i = 0; i < maxConfettis; i++) {
-						particles.push(new confettiParticle());
-					}
-					Draw();
-				}
-			} else {
-				if (Math.floor(playerData.score) > Math.floor(playerData.opponentScore) && Player1.prizeUSD != undefined) {
-					//textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
-					winner = Player1.entityId;
-					textTitle = "You won!!!!";
-					textMessage = "Congratulations, you won:";
-					resultPriceTxt.text = "$" + Player1.prizeUSD;
-					
-					resultTitleTxt.font = "60px bpreplaybold";
-					if (textDisplay.winEffect == 'yes')
-					{
-						textDisplay.winEffect = 'no';
-						particles = [];
-						for (var i = 0; i < maxConfettis; i++) {
-							particles.push(new confettiParticle());
-						}
-						Draw();
-					}
-				} else if (Math.floor(playerData.score) < 3 &&  Math.floor(playerData.opponentScore) < 3 && Player1.prizeUSD != undefined) {
-					winner = Player1.entityId;
-					textTitle = "You won!!!!";
-					textMessage = "Congratulations, you won:";
-					resultPriceTxt.text = "$" + Player1.prizeUSD;
-					
-					resultTitleTxt.font = "60px bpreplaybold";
-					if (textDisplay.winEffect == 'yes')
-					{
-						textDisplay.winEffect = 'no';
-						particles = [];
-						for (var i = 0; i < maxConfettis; i++) {
-							particles.push(new confettiParticle());
-						}
-						Draw();
-					}
-				}
-				else {
-					textTitle = "The outcome of this game favors the opponent.\n\n 🙁 \n\n";
-					textMessage = "\n\nOne more try,\nyou've got this!";
+      stopGame();
+      togglePop(false);
 
-					winner = Player2.entityId;
-					resultTitleTxt.font = "20px bpreplaybold";
-					resultShareTxt.visible = false;
-					buttonFacebook.visible = false;
-					buttonTwitter.visible = false;
-					buttonTiktok.visible = false;
-					buttonWhatsapp.visible = false;
-					resultPriceTxt.visible = false;
-					//textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
-				}
-			}
-			
-			resultTitleTxt.text = textTitle;
-			resultDescTxt.text = textMessage; // textDisplay.resultDesc.replace('[NUMBER]', Math.floor(tweenData.tweenScore)).replace('[SCORE]', Math.floor(playerData.score)).replace('[OPPONENTSCORE]', Math.floor(playerData.opponentScore));
+      playSound("soundResult");
 
-			saveGame(playerData.score, playerData.opponentScore, winner);
-			
-		break;
-		case 'result_no':
-			stopGame();
-			var winner = '';
-			
-			if (textDisplay.giveup == 'me' || Player1.prizeUSD == undefined) {
-				//textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
-				winner = Player2.entityId;
-			} else if (textDisplay.giveup == 'other' && Player1.prizeUSD != undefined) {
-				winner = Player1.entityId;
-			} else {
-				if (Math.floor(playerData.score) > Math.floor(playerData.opponentScore) && Player1.prizeUSD != undefined) {
-					//textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
-					winner = Player1.entityId;
-				} else if (Math.floor(playerData.score) < 3 &&  Math.floor(playerData.opponentScore) < 3 && Player1.prizeUSD != undefined) {
-					winner = Player1.entityId;
-				}
-				else {
-					winner = Player2.entityId;
-				}
-			}
-			
-			saveGame(playerData.score, playerData.opponentScore, winner);
-			
-			break;
-	}
-	
-	if(targetContainer != null){
-		targetContainer.visible = true;
-		targetContainer.alpha = 0;
-		TweenMax.to(targetContainer, .5, {alpha:1, overwrite:true});
-	}
-	
-	resizeCanvas();
+      var winner = "";
+
+      textDisplay.gameWin.replace("[NUMBER]", playerData.score);
+      // TweenMax.to(tweenData, .5, {tweenScore:playerData.score, overwrite:true, onUpdate: function(){
+
+      // }});
+
+      var textMessage = "";
+      var textTitle = "";
+      var textPrice = "";
+      if (textDisplay.giveup == "me" || Player1.prizeUSD == undefined) {
+        //textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+
+        winner = Player2.entityId;
+        textTitle =
+          "The outcome of this game favors the opponent.\n\n 🙁  \n\n";
+        textMessage = "\n\nOne more try,\nyou've got this!";
+
+        resultTitleTxt.font = "20px bpreplaybold";
+        resultShareTxt.visible = false;
+        buttonFacebook.visible = false;
+        buttonTiktok.visible = false;
+        buttonWhatsapp.visible = false;
+        resultPriceTxt.visible = false;
+      } else if (
+        textDisplay.giveup == "other" &&
+        Player1.prizeUSD != undefined
+      ) {
+        //textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
+
+        winner = Player1.entityId;
+        textTitle = "You won!!!!";
+        textMessage = "Congratulations, you won:";
+        resultPriceTxt.text = "$" + Player1.prizeUSD;
+        resultTitleTxt.font = "60px bpreplaybold";
+        if (textDisplay.winEffect == "yes") {
+          textDisplay.winEffect = "no";
+          particles = [];
+          for (var i = 0; i < maxConfettis; i++) {
+            particles.push(new confettiParticle());
+          }
+          Draw();
+        }
+      } else {
+        if (
+          Math.floor(playerData.score) > Math.floor(playerData.opponentScore) &&
+          Player1.prizeUSD != undefined
+        ) {
+          //textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
+          winner = Player1.entityId;
+          textTitle = "You won!!!!";
+          textMessage = "Congratulations, you won:";
+          resultPriceTxt.text = "$" + Player1.prizeUSD;
+
+          resultTitleTxt.font = "60px bpreplaybold";
+          if (textDisplay.winEffect == "yes") {
+            textDisplay.winEffect = "no";
+            particles = [];
+            for (var i = 0; i < maxConfettis; i++) {
+              particles.push(new confettiParticle());
+            }
+            Draw();
+          }
+        } else if (
+          Math.floor(playerData.score) < 3 &&
+          Math.floor(playerData.opponentScore) < 3 &&
+          Player1.prizeUSD != undefined
+        ) {
+          winner = Player1.entityId;
+          textTitle = "You won!!!!";
+          textMessage = "Congratulations, you won:";
+          resultPriceTxt.text = "$" + Player1.prizeUSD;
+
+          resultTitleTxt.font = "60px bpreplaybold";
+          if (textDisplay.winEffect == "yes") {
+            textDisplay.winEffect = "no";
+            particles = [];
+            for (var i = 0; i < maxConfettis; i++) {
+              particles.push(new confettiParticle());
+            }
+            Draw();
+          }
+        } else {
+          textTitle =
+            "The outcome of this game favors the opponent.\n\n 🙁 \n\n";
+          textMessage = "\n\nOne more try,\nyou've got this!";
+
+          winner = Player2.entityId;
+          resultTitleTxt.font = "20px bpreplaybold";
+          resultShareTxt.visible = false;
+          buttonFacebook.visible = false;
+          buttonTwitter.visible = false;
+          buttonTiktok.visible = false;
+          buttonWhatsapp.visible = false;
+          resultPriceTxt.visible = false;
+          //textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+        }
+      }
+
+      resultTitleTxt.text = textTitle;
+      resultDescTxt.text = textMessage; // textDisplay.resultDesc.replace('[NUMBER]', Math.floor(tweenData.tweenScore)).replace('[SCORE]', Math.floor(playerData.score)).replace('[OPPONENTSCORE]', Math.floor(playerData.opponentScore));
+
+      saveGame(playerData.score, playerData.opponentScore, winner);
+
+      break;
+    case "result_no":
+      stopGame();
+      var winner = "";
+
+      if (textDisplay.giveup == "me" || Player1.prizeUSD == undefined) {
+        //textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+        winner = Player2.entityId;
+      } else if (
+        textDisplay.giveup == "other" &&
+        Player1.prizeUSD != undefined
+      ) {
+        winner = Player1.entityId;
+      } else {
+        if (
+          Math.floor(playerData.score) > Math.floor(playerData.opponentScore) &&
+          Player1.prizeUSD != undefined
+        ) {
+          //textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
+          winner = Player1.entityId;
+        } else if (
+          Math.floor(playerData.score) < 3 &&
+          Math.floor(playerData.opponentScore) < 3 &&
+          Player1.prizeUSD != undefined
+        ) {
+          winner = Player1.entityId;
+        } else {
+          winner = Player2.entityId;
+        }
+      }
+
+      saveGame(playerData.score, playerData.opponentScore, winner);
+
+      break;
+  }
+
+  if (targetContainer != null) {
+    targetContainer.visible = true;
+    targetContainer.alpha = 0;
+    TweenMax.to(targetContainer, 0.5, { alpha: 1, overwrite: true });
+  }
+
+  resizeCanvas();
 }
 
 function randomFromTo(from, to) {
-	return Math.floor(Math.random() * (to - from + 1) + from);
+  return Math.floor(Math.random() * (to - from + 1) + from);
 }
 
 var canvas1 = document.getElementById("gameCanvas");
 var context = canvas1.getContext("2d");
 
 function confettiParticle() {
-	this.x = randomFromTo(0, Math.random() * stageW * 2); // x
-	this.y = Math.random() * stageH - stageH; // y
-	this.r = randomFromTo(11, 33); // radius
-	this.d = Math.random() * maxConfettis + 11;
-	this.color =
-	  possibleColors[Math.floor(Math.random() * possibleColors.length)];
-	this.tilt = Math.floor(Math.random() * 33) - 11;
-	this.tiltAngleIncremental = Math.random() * 0.07 + 0.05;
-	this.tiltAngle = 0;
-  
-	this.draw = function() {
-		context.beginPath();
-		context.lineWidth = this.r / 2;
-		context.strokeStyle = this.color;
-		context.moveTo(this.x + this.tilt + this.r / 3, this.y);
-		context.lineTo(this.x + this.tilt, this.y + this.tilt + this.r / 5);
-		return context.stroke();
-	};
+  this.x = randomFromTo(0, Math.random() * stageW * 2); // x
+  this.y = Math.random() * stageH - stageH; // y
+  this.r = randomFromTo(11, 33); // radius
+  this.d = Math.random() * maxConfettis + 11;
+  this.color =
+    possibleColors[Math.floor(Math.random() * possibleColors.length)];
+  this.tilt = Math.floor(Math.random() * 33) - 11;
+  this.tiltAngleIncremental = Math.random() * 0.07 + 0.05;
+  this.tiltAngle = 0;
+
+  this.draw = function () {
+    context.beginPath();
+    context.lineWidth = this.r / 2;
+    context.strokeStyle = this.color;
+    context.moveTo(this.x + this.tilt + this.r / 3, this.y);
+    context.lineTo(this.x + this.tilt, this.y + this.tilt + this.r / 5);
+    return context.stroke();
+  };
 }
 
 const canvasWidth = canvas1.width;
 const canvasHeight = canvas1.height;
 
 function getX(params) {
-	let distance = params.xTo - params.xFrom;
-	let steps = params.frames;
-	let progress = params.frame;
-	return distance / steps * progress;
+  let distance = params.xTo - params.xFrom;
+  let steps = params.frames;
+  let progress = params.frame;
+  return (distance / steps) * progress;
 }
 
 function getY(params) {
-	let distance = params.yTo - params.yFrom;
-	let steps = params.frames;
-	let progress = params.frame;
-	return topHeight;// distance / steps * progress;
+  let distance = params.yTo - params.yFrom;
+  let steps = params.frames;
+  let progress = params.frame;
+  return topHeight; // distance / steps * progress;
 }
 
 function addImage(params) {
-	if (params.frame == params.frames) {
-		
-	}
-	else if (params.frame < params.frames) {
+  if (params.frame == params.frames) {
+  } else if (params.frame < params.frames) {
+    if (window.innerWidth < 600) {
+      cardWidth = 66;
+      cardHeight = 54;
+      topHeight = canvasH - 80;
+    } else if (window.innerWidth < 1200) {
+      cardWidth = 60;
+      cardHeight = 72;
+      topHeight = canvasH - 100;
+    } else {
+      cardWidth = 60;
+      cardHeight = 72;
+      topHeight = canvasH - 120;
+    }
 
-		if (window.innerWidth < 600) {
-			cardWidth = 66;
-			cardHeight = 54;
-			topHeight = canvasH - 80;
-		} else if (window.innerWidth < 1200) {
-			cardWidth = 60;
-			cardHeight = 72;
-			topHeight = canvasH - 100;
-		} else {
-			cardWidth = 60;
-			cardHeight = 72;
-			topHeight = canvasH - 120;
-		}
+    let name = params.name;
+    if (imagesCanvas[name] === undefined) {
+      imagesCanvas[name] = document.createElement("canvas");
+    }
+    imagesCanvas[name].width = cardWidth;
+    imagesCanvas[name].height = cardHeight;
 
-		let name = params.name;
-		if (imagesCanvas[name] === undefined) {
-			imagesCanvas[name] = document.createElement('canvas');
-		}
-		imagesCanvas[name].width = cardWidth;
-		imagesCanvas[name].height = cardHeight;
+    let image = document.getElementById(name);
+    let imageCtx = imagesCanvas[name].getContext("2d");
+    imageCtx.drawImage(image, 0, 0, cardWidth, cardHeight);
+    context.drawImage(imagesCanvas[name], getX(params), getY(params));
 
-		let image = document.getElementById(name);
-		let imageCtx = imagesCanvas[name].getContext('2d');
-		imageCtx.drawImage(image, 0, 0, cardWidth, cardHeight);
-		context.drawImage(imagesCanvas[name], getX(params), getY(params));  
-		
-		params.frame = params.frame + 1;
-		window.requestAnimationFrame(addImage.bind(null, params))
-	}
+    params.frame = params.frame + 1;
+    window.requestAnimationFrame(addImage.bind(null, params));
+  }
 }
 
 function addConvertImage(params) {
-	if (params.frame == params.frames) {
-		
-	}
-	else if (params.frame > params.frames) {
+  if (params.frame == params.frames) {
+  } else if (params.frame > params.frames) {
+    if (window.innerWidth < 600) {
+      cardWidth = 66;
+      cardHeight = 54;
+      topHeight = canvasH - 80;
+    } else if (window.innerWidth < 1200) {
+      cardWidth = 60;
+      cardHeight = 72;
+      topHeight = canvasH - 100;
+    } else {
+      cardWidth = 60;
+      cardHeight = 72;
+      topHeight = canvasH - 120;
+    }
 
-		if (window.innerWidth < 600) {
-			cardWidth = 66;
-			cardHeight = 54;
-			topHeight = canvasH - 80;
-		} else if (window.innerWidth < 1200) {
-			cardWidth = 60;
-			cardHeight = 72;
-			topHeight = canvasH - 100;
-		} else {
-			cardWidth = 60;
-			cardHeight = 72;
-			topHeight = canvasH - 120;
-		}
+    let name = params.name;
+    if (imagesCanvas[name] === undefined) {
+      imagesCanvas[name] = document.createElement("canvas");
+    }
+    imagesCanvas[name].width = cardWidth;
+    imagesCanvas[name].height = cardHeight;
 
-		let name = params.name;
-		if (imagesCanvas[name] === undefined) {
-			imagesCanvas[name] = document.createElement('canvas');
-		}
-		imagesCanvas[name].width = cardWidth;
-		imagesCanvas[name].height = cardHeight;
+    let image = document.getElementById(name);
+    let imageCtx = imagesCanvas[name].getContext("2d");
+    imageCtx.drawImage(image, 0, 0, cardWidth, cardHeight);
+    context.drawImage(imagesCanvas[name], getX(params), getY(params));
 
-		let image = document.getElementById(name);
-		let imageCtx = imagesCanvas[name].getContext('2d');
-		imageCtx.drawImage(image, 0, 0, cardWidth, cardHeight);
-		context.drawImage(imagesCanvas[name], getX(params), getY(params));  
-		
-		params.frame = params.frame - 1;
-		window.requestAnimationFrame(addConvertImage.bind(null, params))
-	}
+    params.frame = params.frame - 1;
+    window.requestAnimationFrame(addConvertImage.bind(null, params));
+  }
 }
 
 let sentEmoji = false;
 let myEmoji = false;
 function showEmoji(emojiName) {
-	toggleEmoji();
-	addImage({
-	  name: emojiName,
-	  frame: 150,
-	  frames: 800,
-	  xFrom: cardPadding,
-	  xTo: canvasWidth - cardWidth - cardPadding,
-	  yFrom: cardPadding,
-	  yTo: cardPadding
-	});
-	myEmoji = true;
-	if (gameData.ai == false && socket != null && sentEmoji == false) {
-		sentEmoji = true;
-		socket.emit("sendEmoji", { name: emojiName })
-	}
+  toggleEmoji();
+  addImage({
+    name: emojiName,
+    frame: 150,
+    frames: 800,
+    xFrom: cardPadding,
+    xTo: canvasWidth - cardWidth - cardPadding,
+    yFrom: cardPadding,
+    yTo: cardPadding,
+  });
+  myEmoji = true;
+  if (gameData.ai == false && socket != null && sentEmoji == false) {
+    sentEmoji = true;
+    socket.emit("sendEmoji", { name: emojiName });
+  }
 }
 
 function showEmojiConvert(emojiName) {
-	sentEmoji = false
-	if (myEmoji == false)
-	{
-		addImage({
-			name: emojiName,
-			frame: 150,
-			frames: 800,
-			xFrom: cardPadding,
-			xTo: canvasWidth - cardWidth - cardPadding,
-			yFrom: cardPadding,
-			yTo: cardPadding
-		  });
-	}
-	myEmoji = false;
+  sentEmoji = false;
+  if (myEmoji == false) {
+    addImage({
+      name: emojiName,
+      frame: 150,
+      frames: 800,
+      xFrom: cardPadding,
+      xTo: canvasWidth - cardWidth - cardPadding,
+      yFrom: cardPadding,
+      yTo: cardPadding,
+    });
+  }
+  myEmoji = false;
 }
 
 function Draw() {
-	const results = [];
-  
-	// Magical recursive functional love
-	requestAnimationFrame(Draw);
-  
-	//context.clearRect(0, 0, windowW, window.innerHeight);
-  
-	for (var i = 0; i < maxConfettis; i++) {
-	  results.push(particles[i].draw());
-	}
-  
-	let particle = {};
-	let remainingFlakes = 0;
-	for (var i = 0; i < maxConfettis; i++) {
-	  particle = particles[i];
-  
-	  particle.tiltAngle += particle.tiltAngleIncremental;
-	  particle.y += (Math.cos(particle.d) + 3 + particle.r / 2) / 2;
-	  particle.tilt = Math.sin(particle.tiltAngle - i / 3) * 15;
-  
-	  if (particle.y <= windowH) remainingFlakes++;
-  
-	  // If a confetti has fluttered out of view,
-	  // bring it back to above the viewport and let if re-fall.
-	  if (particle.x > stageW * 2 + 20 || particle.x < -20 || particle.y > windowH) {
-		particle.x = Math.random() * stageW * 2;
-		particle.y = -20;
-		particle.tilt = Math.floor(Math.random() * 10) - 20;
-	  }
-	}
-  
-	return results;
+  const results = [];
+
+  // Magical recursive functional love
+  requestAnimationFrame(Draw);
+
+  //context.clearRect(0, 0, windowW, window.innerHeight);
+
+  for (var i = 0; i < maxConfettis; i++) {
+    results.push(particles[i].draw());
   }
 
-  function redirectToWithAuth(url, authToken, noError) {
-	var form = document.createElement('form');
-	form.method = 'GET';
-	form.action = url;
+  let particle = {};
+  let remainingFlakes = 0;
+  for (var i = 0; i < maxConfettis; i++) {
+    particle = particles[i];
 
-	var headerInput = document.createElement('input');
-	headerInput.type = 'hidden';
+    particle.tiltAngle += particle.tiltAngleIncremental;
+    particle.y += (Math.cos(particle.d) + 3 + particle.r / 2) / 2;
+    particle.tilt = Math.sin(particle.tiltAngle - i / 3) * 15;
 
-	if (noError == 1)
-	{
-	  headerInput.name = 't';
-	} else {
-	  headerInput.name = 'e';
-	}
-	headerInput.value = authToken; 
-	form.appendChild(headerInput);
-	document.body.appendChild(form);
-	form.submit();
+    if (particle.y <= windowH) remainingFlakes++;
+
+    // If a confetti has fluttered out of view,
+    // bring it back to above the viewport and let if re-fall.
+    if (
+      particle.x > stageW * 2 + 20 ||
+      particle.x < -20 ||
+      particle.y > windowH
+    ) {
+      particle.x = Math.random() * stageW * 2;
+      particle.y = -20;
+      particle.tilt = Math.floor(Math.random() * 10) - 20;
+    }
   }
+
+  return results;
+}
+
+function redirectToWithAuth(url, authToken, noError) {
+  var form = document.createElement("form");
+  form.method = "GET";
+  form.action = url;
+
+  var headerInput = document.createElement("input");
+  headerInput.type = "hidden";
+
+  if (noError == 1) {
+    headerInput.name = "t";
+  } else {
+    headerInput.name = "e";
+  }
+  headerInput.value = authToken;
+  form.appendChild(headerInput);
+  document.body.appendChild(form);
+  form.submit();
+}
 /*!
- * 
+ *
  * START GAME - This is the function that runs to start game
- * 
+ *
  */
-function startGame(){
-	gameData.paused = false;
-	gameData.complete = false;
-	gameData.turn = 0;
-	gameData.player = 0;
-	gameData.moving = false;
+function startGame() {
+  gameData.paused = false;
+  gameData.complete = false;
+  gameData.turn = 0;
+  gameData.player = 0;
+  gameData.moving = false;
 
-	buildPlayers();
+  buildPlayers();
 
-	if(gameData.type == 'classic'){
-		gameData.settings = {
-			row:defaultSettings.row,
-			column:defaultSettings.column,
-			connect:defaultSettings.connect
-		};
-	}else{
-		gameData.settings = {
-			row:gameData.custom.row,
-			column:gameData.custom.column,
-			connect:gameData.custom.connect
-		};
-	}
+  if (gameData.type == "classic") {
+    gameData.settings = {
+      row: defaultSettings.row,
+      column: defaultSettings.column,
+      connect: defaultSettings.connect,
+    };
+  } else {
+    gameData.settings = {
+      row: gameData.custom.row,
+      column: gameData.custom.column,
+      connect: gameData.custom.connect,
+    };
+  }
 
-	timeData.oldTimer = -1;
-	timeData.countdown = boardSettings.timer;
-	timerTxt.text = timerRedTxt.text = millisecondsToTimeGame(timeData.countdown);
-	timerRedTxt.alpha = 0;
+  timeData.oldTimer = -1;
+  timeData.countdown = boardSettings.timer;
+  timerTxt.text = timerRedTxt.text = millisecondsToTimeGame(timeData.countdown);
+  timerRedTxt.alpha = 0;
 
-	statusContainer.alpha = 0;
+  statusContainer.alpha = 0;
 
-	buildBoard();
+  buildBoard();
 
-	if ( typeof initSocket == 'function' && multiplayerSettings.enable && socketData.online) {
-		if(socketData.host){
-			toggleGameTimer(true);
-		}
-	}else{
-		toggleGameTimer(true);
-	}
-	
+  if (
+    typeof initSocket == "function" &&
+    multiplayerSettings.enable &&
+    socketData.online
+  ) {
+    if (socketData.host) {
+      toggleGameTimer(true);
+    }
+  } else {
+    toggleGameTimer(true);
+  }
 }
 
- /*!
- * 
+/*!
+ *
  * STOP GAME - This is the function that runs to stop play game
- * 
+ *
  */
- function stopGame(){
-	boardDesignContainer.removeAllChildren();
-	boardDesignBackContainer.removeAllChildren();
-	boardIconContainer.removeAllChildren();
+function stopGame() {
+  boardDesignContainer.removeAllChildren();
+  boardDesignBackContainer.removeAllChildren();
+  boardIconContainer.removeAllChildren();
 
-	gameData.paused = true;
-	TweenMax.killAll(false, true, false);
+  gameData.paused = true;
+  TweenMax.killAll(false, true, false);
 
-	if (socket != null) {
-		socket.emit('disconnect_game', {});
-	}
+  if (socket != null) {
+    socket.emit("disconnect_game", {});
+  }
 }
 
-function saveGame(score, opponentscore, winner){
+function saveGame(score, opponentscore, winner) {
+  const urlParams = new URLSearchParams(window.location.search);
 
-	const urlParams = new URLSearchParams(window.location.search);
+  // Get the value of a specific parameter
+  const tokenkey = urlParams.get("t"); // Returns 'value1'
+  localStorage.setItem("t", tokenkey);
 
-	// Get the value of a specific parameter
-	const tokenkey = urlParams.get('t'); // Returns 'value1'
-	localStorage.setItem('t', tokenkey);
+  localStorage.setItem("gameID", 1);
 
-	localStorage.setItem('gameID', 1);
-	
-	var tokenID = localStorage.getItem("t");
-	if (tokenID != undefined && tokenID != '')
-	{
-		localStorage.removeItem("t");
-		$.ajax({
-			type: "POST",
-			url: '/result',
-			data: {score:score, user: Player1, opponentScore: opponentscore, oppenent: Player2, winner: winner, room: textDisplay.room, t: tokenID, gameID: Player1.gameID},
-			success: function (result) {
-			  
-			  if (result.success == true && textDisplay.giveup == 'other' || (Math.floor(playerData.score) >= Math.floor(playerData.opponentScore))) {
-				console.log(result.PriseUsd);
-				if (result.PriseUsd != undefined)
-				{
-					resultPriceTxt.text = "$" + result.PriseUsd;
-					// resultDescTxt.text = "Congratulations, you won:";
-				} else {
-					var textTitle = "The outcome of this game favors the opponent.\n\n 🙁 \n\n";
-					var textMessage = "\n\nOne more try,\nyou've got this!";
+  var tokenID = localStorage.getItem("t");
+  if (tokenID != undefined && tokenID != "") {
+    localStorage.removeItem("t");
+    $.ajax({
+      type: "POST",
+      url: "/result",
+      data: {
+        score: score,
+        user: Player1,
+        opponentScore: opponentscore,
+        oppenent: Player2,
+        winner: winner,
+        room: textDisplay.room,
+        t: tokenID,
+        gameID: Player1.gameID,
+      },
+      success: function (result) {
+        if (
+          (result.success == true && textDisplay.giveup == "other") ||
+          Math.floor(playerData.score) >= Math.floor(playerData.opponentScore)
+        ) {
+          console.log(result.PriseUsd);
+          if (result.PriseUsd != undefined) {
+            resultPriceTxt.text = "$" + result.PriseUsd;
+            // resultDescTxt.text = "Congratulations, you won:";
+          } else {
+            var textTitle =
+              "The outcome of this game favors the opponent.\n\n 🙁 \n\n";
+            var textMessage = "\n\nOne more try,\nyou've got this!";
 
-					resultTitleTxt.font = "20px bpreplaybold";
+            resultTitleTxt.font = "20px bpreplaybold";
 
-					resultTitleTxt.text = textTitle;
-					resultDescTxt.text = textMessage;
-				}
-			  }
-			},
-			error: function(xhr, status, error) {
-			  // Handle errors
-			  console.error(xhr.responseText);
-			}
-		  });
-	}
+            resultTitleTxt.text = textTitle;
+            resultDescTxt.text = textMessage;
+          }
+        }
+      },
+      error: function (xhr, status, error) {
+        // Handle errors
+        console.error(xhr.responseText);
+      },
+    });
+  }
 }
 
 /*!
- * 
+ *
  * BUILD PLAYERS - This is the function that runs to build players
- * 
+ *
  */
-function buildPlayers(){
-	let bitmap_height = 0
-	for(var n=0; n<2; n++){
-		$.players['gameIconContainer'+ n].removeAllChildren();
+function buildPlayers() {
+  let bitmap_height = 0;
+  for (var n = 0; n < 2; n++) {
+    $.players["gameIconContainer" + n].removeAllChildren();
 
-		if ( typeof initSocket == 'function' && multiplayerSettings.enable && socketData.online) {
+    if (
+      typeof initSocket == "function" &&
+      multiplayerSettings.enable &&
+      socketData.online
+    ) {
+    } else {
+      if (n == 1) {
+        if (gameData.ai) {
+          $.players["gamePlayer" + 1].text = textDisplay.computer;
+        } else {
+          $.players["gamePlayer" + 0].text = textDisplay.player1;
+          $.players["gamePlayer" + 1].text = textDisplay.player2;
+        }
+      }
+    }
 
-		}else{
-			if(n == 1){
-				if(gameData.ai){
-					$.players['gamePlayer'+ 1].text = textDisplay.computer;
-				}else{
-					$.players['gamePlayer'+ 0].text = textDisplay.player1;
-					$.players['gamePlayer'+ 1].text = textDisplay.player2;
-				}
-			}
-		}
+    $.players["gameTurn" + n].text = "";
 
-		$.players['gameTurn'+ n].text = '';
+    var iconID = "icon" + gameData.icon + gameData.icons[n];
+    $.players["gameIcon" + n] = new createjs.Bitmap(loader.getResult(iconID));
+    centerReg($.players["gameIcon" + n]);
 
-		var iconID = 'icon'+gameData.icon+gameData.icons[n];
-		$.players['gameIcon'+ n] = new createjs.Bitmap(loader.getResult(iconID));
-		centerReg($.players['gameIcon'+ n]);
+    $.players["gameIcon" + n].y = -35;
+    $.players["gameIcon" + n].scaleX = $.players["gameIcon" + n].scaleY = 1.3;
 
-		$.players['gameIcon'+ n].y = -35;
-		$.players['gameIcon'+ n].scaleX = $.players['gameIcon'+ n].scaleY = 1.3;
+    $.players["gameIconContainer" + n].addChild($.players["gameIcon" + n]);
 
-		$.players['gameIconContainer'+ n].addChild($.players['gameIcon'+ n]);
+    //playerFlagContainer
+    $.players["gameFlagContainer" + n].removeAllChildren();
 
-		//playerFlagContainer
-		$.players['gameFlagContainer'+ n].removeAllChildren();
+    const countryCode = getCountryFromIP(n);
 
-		const countryCode = getCountryFromIP(n);
+    if (countryCode != "") {
+      // Load flag as an image
+      const flagImg = new Image();
+      // flagImg.src = `https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/flags/4x3/${countryCode.toLowerCase()}.svg`;
+      // flagImg.src = `https://www.worldometers.info/img/flags/${countryCode.toLowerCase()}-flag.gif`
+      flagImg.src =
+        `https://www.player1.win/assets/images/flags/` + countryCode + `.png`;
 
-		if (countryCode != '') {
-			// Load flag as an image
-			const flagImg = new Image();
-			// flagImg.src = `https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/flags/4x3/${countryCode.toLowerCase()}.svg`;
-			// flagImg.src = `https://www.worldometers.info/img/flags/${countryCode.toLowerCase()}-flag.gif`
-			flagImg.src = `https://www.player1.win/assets/images/flags/`+countryCode+`.png`
+      const flagWidth = 36; // Set your desired width here
+      const flagHeight = 27; // Set your desired height here
 
-			const flagWidth = 36; // Set your desired width here
-			const flagHeight = 27; // Set your desired height here
-		
-			flagImg.onload = function(container, order_n, isBot) {
-				// This function will be called when the image is loaded
-				return function() {
-					// Create a bitmap from the flag image
-					const bitmap = new createjs.Bitmap(flagImg);
-					// Set static width and height of the bitmap
-					bitmap.scaleX = flagWidth / bitmap.image.width;
-					bitmap.scaleY = flagHeight / bitmap.image.height;
-		
-					// Center the bitmap within the container
-					// bitmap.regX = flagWidth + parseInt(bitmap.image.width / 2) - 15;
+      flagImg.onload = (function (container, order_n, isBot) {
+        // This function will be called when the image is loaded
+        return function () {
+          // Create a bitmap from the flag image
+          const bitmap = new createjs.Bitmap(flagImg);
+          // Set static width and height of the bitmap
+          bitmap.scaleX = flagWidth / bitmap.image.width;
+          bitmap.scaleY = flagHeight / bitmap.image.height;
 
-					// if (isBot == true)
-					// bitmap.regY = 100 + parseInt((bitmap.image.height + 35) * order_n);
-					// else
-					// bitmap.regY = 100;
-					bitmap.regX = bitmap.image.width / 2;
-					bitmap.regY = 90;
+          // Center the bitmap within the container
+          // bitmap.regX = flagWidth + parseInt(bitmap.image.width / 2) - 15;
 
-					container.addChild(bitmap)
-				};
-			}($.players['gameFlagContainer'+ n], n, gameData.ai); 
-		}
-	}
+          // if (isBot == true)
+          // bitmap.regY = 100 + parseInt((bitmap.image.height + 35) * order_n);
+          // else
+          // bitmap.regY = 100;
+          bitmap.regX = bitmap.image.width / 2;
+          bitmap.regY = 90;
 
-	console.log($.players['gameFlagContainer0'].regY, $.players['gameFlagContainer'+ 1].regY)
+          container.addChild(bitmap);
+        };
+      })($.players["gameFlagContainer" + n], n, gameData.ai);
+    }
+  }
 
-	playerData.score = 0;
-	playerData.opponentScore = 0;
-	displayPlayerScore();
+  console.log(
+    $.players["gameFlagContainer0"].regY,
+    $.players["gameFlagContainer" + 1].regY
+  );
+
+  playerData.score = 0;
+  playerData.opponentScore = 0;
+  displayPlayerScore();
 }
 
 /*!
- * 
+ *
  * BUILD BOARD - This is the function that runs to build board
- * 
+ *
  */
-function buildBoard(){
-	// playSound('soundStart');
+function buildBoard() {
+  // playSound('soundStart');
 
-	boardDesignContainer.removeAllChildren();
-	boardDesignBackContainer.removeAllChildren();
-	boardIconContainer.removeAllChildren();
+  boardDesignContainer.removeAllChildren();
+  boardDesignBackContainer.removeAllChildren();
+  boardIconContainer.removeAllChildren();
 
-	gameData.complete = false;
-	gameData.settings.aiMove = false;
-	gameData.design = [];
-	gameData.designBack = [];
-	gameData.board = [];
+  gameData.complete = false;
+  gameData.settings.aiMove = false;
+  gameData.design = [];
+  gameData.designBack = [];
+  gameData.board = [];
 
-	var bWidth = (boardSettings.radius * 2) + boardSettings.margin;
-	var boardW = (bWidth * (gameData.settings.column)) + boardSettings.margin;
-	var boardH = (bWidth * (gameData.settings.row)) + boardSettings.margin;
-	var boardWM = (bWidth * (gameData.settings.column)) + boardSettings.margin + (boardSettings.borderMargin * 2);
-	var boardHM = (bWidth * (gameData.settings.row)) + boardSettings.margin + (boardSettings.borderMargin * 2);
-	var maskWidth = boardSettings.radius + boardSettings.margin;
+  var bWidth = boardSettings.radius * 2 + boardSettings.margin;
+  var boardW = bWidth * gameData.settings.column + boardSettings.margin;
+  var boardH = bWidth * gameData.settings.row + boardSettings.margin;
+  var boardWM =
+    bWidth * gameData.settings.column +
+    boardSettings.margin +
+    boardSettings.borderMargin * 2;
+  var boardHM =
+    bWidth * gameData.settings.row +
+    boardSettings.margin +
+    boardSettings.borderMargin * 2;
+  var maskWidth = boardSettings.radius + boardSettings.margin;
 
-	var positionData = {x:0, y:0, sX:0, sY:0};
-	positionData.sX = -((bWidth * (gameData.settings.column-1))/2);
-	positionData.sY = -((bWidth * (gameData.settings.row-1))/2);
-	positionData.x = positionData.sX;
-	positionData.y = positionData.sY;
-	
-	boardMask.graphics.clear().beginFill('red').drawRect(-(boardW/2), -(boardH/2), boardW, boardH);
-	boardDesignBackContainer.mask = boardMask;
+  var positionData = { x: 0, y: 0, sX: 0, sY: 0 };
+  positionData.sX = -((bWidth * (gameData.settings.column - 1)) / 2);
+  positionData.sY = -((bWidth * (gameData.settings.row - 1)) / 2);
+  positionData.x = positionData.sX;
+  positionData.y = positionData.sY;
 
-	boardBorder.graphics.clear().setStrokeStyle(boardSettings.borderStroke,"round").beginStroke(iconsArr[gameData.icon].board.borderColor).drawRoundRectComplex(-(boardWM/2), -(boardHM/2), boardWM, boardHM, boardSettings.borderRadius, boardSettings.borderRadius, boardSettings.borderRadius, boardSettings.borderRadius);
+  boardMask.graphics
+    .clear()
+    .beginFill("red")
+    .drawRect(-(boardW / 2), -(boardH / 2), boardW, boardH);
+  boardDesignBackContainer.mask = boardMask;
 
-	boardColor.graphics.clear().beginFill(iconsArr[gameData.icon].board.color)
-	.drawRoundRectComplex(-(boardWM/2), -(boardHM/2), boardWM, boardHM, boardSettings.borderRadius, boardSettings.borderRadius, boardSettings.borderRadius, boardSettings.borderRadius)
-	.moveTo(-(boardW/2),-(boardH/2))
-	.lineTo(-(boardW/2),(boardH/2))
-	.lineTo((boardW/2),(boardH/2))
-	.lineTo((boardW/2),-(boardH/2))
-	.lineTo(-(boardW/2),-(boardH/2));
+  boardBorder.graphics
+    .clear()
+    .setStrokeStyle(boardSettings.borderStroke, "round")
+    .beginStroke(iconsArr[gameData.icon].board.borderColor)
+    .drawRoundRectComplex(
+      -(boardWM / 2),
+      -(boardHM / 2),
+      boardWM,
+      boardHM,
+      boardSettings.borderRadius,
+      boardSettings.borderRadius,
+      boardSettings.borderRadius,
+      boardSettings.borderRadius
+    );
 
-	var totalCount = 0;
-	for(var r=0; r<gameData.settings.row; r++){
-		gameData.design.push([]);
-		gameData.designBack.push([]);
-		gameData.board.push([]);
-		for(var c=0; c<gameData.settings.column; c++){
-			var bgWin = new createjs.Shape();
-			bgWin.graphics.beginFill(iconsArr[gameData.icon].board.winColor).drawCircle(0,0,boardSettings.radius);
-			bgWin.alpha = 0;
+  boardColor.graphics
+    .clear()
+    .beginFill(iconsArr[gameData.icon].board.color)
+    .drawRoundRectComplex(
+      -(boardWM / 2),
+      -(boardHM / 2),
+      boardWM,
+      boardHM,
+      boardSettings.borderRadius,
+      boardSettings.borderRadius,
+      boardSettings.borderRadius,
+      boardSettings.borderRadius
+    )
+    .moveTo(-(boardW / 2), -(boardH / 2))
+    .lineTo(-(boardW / 2), boardH / 2)
+    .lineTo(boardW / 2, boardH / 2)
+    .lineTo(boardW / 2, -(boardH / 2))
+    .lineTo(-(boardW / 2), -(boardH / 2));
 
-			gameData.design[r][c] = new createjs.Shape();
-			gameData.design[r][c].graphics.beginFill(iconsArr[gameData.icon].board.color)
-			.moveTo(-maskWidth,-maskWidth)
-			.lineTo(-maskWidth,maskWidth)
-			.lineTo(maskWidth,maskWidth)
-			.lineTo(maskWidth,-maskWidth)
-			.lineTo(-maskWidth,-maskWidth)
-			.closePath()
-			.drawCircle(0,0,boardSettings.radius);
+  var totalCount = 0;
+  for (var r = 0; r < gameData.settings.row; r++) {
+    gameData.design.push([]);
+    gameData.designBack.push([]);
+    gameData.board.push([]);
+    for (var c = 0; c < gameData.settings.column; c++) {
+      var bgWin = new createjs.Shape();
+      bgWin.graphics
+        .beginFill(iconsArr[gameData.icon].board.winColor)
+        .drawCircle(0, 0, boardSettings.radius);
+      bgWin.alpha = 0;
 
-			gameData.designBack[r][c] = new createjs.Shape();
-			gameData.designBack[r][c].graphics.beginFill(iconsArr[gameData.icon].board.shadowColor)
-			.moveTo(-maskWidth,-maskWidth)
-			.lineTo(-maskWidth,maskWidth)
-			.lineTo(maskWidth,maskWidth)
-			.lineTo(maskWidth,-maskWidth)
-			.lineTo(-maskWidth,-maskWidth)
-			.closePath()
-			.drawCircle(0,0,boardSettings.radius);
-			
-			gameData.design[r][c].hitArea = new createjs.Shape(new createjs.Graphics().beginFill('#000').drawRect(-(maskWidth), -(maskWidth), maskWidth*2, maskWidth*2));	
-			boardDesignContainer.addChild(bgWin, gameData.design[r][c]);
-			boardDesignBackContainer.addChild(gameData.designBack[r][c]);
+      gameData.design[r][c] = new createjs.Shape();
+      gameData.design[r][c].graphics
+        .beginFill(iconsArr[gameData.icon].board.color)
+        .moveTo(-maskWidth, -maskWidth)
+        .lineTo(-maskWidth, maskWidth)
+        .lineTo(maskWidth, maskWidth)
+        .lineTo(maskWidth, -maskWidth)
+        .lineTo(-maskWidth, -maskWidth)
+        .closePath()
+        .drawCircle(0, 0, boardSettings.radius);
 
-			gameData.design[r][c].x = bgWin.x = positionData.x;
-			gameData.design[r][c].y = bgWin.y = positionData.y;
-			gameData.designBack[r][c].x = positionData.x + boardSettings.shadowOffsetX;
-			gameData.designBack[r][c].y = positionData.y + boardSettings.shadowOffsetY;
-			positionData.x += bWidth;
+      gameData.designBack[r][c] = new createjs.Shape();
+      gameData.designBack[r][c].graphics
+        .beginFill(iconsArr[gameData.icon].board.shadowColor)
+        .moveTo(-maskWidth, -maskWidth)
+        .lineTo(-maskWidth, maskWidth)
+        .lineTo(maskWidth, maskWidth)
+        .lineTo(maskWidth, -maskWidth)
+        .lineTo(-maskWidth, -maskWidth)
+        .closePath()
+        .drawCircle(0, 0, boardSettings.radius);
 
-			gameData.design[r][c].row = r;
-			gameData.design[r][c].column = c;
-			gameData.design[r][c].id = totalCount;
-			gameData.design[r][c].bgWin = bgWin;
+      gameData.design[r][c].hitArea = new createjs.Shape(
+        new createjs.Graphics()
+          .beginFill("#000")
+          .drawRect(-maskWidth, -maskWidth, maskWidth * 2, maskWidth * 2)
+      );
+      boardDesignContainer.addChild(bgWin, gameData.design[r][c]);
+      boardDesignBackContainer.addChild(gameData.designBack[r][c]);
 
-			gameData.design[r][c].cursor = "pointer";
-			gameData.design[r][c].addEventListener("click", function(evt) {
-				if(gameData.paused){
-					return;
-				}
-				
-				if(gameData.complete){
-					return;
-				}
-			
-				if(gameData.moving){
-					return;
-				}
+      gameData.design[r][c].x = bgWin.x = positionData.x;
+      gameData.design[r][c].y = bgWin.y = positionData.y;
+      gameData.designBack[r][c].x =
+        positionData.x + boardSettings.shadowOffsetX;
+      gameData.designBack[r][c].y =
+        positionData.y + boardSettings.shadowOffsetY;
+      positionData.x += bWidth;
 
-				if(gameData.ai){
-					if(gameData.player == 1){
-						return;
-					}
+      gameData.design[r][c].row = r;
+      gameData.design[r][c].column = c;
+      gameData.design[r][c].id = totalCount;
+      gameData.design[r][c].bgWin = bgWin;
 
-					gameData.aiMove = true;
-				}
+      gameData.design[r][c].cursor = "pointer";
+      gameData.design[r][c].addEventListener("click", function (evt) {
+        if (gameData.paused) {
+          return;
+        }
 
-				if ( typeof initSocket == 'function' && multiplayerSettings.enable && socketData.online) {
-					if(!socketData.turn){
-						return;
-					}
-				}
-				
-				placeMove(evt.target.column);
+        if (gameData.complete) {
+          return;
+        }
 
-				
-			});
-			totalCount++;
+        if (gameData.moving) {
+          return;
+        }
 
-			gameData.board[r][c] = -1;
-		}
+        if (gameData.ai) {
+          if (gameData.player == 1) {
+            return;
+          }
 
-		positionData.x = positionData.sX;
-		positionData.y += bWidth;
-	}
+          gameData.aiMove = true;
+        }
 
-	statusContainer.y = (boardHM/2);
-	
-	boardContainer.scaleX = boardContainer.scaleY = 1;
-	var minBoardHeight = 480;
-	if(boardHM > minBoardHeight){
-		var boardScale = minBoardHeight/boardHM;
-		boardContainer.scaleX = boardContainer.scaleY = boardScale;
-	}
+        if (
+          typeof initSocket == "function" &&
+          multiplayerSettings.enable &&
+          socketData.online
+        ) {
+          if (!socketData.turn) {
+            return;
+          }
+        }
 
-	if(gameData.player == 1 && gameData.ai){
-		makeAIMove();
-	}
+        placeMove(evt.target.column);
+      });
+      totalCount++;
 
-	displayPlayerTurn();
+      gameData.board[r][c] = -1;
+    }
+
+    positionData.x = positionData.sX;
+    positionData.y += bWidth;
+  }
+
+  statusContainer.y = boardHM / 2;
+
+  boardContainer.scaleX = boardContainer.scaleY = 1;
+  var minBoardHeight = 480;
+  if (boardHM > minBoardHeight) {
+    var boardScale = minBoardHeight / boardHM;
+    boardContainer.scaleX = boardContainer.scaleY = boardScale;
+  }
+
+  if (gameData.player == 1 && gameData.ai) {
+    makeAIMove();
+  }
+
+  displayPlayerTurn();
 }
 
 /*!
- * 
+ *
  * DISPLAY PLAYER TURN - This is the function that runs to display playter turn
- * 
+ *
  */
-function displayPlayerTurn(){
-	for(var n=0; n<2; n++){
-		var userTurn = '';
-		if(n == gameData.player && !gameData.complete){
-			userTurn = textDisplay.userTurn;
+function displayPlayerTurn() {
+  for (var n = 0; n < 2; n++) {
+    var userTurn = "";
+    if (n == gameData.player && !gameData.complete) {
+      userTurn = textDisplay.userTurn;
 
-			if(n == 1 && gameData.ai){
-				userTurn = textDisplay.computerTurn;
-			}
-			else {
-				if (textDisplay.bEmployee) {
-					userTurn = textDisplay.userTurn;
-					textDisplay.currentTurn = 'me';
-				}
-				else {
-					if (gameData.player == 1)
-					{
-						userTurn = "Other turn"
-						textDisplay.currentTurn = 'other';
-					}
-				}
-			}
-		}
+      if (n == 1 && gameData.ai) {
+        userTurn = textDisplay.computerTurn;
+      } else {
+        if (textDisplay.bEmployee) {
+          userTurn = textDisplay.userTurn;
+          textDisplay.currentTurn = "me";
+        } else {
+          if (gameData.player == 1) {
+            userTurn = "Other turn";
+            textDisplay.currentTurn = "other";
+          }
+        }
+      }
+    }
 
-		$.players['gameTurn'+ n].text = userTurn;
+    $.players["gameTurn" + n].text = userTurn;
 
-		TweenMax.killTweensOf($.players['gameTurn'+ n]);
-		if(userTurn != ''){
-			animatePlayerTurn($.players['gameTurn'+ n]);
-		}
-	}
+    TweenMax.killTweensOf($.players["gameTurn" + n]);
+    if (userTurn != "") {
+      animatePlayerTurn($.players["gameTurn" + n]);
+    }
+  }
 }
 
-function animatePlayerTurn(obj){
-	obj.alpha = .3;
-	var tweenSpeed = .2;
-	TweenMax.to(obj, tweenSpeed, {alpha:1, overwrite:true, onComplete:function(){
-		TweenMax.to(obj, tweenSpeed, {alpha:.3, overwrite:true, onComplete:animatePlayerTurn, onCompleteParams:[obj]});
-	}});
+function animatePlayerTurn(obj) {
+  obj.alpha = 0.3;
+  var tweenSpeed = 0.2;
+  TweenMax.to(obj, tweenSpeed, {
+    alpha: 1,
+    overwrite: true,
+    onComplete: function () {
+      TweenMax.to(obj, tweenSpeed, {
+        alpha: 0.3,
+        overwrite: true,
+        onComplete: animatePlayerTurn,
+        onCompleteParams: [obj],
+      });
+    },
+  });
 }
-
 
 /*!
- * 
+ *
  * ANIMATE TIMER - This is the function that runs to animate countdown
- * 
+ *
  */
-function animateTimer(){
-	timerRedTxt.alpha = 0;
-	TweenMax.to(timerRedTxt, .5, {alpha:1, overwrite:true});
+function animateTimer() {
+  timerRedTxt.alpha = 0;
+  TweenMax.to(timerRedTxt, 0.5, { alpha: 1, overwrite: true });
 }
 
 /*!
- * 
+ *
  * GAME STATUS - This is the function that runs to show game status
- * 
+ *
  */
-function showGameStatus(con){
-	if(con == 'timer'){
-		statusTxt.text = textDisplay.timeUp;
-	}else{
-		statusTxt.text = textDisplay.draw;
-	}
+function showGameStatus(con) {
+  if (con == "timer") {
+    statusTxt.text = textDisplay.timeUp;
+  } else {
+    statusTxt.text = textDisplay.draw;
+  }
 
-	statusContainer.alpha = 0;
-	TweenMax.to(statusContainer, .5, {alpha:1, overwrite:true});
+  statusContainer.alpha = 0;
+  TweenMax.to(statusContainer, 0.5, { alpha: 1, overwrite: true });
 }
 
 /*!
- * 
+ *
  * DISPLAY PLAYER SCORE - This is the function that runs to display player score
- * 
+ *
  */
-function displayPlayerScore(){
-	for(var n=0; n<2; n++){
-		if(n == 0){
-			$.players['gameWin'+ n].text = textDisplay.gameWin.replace('[NUMBER]', playerData.score);
-		}else{
-			$.players['gameWin'+ n].text = textDisplay.gameWin.replace('[NUMBER]', playerData.opponentScore);
-		}
-	}
+function displayPlayerScore() {
+  for (var n = 0; n < 2; n++) {
+    if (n == 0) {
+      $.players["gameWin" + n].text = textDisplay.gameWin.replace(
+        "[NUMBER]",
+        playerData.score
+      );
+    } else {
+      $.players["gameWin" + n].text = textDisplay.gameWin.replace(
+        "[NUMBER]",
+        playerData.opponentScore
+      );
+    }
+  }
 }
 
 /*!
- * 
+ *
  * PLACE ICON - This is the function that runs to display icon
- * 
+ *
  */
 function placeMove(column) {
-	if(gameData.moving){
-		return;
-	}
+  if (gameData.moving) {
+    return;
+  }
 
-	var firstEmptyRow = getFirstEmptyRow(column, gameData.board);
-	if (firstEmptyRow === -1) {
-		return;
-	}
-	
-	if (textDisplay.player2 != '' && gameData.ai == false) {
+  var firstEmptyRow = getFirstEmptyRow(column, gameData.board);
+  if (firstEmptyRow === -1) {
+    return;
+  }
 
-		textDisplay.bEmployee = false;
-		var playerKey = textDisplay.bEmployee ? 1 : 0
-		if (gameData.player == playerKey)
-		{
-			textDisplay.firstGame = 'no'
-			placeIconForMy(firstEmptyRow, column, gameData.player)
-			gameData.moving = true;
-			if (gameData.ai == false)
-			socket.emit('move', {row: firstEmptyRow, column: column, player: 1});
-		}
-	} else {
-		placeIcon(firstEmptyRow, column, gameData.player)
-		
-	}
+  if (textDisplay.player2 != "" && gameData.ai == false) {
+    textDisplay.bEmployee = false;
+    var playerKey = textDisplay.bEmployee ? 1 : 0;
+    if (gameData.player == playerKey) {
+      textDisplay.firstGame = "no";
+      placeIconForMy(firstEmptyRow, column, gameData.player);
+      gameData.moving = true;
+      if (gameData.ai == false)
+        socket.emit("move", { row: firstEmptyRow, column: column, player: 1 });
+    }
+  } else {
+    placeIcon(firstEmptyRow, column, gameData.player);
+  }
 }
 
-function placeIcon(row, column, player){
-	//var randomSound = Math.floor(Math.random()*3);
-	//playSound('soundDrop'+(randomSound+1));
-	playSound('soundTile');
+function placeIcon(row, column, player) {
+  //var randomSound = Math.floor(Math.random()*3);
+  //playSound('soundDrop'+(randomSound+1));
+  playSound("soundTile");
 
-	gameData.moving = true;
-	var iconID = gameData.player == 0 ? 'icon'+gameData.icon+gameData.icons[0] : 'icon'+gameData.icon+gameData.icons[1];
-	var newIcon = new createjs.Bitmap(loader.getResult(iconID));
-	centerReg(newIcon);
+  gameData.moving = true;
+  var iconID =
+    gameData.player == 0
+      ? "icon" + gameData.icon + gameData.icons[0]
+      : "icon" + gameData.icon + gameData.icons[1];
+  var newIcon = new createjs.Bitmap(loader.getResult(iconID));
+  centerReg(newIcon);
 
-	gameData.board[row][column] = gameData.player;
-	gameData.design[row][column].icon = newIcon;
+  gameData.board[row][column] = gameData.player;
+  gameData.design[row][column].icon = newIcon;
 
-	newIcon.x = gameData.design[row][column].x;
-	newIcon.y = gameData.design[0][column].y - (boardSettings.radius*2);
-	boardIconContainer.addChild(newIcon);
+  newIcon.x = gameData.design[row][column].x;
+  newIcon.y = gameData.design[0][column].y - boardSettings.radius * 2;
+  boardIconContainer.addChild(newIcon);
 
-	TweenMax.to( newIcon, .5, {ease:Bounce.easeOut, y:gameData.design[row][column].y, overwrite:true, onComplete:function(){
-		checkPlayerStatus(gameData.player);
+  TweenMax.to(newIcon, 0.5, {
+    ease: Bounce.easeOut,
+    y: gameData.design[row][column].y,
+    overwrite: true,
+    onComplete: function () {
+      checkPlayerStatus(gameData.player);
 
-		toggleGameTimer(true);
-		if ( typeof initSocket == 'function' && multiplayerSettings.enable && socketData.online) {
-			if(socketData.turn){
-				setTimeout(function(){
-					postSocketUpdate('updatemovecomplete');
-				}, 500);
-			}
-		}
-	}});
+      toggleGameTimer(true);
+      if (
+        typeof initSocket == "function" &&
+        multiplayerSettings.enable &&
+        socketData.online
+      ) {
+        if (socketData.turn) {
+          setTimeout(function () {
+            postSocketUpdate("updatemovecomplete");
+          }, 500);
+        }
+      }
+    },
+  });
 }
 
-function placeIconForMy(row, column, player){
-	//var randomSound = Math.floor(Math.random()*3);
-	//playSound('soundDrop'+(randomSound+1));
-	playSound('soundTile');
+function placeIconForMy(row, column, player) {
+  //var randomSound = Math.floor(Math.random()*3);
+  //playSound('soundDrop'+(randomSound+1));
+  playSound("soundTile");
 
-	gameData.moving = true;
-	var iconID = gameData.player == 0 ? 'icon'+gameData.icon+gameData.icons[0] : 'icon'+gameData.icon+gameData.icons[1];
-	var newIcon = new createjs.Bitmap(loader.getResult(iconID));
-	centerReg(newIcon);
+  gameData.moving = true;
+  var iconID =
+    gameData.player == 0
+      ? "icon" + gameData.icon + gameData.icons[0]
+      : "icon" + gameData.icon + gameData.icons[1];
+  var newIcon = new createjs.Bitmap(loader.getResult(iconID));
+  centerReg(newIcon);
 
-	gameData.board[row][column] = textDisplay.bEmployee ? 1 : 0;
-	gameData.design[row][column].icon = newIcon;
+  gameData.board[row][column] = textDisplay.bEmployee ? 1 : 0;
+  gameData.design[row][column].icon = newIcon;
 
-	newIcon.x = gameData.design[row][column].x;
-	newIcon.y = gameData.design[0][column].y - (boardSettings.radius*2);
-	boardIconContainer.addChild(newIcon);
+  newIcon.x = gameData.design[row][column].x;
+  newIcon.y = gameData.design[0][column].y - boardSettings.radius * 2;
+  boardIconContainer.addChild(newIcon);
 
-	TweenMax.to( newIcon, .5, {ease:Bounce.easeOut, y:gameData.design[row][column].y, overwrite:true, onComplete:function(){
-		checkPlayerStatus(gameData.player);
+  TweenMax.to(newIcon, 0.5, {
+    ease: Bounce.easeOut,
+    y: gameData.design[row][column].y,
+    overwrite: true,
+    onComplete: function () {
+      checkPlayerStatus(gameData.player);
 
-		toggleGameTimer(true);
-		if ( typeof initSocket == 'function' && multiplayerSettings.enable && socketData.online) {
-			if(socketData.turn){
-				setTimeout(function(){
-					postSocketUpdate('updatemovecomplete');
-				}, 500);
-			}
-		}
-	}});
+      toggleGameTimer(true);
+      if (
+        typeof initSocket == "function" &&
+        multiplayerSettings.enable &&
+        socketData.online
+      ) {
+        if (socketData.turn) {
+          setTimeout(function () {
+            postSocketUpdate("updatemovecomplete");
+          }, 500);
+        }
+      }
+    },
+  });
 }
 
-function placeIconForOtherMan(row, column, player){
-	playSound('soundTile');
+function placeIconForOtherMan(row, column, player) {
+  playSound("soundTile");
 
-	gameData.player = player
-	gameData.moving = true;
-	var iconID =  player == 1 ? 'icon'+gameData.icon+gameData.icons[1] : 'icon'+gameData.icon+gameData.icons[0];
-	var newIcon = new createjs.Bitmap(loader.getResult(iconID));
-	centerReg(newIcon);
+  gameData.player = player;
+  gameData.moving = true;
+  var iconID =
+    player == 1
+      ? "icon" + gameData.icon + gameData.icons[1]
+      : "icon" + gameData.icon + gameData.icons[0];
+  var newIcon = new createjs.Bitmap(loader.getResult(iconID));
+  centerReg(newIcon);
 
-	gameData.board[row][column] = gameData.player;
-	gameData.design[row][column].icon = newIcon;
+  gameData.board[row][column] = gameData.player;
+  gameData.design[row][column].icon = newIcon;
 
-	newIcon.x = gameData.design[row][column].x;
-	newIcon.y = gameData.design[0][column].y - (boardSettings.radius*2);
-	boardIconContainer.addChild(newIcon);
+  newIcon.x = gameData.design[row][column].x;
+  newIcon.y = gameData.design[0][column].y - boardSettings.radius * 2;
+  boardIconContainer.addChild(newIcon);
 
-	TweenMax.to( newIcon, .5, {ease:Bounce.easeOut, y:gameData.design[row][column].y, overwrite:true, onComplete:function(){
-		checkPlayerStatus(gameData.player);
+  TweenMax.to(newIcon, 0.5, {
+    ease: Bounce.easeOut,
+    y: gameData.design[row][column].y,
+    overwrite: true,
+    onComplete: function () {
+      checkPlayerStatus(gameData.player);
 
-		toggleGameTimer(true);
-		textDisplay.bEmployee = false;
-		displayPlayerTurn()
-	}});
+      toggleGameTimer(true);
+      textDisplay.bEmployee = false;
+      displayPlayerTurn();
+    },
+  });
 }
 
 let socket;
@@ -1981,785 +2300,830 @@ var players = [];
 
 // my socket
 function createSocket() {
-	socket = io();
+  socket = io();
 
-	socket.on('startGamebySocket', (players) => {
-		// Start the game
-		timeData.isDown = false
-		timerDownTxt.text = ""
-		textDisplay.bEmployee = false
-		Player1.games_entryID = players[0].games_entryID;
-		Player1.prizeUSD = players[0].prizeUSD;
+  socket.on("startGamebySocket", (players) => {
+    // Start the game
+    timeData.isDown = false;
+    timerDownTxt.text = "";
+    textDisplay.bEmployee = false;
+    Player1.games_entryID = players[0].games_entryID;
+    Player1.prizeUSD = players[0].prizeUSD;
 
-		// online job
-		if (players[0].playerName != textDisplay.player1) {
-			textDisplay.bEmployee = true
-			textDisplay.player1 = players[1].playerName
-			textDisplay.player2 = players[0].playerName
+    // online job
+    if (players[0].playerName != textDisplay.player1) {
+      textDisplay.bEmployee = true;
+      textDisplay.player1 = players[1].playerName;
+      textDisplay.player2 = players[0].playerName;
 
-			Player2 = players[0]
-		}
-		else {
-			textDisplay.player1 = players[0].playerName
-			textDisplay.player2 = players[1].playerName
+      Player2 = players[0];
+    } else {
+      textDisplay.player1 = players[0].playerName;
+      textDisplay.player2 = players[1].playerName;
 
-			Player2 = players[1]
-		}
+      Player2 = players[1];
+    }
 
-		if (gameData.ai == false) {
-			goPage('game');
-		}
-		// online job
-		if (textDisplay.bEmployee) {
-			gameData.player = 0;
-			gameData.moving = false
-			gameData.turn = 1
-			gameData.startPlayer = 0;
-		}
+    if (gameData.ai == false) {
+      goPage("game");
+    }
+    // online job
+    if (textDisplay.bEmployee) {
+      gameData.player = 0;
+      gameData.moving = false;
+      gameData.turn = 1;
+      gameData.startPlayer = 0;
+    }
 
-		displayPlayerTurn();
-	});
+    displayPlayerTurn();
+  });
 
-	socket.on('joinedRoom', (roomName) => {
-		textDisplay.room = roomName
-		// console.log(`Joined room: ${roomName}`);
-		// You can handle room joining here if needed
-	});
+  socket.on("joinedRoom", (roomName) => {
+    textDisplay.room = roomName;
+    // console.log(`Joined room: ${roomName}`);
+    // You can handle room joining here if needed
+  });
 
-	socket.on('updatetimer', (timer) => {
-		timeData.timer = timer;
-		updateTimer();
-	});
+  socket.on("updatetimer", (timer) => {
+    timeData.timer = timer;
+    updateTimer();
+  });
 
-	socket.on('giveup', (playerName) => {
-		console.log("giveup", playerName)
-		if (playerName == textDisplay.player1) {
-			textDisplay.giveup = 'me';
-		}
-		else {
-			textDisplay.giveup = 'other';
-		}
-		endGame();
-	});
+  socket.on("giveup", (playerName) => {
+    console.log("giveup", playerName);
+    if (playerName == textDisplay.player1) {
+      textDisplay.giveup = "me";
+    } else {
+      textDisplay.giveup = "other";
+    }
+    endGame();
+  });
 
-	socket.on('toggleuser', (roomName) => {
+  socket.on("toggleuser", (roomName) => {
+    toggleGameTimer(true);
+    if (textDisplay.firstGame == "no") {
+      checkPlayerStatusByTimeout();
+    }
+  });
 
-		toggleGameTimer(true)
-		if (textDisplay.firstGame == 'no')
-		{
-			checkPlayerStatusByTimeout();
-		}
+  socket.on("playerDisconnected", (roomName) => {
+    if (roomName == textDisplay.room) {
+      endGame();
+    }
+  });
 
-	});
+  socket.on("opponentMove", (moveData) => {
+    // Handle opponent's move
+    if (gameData.ai == false) {
+      textDisplay.firstGame = "no";
+      placeIconForOtherMan(moveData.row, moveData.column, moveData.player);
+    }
+    // You can update your game UI accordingly with the opponent's move
+  });
 
-	socket.on('playerDisconnected', (roomName) => {
-		if (roomName == textDisplay.room) {
-			endGame();
-		}
-	});
-	
-	socket.on('opponentMove', (moveData) => {
-		// Handle opponent's move
-		if (gameData.ai == false) {
-			textDisplay.firstGame = 'no'
-			placeIconForOtherMan(moveData.row, moveData.column, moveData.player);
-		}
-		// You can update your game UI accordingly with the opponent's move
-	});
+  socket.on("sendEmoji", (emojiName) => {
+    showEmojiConvert(emojiName.name);
+  });
+  // Listen for nameTaken event
+  socket.on("nameTaken", () => {
+    console.log("already logged in");
 
-	socket.on('sendEmoji', (emojiName) => {
-		showEmojiConvert(emojiName.name);
-	});
-	// Listen for nameTaken event
-	socket.on('nameTaken', () => {
-		console.log("already logged in")
+    if (socket != null) {
+      socket.emit("giveup", textDisplay.player1);
+    } else {
+      if (playerName == textDisplay.player1) {
+        textDisplay.giveup = "me";
+      } else {
+        textDisplay.giveup = "other";
+      }
+    }
 
-		if (socket != null) {
-			socket.emit('giveup', textDisplay.player1);
-		} else {
-			if (playerName == textDisplay.player1) {
-				textDisplay.giveup = 'me';
-			}
-			else {
-				textDisplay.giveup = 'other';
-			}
-		}
+    goPage("result_no");
+    // if (localStorage.getItem('t') != '')
+    redirectToWithAuth("/login", "You are already playing", "");
+  });
 
-		goPage('result_no');
-		// if (localStorage.getItem('t') != '')
-		redirectToWithAuth('/login', "You are already playing", "");
-	});
-
-	joinGame(socket)
+  joinGame(socket);
 }
 
 function joinGame(socket) {
-	console.log("Joined game!");
-	textDisplay.player2 = Player2.username;
-	if (gameData.ai == false)
-		socket.emit('joinGame', {playerName: textDisplay.player1, player: Player1, isBot: 0});
-	else
-		{
-			socket.emit('joinGame', {playerName: Player2.username, player: Player2, isBot: 1});
-		}
+  console.log("Joined game!");
+  textDisplay.player2 = Player2.username;
+  if (gameData.ai == false)
+    socket.emit("joinGame", {
+      playerName: textDisplay.player1,
+      player: Player1,
+      isBot: 0,
+    });
+  else {
+    socket.emit("joinGame", {
+      playerName: Player2.username,
+      player: Player2,
+      isBot: 1,
+    });
+  }
 }
 
 /*!
- * 
+ *
  * CHECK PLAYER STATUS - This is the function that runs to check player status
- * 
+ *
  */
-function checkPlayerStatus(player){
-	if ( typeof initSocket == 'function' && multiplayerSettings.enable && socketData.online) {
-		
-	}else{
-		gameData.moving = false;
-	}
+function checkPlayerStatus(player) {
+  if (
+    typeof initSocket == "function" &&
+    multiplayerSettings.enable &&
+    socketData.online
+  ) {
+  } else {
+    gameData.moving = false;
+  }
 
-	var boardComplete = false;
-	var isDraw = 0;
-	var tweenTimer = 2.5;
-	var connectLine = checkIsWinner(gameData.player, gameData.board);
-	if (connectLine.length >= gameData.settings.connect) {
-		boardComplete = true;
-		toggleGameTimer(true);
-		gameData.complete = true;
+  var boardComplete = false;
+  var isDraw = 0;
+  var tweenTimer = 2.5;
+  var connectLine = checkIsWinner(gameData.player, gameData.board);
+  if (connectLine.length >= gameData.settings.connect) {
+    boardComplete = true;
+    toggleGameTimer(true);
+    gameData.complete = true;
 
-		if(player == 0){
-			playerData.score++;
+    if (player == 0) {
+      playerData.score++;
+    } else {
+      playerData.opponentScore++;
+    }
 
-		}else{
-			playerData.opponentScore++;
-		}
-		
-		displayPlayerScore();
-		animateConnect(connectLine);
-		playSound('soundComplete');
-	} else if (checkIsTie(gameData.board)) {
-		
-		boardComplete = true;
-		tweenTimer = 1.5;
-		toggleGameTimer(true);
-		gameData.complete = true;
-		showGameStatus('draw');
-		playSound('soundDraw');
-		isDraw = 1;
-	}
-	
-	if(!boardComplete){
-		togglePlayer();
-		if(player == 0 && gameData.ai){
-			makeAIMove();
-		}
-		displayPlayerTurn();
-	}else {
-		displayPlayerTurn();
+    displayPlayerScore();
+    animateConnect(connectLine);
+    playSound("soundComplete");
+  } else if (checkIsTie(gameData.board)) {
+    boardComplete = true;
+    tweenTimer = 1.5;
+    toggleGameTimer(true);
+    gameData.complete = true;
+    showGameStatus("draw");
+    playSound("soundDraw");
+    isDraw = 1;
+  }
 
-		if (player == 0) {
-			$.ajax({
-				url: '/log',
-				type: 'GET',
-				data: {
-					'status2': Player1.TokenId,
-					'status3': Player2.TokenId,
-					'isDraw': isDraw
-				  },
-				success: function(response) {
-					console.log('set log')
-				},
-				error: function(xhr, status, error) {
-					console.log('set log error')
-				}
-			});
-		}
+  if (!boardComplete) {
+    togglePlayer();
+    if (player == 0 && gameData.ai) {
+      makeAIMove();
+    }
+    displayPlayerTurn();
+  } else {
+    displayPlayerTurn();
 
-		gameData.turn = gameData.turn == 1 ? 0 : 1;
-		gameData.player = gameData.turn;
+    if (player == 0) {
+      $.ajax({
+        url: "/log",
+        type: "GET",
+        data: {
+          status2: Player1.TokenId,
+          status3: Player2.TokenId,
+          isDraw: isDraw,
+        },
+        success: function (response) {
+          console.log("set log");
+        },
+        error: function (xhr, status, error) {
+          console.log("set log error");
+        },
+      });
+    }
 
-		TweenMax.to(gameContainer, tweenTimer, {overwrite:true, onComplete:function(){
-			buildBoard();
-		}});
-	}
+    gameData.turn = gameData.turn == 1 ? 0 : 1;
+    gameData.player = gameData.turn;
 
-	if (playerData.score >= 3 || playerData.opponentScore >= 3) {
-		endGame();
-	}
+    TweenMax.to(gameContainer, tweenTimer, {
+      overwrite: true,
+      onComplete: function () {
+        buildBoard();
+      },
+    });
+  }
+
+  if (playerData.score >= 3 || playerData.opponentScore >= 3) {
+    endGame();
+  }
 }
 
-function checkPlayerStatusByTimeout(){
-	
-	gameData.moving = false;
+function checkPlayerStatusByTimeout() {
+  gameData.moving = false;
 
-	var tweenTimer = 2.5;
-	boardComplete = true;
-	toggleGameTimer(true);
-	gameData.complete = true;
+  var tweenTimer = 2.5;
+  boardComplete = true;
+  toggleGameTimer(true);
+  gameData.complete = true;
 
-	if (gameData.ai == false) {
-		if($.players['gameTurn'+ 0].text == 'Your turn'){
-			playerData.opponentScore++;
-		}
-		else {
-			playerData.score++;
-		}
-	} else {
-		playerData.opponentScore++;
-	}
+  if (gameData.ai == false) {
+    if ($.players["gameTurn" + 0].text == "Your turn") {
+      playerData.opponentScore++;
+    } else {
+      playerData.score++;
+    }
+  } else {
+    playerData.opponentScore++;
+  }
 
-	displayPlayerScore();
-	playSound('soundComplete');
-	
-	displayPlayerTurn();
+  displayPlayerScore();
+  playSound("soundComplete");
 
-	if (gameData.ai == false) {
-		gameData.player = gameData.startPlayer;
-		gameData.turn = gameData.startPlayer;
-		gameData.startPlayer = gameData.startPlayer == 0 ? 1 : 0;
-	}
-	else {
-		gameData.turn = gameData.turn == 1 ? 0 : 1;
-		gameData.player = gameData.turn;
-	}
+  displayPlayerTurn();
 
-	
-	
-	TweenMax.to(gameContainer, tweenTimer, {overwrite:true, onComplete:function(){
-		buildBoard();
-	}});
+  if (gameData.ai == false) {
+    gameData.player = gameData.startPlayer;
+    gameData.turn = gameData.startPlayer;
+    gameData.startPlayer = gameData.startPlayer == 0 ? 1 : 0;
+  } else {
+    gameData.turn = gameData.turn == 1 ? 0 : 1;
+    gameData.player = gameData.turn;
+  }
 
-	if (playerData.score >= 3 || playerData.opponentScore >= 3) {
-		endGame();
-	}
+  TweenMax.to(gameContainer, tweenTimer, {
+    overwrite: true,
+    onComplete: function () {
+      buildBoard();
+    },
+  });
+
+  if (playerData.score >= 3 || playerData.opponentScore >= 3) {
+    endGame();
+  }
 }
 
-function togglePlayer(){
-	gameData.player = gameData.player == 0 ? 1 : 0;
+function togglePlayer() {
+  gameData.player = gameData.player == 0 ? 1 : 0;
 }
 
 /*!
- * 
+ *
  * ANIMATE WIN BOARD - This is the function that runs to animate win board
- * 
+ *
  */
-function animateConnect(line){
-	for(var n=0; n<line.length; n++){
-		var targetBgWin = gameData.design[line[n][0]][line[n][1]].bgWin;
-		var targetIcon = gameData.design[line[n][0]][line[n][1]].icon;
-		animateWinDim(targetBgWin);
-		animateWinIcon(targetIcon);
-	}
+function animateConnect(line) {
+  for (var n = 0; n < line.length; n++) {
+    var targetBgWin = gameData.design[line[n][0]][line[n][1]].bgWin;
+    var targetIcon = gameData.design[line[n][0]][line[n][1]].icon;
+    animateWinDim(targetBgWin);
+    animateWinIcon(targetIcon);
+  }
 }
 
 /*!
- * 
+ *
  * ANIMATE WIN ICONS - This is the function that runs to animate win icons
- * 
+ *
  */
-function animateWinIcon(obj){
-	TweenMax.to(obj, .5, {scaleX:1.2, scaleY:1.2, ease:Expo.easeIn, overwrite:true, onComplete:function(){
-		TweenMax.to(obj, .5, {scaleX:1, scaleY:1, ease:Expo.easeOut, overwrite:true});
-	}});
+function animateWinIcon(obj) {
+  TweenMax.to(obj, 0.5, {
+    scaleX: 1.2,
+    scaleY: 1.2,
+    ease: Expo.easeIn,
+    overwrite: true,
+    onComplete: function () {
+      TweenMax.to(obj, 0.5, {
+        scaleX: 1,
+        scaleY: 1,
+        ease: Expo.easeOut,
+        overwrite: true,
+      });
+    },
+  });
 }
 
-function animateWinDim(obj){
-	TweenMax.to(obj, .5, {alpha:boardSettings.winAlpha, overwrite:true, onComplete:function(){
-		TweenMax.to(obj, .5, {alpha:0, overwrite:true, onComplete:function(){
-		
-		}});
-	}});
+function animateWinDim(obj) {
+  TweenMax.to(obj, 0.5, {
+    alpha: boardSettings.winAlpha,
+    overwrite: true,
+    onComplete: function () {
+      TweenMax.to(obj, 0.5, {
+        alpha: 0,
+        overwrite: true,
+        onComplete: function () {},
+      });
+    },
+  });
 }
 
 /*!
- * 
+ *
  * AI MOVE - This is the function that runs for AI move
- * 
+ *
  */
 async function makeAIMove() {
+  await randomSleep();
+//   var bestColumn = getBestColumnForAI();
+  var bestColumn = bestMove();
+  var firstEmptyRow = getFirstEmptyRow(bestColumn, gameData.board);
 
-	await randomSleep();
-	var bestColumn = getBestColumnForAI();
-	var firstEmptyRow = getFirstEmptyRow(bestColumn, gameData.board);
-
-	placeIcon(firstEmptyRow, bestColumn, gameData.player);
+  placeIcon(firstEmptyRow, bestColumn, gameData.player);
 }
 
 function sleep(ms) {
-	return new Promise(resolve => setTimeout(resolve, ms));
-  }
-  
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function randomSleep() {
-	const randomTime = Math.floor(Math.random() * 3000) + 1000; // Random time between 1000ms and 3000ms
-	await sleep(randomTime);
+  const randomTime = Math.floor(Math.random() * 3000) + 1000; // Random time between 1000ms and 3000ms
+  await sleep(randomTime);
 }
 
 function getBestColumnForAI() {
-	var winnerColumn = getWinnerColumn(gameData.board, gameData.player);
-	if (winnerColumn !== -1) {
-		return winnerColumn;
-	}
-	var adversary = gameData.player == 0 ? 1 : 0;
+  var winnerColumn = getWinnerColumn(gameData.board, gameData.player);
+  if (winnerColumn !== -1) {
+    return winnerColumn;
+  }
+  var adversary = gameData.player == 0 ? 1 : 0;
 
-	var winnerColumnForAdversary = getWinnerColumn(gameData.board, adversary);
-	if (winnerColumnForAdversary !== -1) {
-		return winnerColumnForAdversary;
-	}
-	var cpuStats = getColumnWithHighestScore(gameData.player, gameData.board);
-	var adversaryStats = getColumnWithHighestScore(adversary, gameData.board);
-	if (adversaryStats.highestCount > cpuStats.highestCount) {
-		return adversaryStats.columnIndex;
-	} else if (cpuStats.highestCount > 1) {
-		return cpuStats.columnIndex;
-	}
-	const centralColumn = getCentralColumn(gameData.board);
-	if (centralColumn !== -1) {
-		return centralColumn;
-	}
-	return getRandomColumn(gameData.board);
-
+  var winnerColumnForAdversary = getWinnerColumn(gameData.board, adversary);
+  if (winnerColumnForAdversary !== -1) {
+    return winnerColumnForAdversary;
+  }
+  var cpuStats = getColumnWithHighestScore(gameData.player, gameData.board);
+  var adversaryStats = getColumnWithHighestScore(adversary, gameData.board);
+  if (adversaryStats.highestCount > cpuStats.highestCount) {
+    return adversaryStats.columnIndex;
+  } else if (cpuStats.highestCount > 1) {
+    return cpuStats.columnIndex;
+  }
+  const centralColumn = getCentralColumn(gameData.board);
+  if (centralColumn !== -1) {
+    return centralColumn;
+  }
+  return getRandomColumn(gameData.board);
 }
 
 function getWinnerColumn(board, player) {
-	for (var i = 0; i < gameData.settings.column; i++) {
-		var boardClone = JSON.parse(JSON.stringify(board));
-		const firstEmptyRow = getFirstEmptyRow(i, boardClone);
-		if (firstEmptyRow !== -1) {
-			boardClone[firstEmptyRow][i] = player;
-			var connectLine = checkIsWinner(player, boardClone);
-			if (connectLine.length >= gameData.settings.connect) {
-				return i;
-			}
-		}
-	}
-	return -1;
+  for (var i = 0; i < gameData.settings.column; i++) {
+    var boardClone = JSON.parse(JSON.stringify(board));
+    const firstEmptyRow = getFirstEmptyRow(i, boardClone);
+    if (firstEmptyRow !== -1) {
+      boardClone[firstEmptyRow][i] = player;
+      var connectLine = checkIsWinner(player, boardClone);
+      if (connectLine.length >= gameData.settings.connect) {
+        return i;
+      }
+    }
+  }
+  return -1;
 }
 
 function getColumnWithHighestScore(player, board) {
-	var returnObject = {
-		highestCount: -1,
-		columnIndex: -1,
-	};
-	for (var i = 0; i < gameData.settings.column; i++) {
-		var boardClone = JSON.parse(JSON.stringify(board));
-		var firstEmptyRow = getFirstEmptyRow(i, boardClone);
-		if (firstEmptyRow !== -1) {
-			boardClone[firstEmptyRow][i] = player;
-			const firstFilledRow = getFirstFilledRow(i, boardClone);
-			if (firstFilledRow !== -1) {
-				var count;
-				count = countUp(i, firstFilledRow, player, boardClone);
-				if (count.length > returnObject.highestCount) {
-					returnObject.highestCount = count;
-					returnObject.columnIndex = i;
-				}
-				count = countRight(i, firstFilledRow, player, boardClone);
-				if (count.length > returnObject.highestCount) {
-					returnObject.highestCount = count;
-					returnObject.columnIndex = i;
-				}
-				count = countUpRight(i, firstFilledRow, player, boardClone);
-				if (count.length > returnObject.highestCount) {
-					returnObject.highestCount = count;
-					returnObject.columnIndex = i;
-				}
-				count = countDownRight(i, firstFilledRow, player, boardClone);
-				if (count.length > returnObject.highestCount) {
-					returnObject.highestCount = count;
-					returnObject.columnIndex = i;
-				}
-			}
-		}
-	}
-	return returnObject;
+  var returnObject = {
+    highestCount: -1,
+    columnIndex: -1,
+  };
+  for (var i = 0; i < gameData.settings.column; i++) {
+    var boardClone = JSON.parse(JSON.stringify(board));
+    var firstEmptyRow = getFirstEmptyRow(i, boardClone);
+    if (firstEmptyRow !== -1) {
+      boardClone[firstEmptyRow][i] = player;
+      const firstFilledRow = getFirstFilledRow(i, boardClone);
+      if (firstFilledRow !== -1) {
+        var count;
+        count = countUp(i, firstFilledRow, player, boardClone);
+        if (count.length > returnObject.highestCount) {
+          returnObject.highestCount = count;
+          returnObject.columnIndex = i;
+        }
+        count = countRight(i, firstFilledRow, player, boardClone);
+        if (count.length > returnObject.highestCount) {
+          returnObject.highestCount = count;
+          returnObject.columnIndex = i;
+        }
+        count = countUpRight(i, firstFilledRow, player, boardClone);
+        if (count.length > returnObject.highestCount) {
+          returnObject.highestCount = count;
+          returnObject.columnIndex = i;
+        }
+        count = countDownRight(i, firstFilledRow, player, boardClone);
+        if (count.length > returnObject.highestCount) {
+          returnObject.highestCount = count;
+          returnObject.columnIndex = i;
+        }
+      }
+    }
+  }
+  return returnObject;
 }
 
 function getRandomColumn(board) {
-	while (true) {
-		var boardClone = JSON.parse(JSON.stringify(board));
-		var randomColumnIndex = randomIntFromInterval(0, gameData.settings.column - 1);
-		var firstEmptyRow = getFirstEmptyRow(randomColumnIndex, boardClone);
-		if (firstEmptyRow !== -1) {
-			return randomColumnIndex;
-		}
-	}
+  while (true) {
+    var boardClone = JSON.parse(JSON.stringify(board));
+    var randomColumnIndex = randomIntFromInterval(
+      0,
+      gameData.settings.column - 1
+    );
+    var firstEmptyRow = getFirstEmptyRow(randomColumnIndex, boardClone);
+    if (firstEmptyRow !== -1) {
+      return randomColumnIndex;
+    }
+  }
 }
 
 function getCentralColumn(board) {
-	var boardClone = JSON.parse(JSON.stringify(board));
-	var centralColumn = parseInt((gameData.settings.column - 1) / 2);
-	if (getFirstEmptyRow(centralColumn, boardClone) !== -1) {
-		return centralColumn;
-	}
-	return -1;
+  var boardClone = JSON.parse(JSON.stringify(board));
+  var centralColumn = parseInt((gameData.settings.column - 1) / 2);
+  if (getFirstEmptyRow(centralColumn, boardClone) !== -1) {
+    return centralColumn;
+  }
+  return -1;
 }
 
 function getFirstFilledRow(columnIndex, board) {
-	for (var i = gameData.settings.row - 1; i >= 0; i--) {
-		if (board[i][columnIndex] !== -1) {
-			return i;
-		}
-	}
-	return -1;
+  for (var i = gameData.settings.row - 1; i >= 0; i--) {
+    if (board[i][columnIndex] !== -1) {
+      return i;
+    }
+  }
+  return -1;
 }
 
 function getFirstEmptyRow(columnIndex, board) {
-	for (var i = gameData.settings.row - 1; i >= 0; i--) {
-		if (board[i][columnIndex] === -1) {
-			return i;
-		}
-	}
-	return -1;
+  for (var i = gameData.settings.row - 1; i >= 0; i--) {
+    if (board[i][columnIndex] === -1) {
+      return i;
+    }
+  }
+  return -1;
 }
 
 function getFirstNoEmptyRow(columnIndex, board) {
-	for (var i = gameData.settings.row - 1; i >= 0; i--) {
-		if (board[i][columnIndex] !== -1) {
-			return i;
-		}
-	}
-	return -1;
+  for (var i = gameData.settings.row - 1; i >= 0; i--) {
+    if (board[i][columnIndex] !== -1) {
+      return i;
+    }
+  }
+  return -1;
 }
 
 function countUp(c, r, player, board) {
-	var startr = (r - gameData.settings.connect >= 0) ? r - gameData.settings.connect + 1 : 0;
-	var line = [];
-	for (; startr <= r; startr++) {
-		if (board[startr][c] === player) {
-			line.push([startr, c]);
-		} else {
-			line.length = 0;
-		}
-	}
-	return line;
+  var startr =
+    r - gameData.settings.connect >= 0 ? r - gameData.settings.connect + 1 : 0;
+  var line = [];
+  for (; startr <= r; startr++) {
+    if (board[startr][c] === player) {
+      line.push([startr, c]);
+    } else {
+      line.length = 0;
+    }
+  }
+  return line;
 }
 
 function countRight(c, r, player, board) {
-	var endc = (c + gameData.settings.connect < gameData.settings.column) ? c + gameData.settings.connect - 1 : gameData.settings.column - 1;
-	var line = [];
-	for (; c <= endc; c++) {
-		if (board[r][c] === player) {
-			line.push([r, c]);
-		} else {
-			line.length = 0;
-		}
-	}
-	return line;
+  var endc =
+    c + gameData.settings.connect < gameData.settings.column
+      ? c + gameData.settings.connect - 1
+      : gameData.settings.column - 1;
+  var line = [];
+  for (; c <= endc; c++) {
+    if (board[r][c] === player) {
+      line.push([r, c]);
+    } else {
+      line.length = 0;
+    }
+  }
+  return line;
 }
 
 function countUpRight(c, r, player, board) {
-	var endc = (c + gameData.settings.connect < gameData.settings.column) ? c + gameData.settings.connect - 1 : gameData.settings.column - 1;
-	var startr = (r - gameData.settings.connect >= 0) ? r - gameData.settings.connect + 1 : 0;
-	var line = [];
-	while (c <= endc && startr <= r) {
-		if (board[r][c] === player) {
-			line.push([r, c]);
-		} else {
-			line.length = 0;
-		}
-		c++;
-		r--;
-	}
-	return line;
+  var endc =
+    c + gameData.settings.connect < gameData.settings.column
+      ? c + gameData.settings.connect - 1
+      : gameData.settings.column - 1;
+  var startr =
+    r - gameData.settings.connect >= 0 ? r - gameData.settings.connect + 1 : 0;
+  var line = [];
+  while (c <= endc && startr <= r) {
+    if (board[r][c] === player) {
+      line.push([r, c]);
+    } else {
+      line.length = 0;
+    }
+    c++;
+    r--;
+  }
+  return line;
 }
 
 function countDownRight(c, r, player, board) {
-	var endc = (c + gameData.settings.connect < gameData.settings.column) ? c + gameData.settings.connect - 1 : gameData.settings.column - 1;
-	var endr = (r + gameData.settings.connect < gameData.settings.row) ? r + gameData.settings.connect - 1 : gameData.settings.row - 1;
-	var line = [];
-	while (c <= endc && r <= endr) {
-		if (board[r][c] === player) {
-			line.push([r, c]);
-		} else {
-			line.length = 0;
-		}
-		c++;
-		r++;
-	}
-	return line;
+  var endc =
+    c + gameData.settings.connect < gameData.settings.column
+      ? c + gameData.settings.connect - 1
+      : gameData.settings.column - 1;
+  var endr =
+    r + gameData.settings.connect < gameData.settings.row
+      ? r + gameData.settings.connect - 1
+      : gameData.settings.row - 1;
+  var line = [];
+  while (c <= endc && r <= endr) {
+    if (board[r][c] === player) {
+      line.push([r, c]);
+    } else {
+      line.length = 0;
+    }
+    c++;
+    r++;
+  }
+  return line;
 }
 
 function checkIsWinner(player, board) {
-	for(var r=0; r<gameData.settings.row; r++){
-		for(var c=0; c<gameData.settings.column; c++){
-			var count;
-			count = countUp(c, r, player, board);
-			if (count.length >= gameData.settings.connect) return count;
-			count = countRight(c, r, player, board);
-			if (count.length >= gameData.settings.connect) return count;
-			count = countUpRight(c, r, player, board);
-			if (count.length >= gameData.settings.connect) return count;
-			count = countDownRight(c, r, player, board);
-			if (count.length >= gameData.settings.connect) return count;
-		}
-	}
-	return count;
+  for (var r = 0; r < gameData.settings.row; r++) {
+    for (var c = 0; c < gameData.settings.column; c++) {
+      var count;
+      count = countUp(c, r, player, board);
+      if (count.length >= gameData.settings.connect) return count;
+      count = countRight(c, r, player, board);
+      if (count.length >= gameData.settings.connect) return count;
+      count = countUpRight(c, r, player, board);
+      if (count.length >= gameData.settings.connect) return count;
+      count = countDownRight(c, r, player, board);
+      if (count.length >= gameData.settings.connect) return count;
+    }
+  }
+  return count;
 }
 
 function checkIsTie(board) {
-	for(var r=0; r<gameData.settings.row; r++){
-		for(var c=0; c<gameData.settings.column; c++){
-			if (board[r][c] === -1) {
-				return false;
-			}
-		}
-	}
-	return true;
+  for (var r = 0; r < gameData.settings.row; r++) {
+    for (var c = 0; c < gameData.settings.column; c++) {
+      if (board[r][c] === -1) {
+        return false;
+      }
+    }
+  }
+  return true;
 }
 
 /*!
- * 
+ *
  * GAME TIMER - This is the function that runs for game timer
- * 
+ *
  */
-function toggleGameTimer(con){	
-	if(con){
-		timeData.startDate = new Date();
-		timeData.oldTimer = -1;
-	}
-	timeData.enable = con;
+function toggleGameTimer(con) {
+  if (con) {
+    timeData.startDate = new Date();
+    timeData.oldTimer = -1;
+  }
+  timeData.enable = con;
 }
 
 /*!
- * 
+ *
  * UPDATE GAME - This is the function that runs to loop game update
- * 
+ *
  */
-function updateGame(){
-	if(!gameData.paused){
-		if(timeData.enable){
-			
-			if (gameData.ai == false) {
-				if (gameData.player == 0) {
-					timeData.nowDate = new Date();
-					timeData.elapsedTime = Math.floor((timeData.nowDate.getTime() - timeData.startDate.getTime()));
-					timeData.timer = Math.floor((timeData.countdown) - (timeData.elapsedTime));
+function updateGame() {
+  if (!gameData.paused) {
+    if (timeData.enable) {
+      if (gameData.ai == false) {
+        if (gameData.player == 0) {
+          timeData.nowDate = new Date();
+          timeData.elapsedTime = Math.floor(
+            timeData.nowDate.getTime() - timeData.startDate.getTime()
+          );
+          timeData.timer = Math.floor(
+            timeData.countdown - timeData.elapsedTime
+          );
 
-					if (timeData.timer <= 0) {
-						timeData.startDate = new Date();
-					}
+          if (timeData.timer <= 0) {
+            timeData.startDate = new Date();
+          }
 
-					if (socket != null) {
-						socket.emit("updatetimer", timeData.timer)
-					}
-				}
-			} else {
-				timeData.nowDate = new Date();
-				timeData.elapsedTime = Math.floor((timeData.nowDate.getTime() - timeData.startDate.getTime()));
-				timeData.timer = Math.floor((timeData.countdown) - (timeData.elapsedTime));
-				updateTimer();
-			}
-		}
-	}
+          if (socket != null) {
+            socket.emit("updatetimer", timeData.timer);
+          }
+        }
+      } else {
+        timeData.nowDate = new Date();
+        timeData.elapsedTime = Math.floor(
+          timeData.nowDate.getTime() - timeData.startDate.getTime()
+        );
+        timeData.timer = Math.floor(timeData.countdown - timeData.elapsedTime);
+        updateTimer();
+      }
+    }
+  }
 }
 
-function updateTimerDownGame(){
-	if (timeData.isDown && timeData.startDate != null) {
-		timeData.nowDate = new Date();
-		timeData.elapsedTime = Math.floor((timeData.nowDate.getTime() - timeData.startDate.getTime()));
-		timeData.timer = Math.floor((timeData.countdown) - (timeData.elapsedTime));
+function updateTimerDownGame() {
+  if (timeData.isDown && timeData.startDate != null) {
+    timeData.nowDate = new Date();
+    timeData.elapsedTime = Math.floor(
+      timeData.nowDate.getTime() - timeData.startDate.getTime()
+    );
+    timeData.timer = Math.floor(timeData.countdown - timeData.elapsedTime);
 
-		updateTimerDown();
-	}
-		
+    updateTimerDown();
+  }
 }
 
-function updateTimer(){
-	if(timeData.oldTimer == -1){
-		timeData.oldTimer = timeData.timer;
-	}
+function updateTimer() {
+  if (timeData.oldTimer == -1) {
+    timeData.oldTimer = timeData.timer;
+  }
 
-	if(timeData.timer <= 0) {
-		timerTxt.color = '#170e77';
-		timeData.oldTimer = -1;
-		if (gameData.ai == true) {
-			checkPlayerStatusByTimeout();
-		}
-		else {
-			timeData.enable = false;
+  if (timeData.timer <= 0) {
+    timerTxt.color = "#170e77";
+    timeData.oldTimer = -1;
+    if (gameData.ai == true) {
+      checkPlayerStatusByTimeout();
+    } else {
+      timeData.enable = false;
 
-			if (gameData.player == 0 && socket != null) {
-				socket.emit("toggleuser", textDisplay.room);
-			}
-		}
+      if (gameData.player == 0 && socket != null) {
+        socket.emit("toggleuser", textDisplay.room);
+      }
+    }
+  } else {
+    if (timeData.oldTimer - timeData.timer > 1000) {
+      if (timeData.timer < 1000) {
+        playSound("soundCountdownEnd");
+      } else if (timeData.timer <= 10000) {
+        timerTxt.color = "#FF0000";
+        // animateTimer()
+        playSound("soundCountdown");
+      } else {
+        timerTxt.color = "#170e77";
+      }
+      timeData.oldTimer = timeData.timer;
+    }
 
-	} else {
-		
-		if((timeData.oldTimer - timeData.timer) > 1000){
-			if(timeData.timer < 1000){
-				playSound('soundCountdownEnd');
-			} else if(timeData.timer <= 10000){
-				timerTxt.color = '#FF0000'
-				// animateTimer()
-				playSound('soundCountdown');
-			} else {
-				timerTxt.color = '#170e77';
-			}
-			timeData.oldTimer = timeData.timer;
-		}
-		
-		timerTxt.text = timerRedTxt.text = millisecondsToTimeGame(timeData.timer);
-	}
+    timerTxt.text = timerRedTxt.text = millisecondsToTimeGame(timeData.timer);
+  }
 }
 
-function updateTimerDown(){
+function updateTimerDown() {
+  if (timeData.oldTimer == -1) {
+    timeData.oldTimer = timeData.timer;
+  }
 
-	if(timeData.oldTimer == -1){
-		timeData.oldTimer = timeData.timer;
-	}
+  if (timeData.isDown && timeData.timer <= 0) {
+    timeData.isDown = false;
+    timerDownTxt.text = "";
+    timerDownTxt.visible = false;
 
-	if(timeData.isDown && timeData.timer <= 0){
-		timeData.isDown = false
-		timerDownTxt.text = ""
-		timerDownTxt.visible = false;
+    if (socket != null) socket.emit("beforeautogame", {});
 
-		if (socket != null)
-			socket.emit('beforeautogame', {})
+    $.ajax({
+      url: "/bot/info",
+      type: "GET",
+      data: {
+        t: localStorage.getItem("t"),
+        gameID: 1,
+        betUsd: Player1.betUsd,
+      },
+      success: function (response) {
+        Player2 = response;
 
-		$.ajax({
-			url: '/bot/info',
-			type: 'GET',
-			data: {
-					't': localStorage.getItem('t'),
-					'gameID': 1,
-					betUsd: Player1.betUsd
-				},
-			success: function(response) {
-				
-				Player2 = response;
+        textDisplay.computer = response.username;
+        textDisplay.computerTurn = response.username + " turn";
+        $.players["player" + 1].text = response.username;
 
-				textDisplay.computer = response.username;
-				textDisplay.computerTurn = response.username + ' turn';
-				$.players['player'+ 1].text = response.username;
+        checkGameType(true);
+        goPage("game");
 
-				checkGameType(true);
-				goPage('game');
+        startGame();
+      },
+      error: function (xhr, status, error) {
+        // Handle errors
 
-				startGame();
-			},
-			error: function(xhr, status, error) {
-				// Handle errors
-				
-				if (socket != null) {
-					socket.disconnect();
-				}
-				if (xhr.status === 400) {
-					redirectToWithAuth('https://www.player1.win/games/1/connect-four', 'Token invalid', 0);
-				} else {
-					console.error('Error:', errorThrown);
-					location.reload();
-				}
-				// if (gameData.paused == true)
-				// 	
+        if (socket != null) {
+          socket.disconnect();
+        }
+        if (xhr.status === 400) {
+          redirectToWithAuth(
+            "https://www.player1.win/games/1/connect-four",
+            "Token invalid",
+            0
+          );
+        } else {
+          console.error("Error:", errorThrown);
+          location.reload();
+        }
+        // if (gameData.paused == true)
+        //
+      },
+    });
+  } else {
+    if (Math.abs(timeData.oldTimer - timeData.timer) > 1000) {
+      if (timeData.timer < 1000) {
+        playSound("soundCountdownEnd");
+      } else if (timeData.timer < 5000) {
+        playSound("soundCountdown");
+      }
 
-			}
-		});
-	}else{
-		if(Math.abs((timeData.oldTimer - timeData.timer)) > 1000){
-			if(timeData.timer < 1000){
-				playSound('soundCountdownEnd');
-			}else if(timeData.timer < 5000){
-				playSound('soundCountdown');
-			}
-			
-			timeData.oldTimer = timeData.timer;
-			timerDownTxt.text = millisecondsToTimeGame(timeData.timer);
-		}
-	}
+      timeData.oldTimer = timeData.timer;
+      timerDownTxt.text = millisecondsToTimeGame(timeData.timer);
+    }
+  }
 }
 
 /*!
- * 
+ *
  * END GAME - This is the function that runs for game end
- * 
+ *
  */
-function endGame(){
-	gameData.paused = true;
+function endGame() {
+  gameData.paused = true;
 
-	if (socket != null) {
-		socket.emit('disconnect_game', {});
-	}
+  if (socket != null) {
+    socket.emit("disconnect_game", {});
+  }
 
-	toggleGameTimer(false);
-	TweenMax.to(gameContainer, 2, {overwrite:true, onComplete:function(){
-		textDisplay.winEffect = 'yes';
-		goPage('result')
-	}});
-
+  toggleGameTimer(false);
+  TweenMax.to(gameContainer, 2, {
+    overwrite: true,
+    onComplete: function () {
+      textDisplay.winEffect = "yes";
+      goPage("result");
+    },
+  });
 }
 
 /*!
- * 
+ *
  * MILLISECONDS CONVERT - This is the function that runs to convert milliseconds to time
- * 
+ *
  */
 function millisecondsToTimeGame(milli) {
-	var milliseconds = milli % 1000;
-	var seconds = Math.floor((milli / 1000) % 60);
-	var minutes = Math.floor((milli / (60 * 1000)) % 60);
-	
-	if(seconds<10){
-		seconds = '0'+seconds;  
-	}
-	
-	if(minutes<10){
-		minutes = '0'+minutes;  
-	}
-	
-	return minutes+':'+seconds;
+  var milliseconds = milli % 1000;
+  var seconds = Math.floor((milli / 1000) % 60);
+  var minutes = Math.floor((milli / (60 * 1000)) % 60);
+
+  if (seconds < 10) {
+    seconds = "0" + seconds;
+  }
+
+  if (minutes < 10) {
+    minutes = "0" + minutes;
+  }
+
+  return minutes + ":" + seconds;
 }
 
 /*!
- * 
+ *
  * OPTIONS - This is the function that runs to toggle options
- * 
+ *
  */
 
-function toggleOption(){
-	if(optionsContainer.visible){
-		optionsContainer.visible = false;
-	}else{
-		optionsContainer.visible = true;
-	}
+function toggleOption() {
+  if (optionsContainer.visible) {
+    optionsContainer.visible = false;
+  } else {
+    optionsContainer.visible = true;
+  }
 }
 
 function toggleEmoji() {
-	if (emojiContainer.visible) {
-		emojiContainer.visible = false;
-	} else {
-		emojiContainer.visible = true;
-	}
+  if (emojiContainer.visible) {
+    emojiContainer.visible = false;
+  } else {
+    emojiContainer.visible = true;
+  }
 }
-
 
 /*!
- * 
+ *
  * OPTIONS - This is the function that runs to mute and fullscreen
- * 
+ *
  */
-function toggleSoundMute(con){
-	buttonSoundOff.visible = false;
-	buttonSoundOn.visible = false;
-	toggleSoundInMute(con);
-	if(con){
-		buttonSoundOn.visible = true;
-	}else{
-		buttonSoundOff.visible = true;	
-	}
+function toggleSoundMute(con) {
+  buttonSoundOff.visible = false;
+  buttonSoundOn.visible = false;
+  toggleSoundInMute(con);
+  if (con) {
+    buttonSoundOn.visible = true;
+  } else {
+    buttonSoundOff.visible = true;
+  }
 }
 
-function toggleMusicMute(con){
-	buttonMusicOff.visible = false;
-	buttonMusicOn.visible = false;
-	toggleMusicInMute(con);
-	if(con){
-		buttonMusicOn.visible = true;
-	}else{
-		buttonMusicOff.visible = true;	
-	}
+function toggleMusicMute(con) {
+  buttonMusicOff.visible = false;
+  buttonMusicOn.visible = false;
+  toggleMusicInMute(con);
+  if (con) {
+    buttonMusicOn.visible = true;
+  } else {
+    buttonMusicOff.visible = true;
+  }
 }
 
 function toggleFullScreen() {
-  if (!document.fullscreenElement &&    // alternative standard method
-      !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) {  // current working methods
+  if (
+    !document.fullscreenElement && // alternative standard method
+    !document.mozFullScreenElement &&
+    !document.webkitFullscreenElement &&
+    !document.msFullscreenElement
+  ) {
+    // current working methods
     if (document.documentElement.requestFullscreen) {
       document.documentElement.requestFullscreen();
     } else if (document.documentElement.msRequestFullscreen) {
@@ -2767,7 +3131,9 @@ function toggleFullScreen() {
     } else if (document.documentElement.mozRequestFullScreen) {
       document.documentElement.mozRequestFullScreen();
     } else if (document.documentElement.webkitRequestFullscreen) {
-      document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+      document.documentElement.webkitRequestFullscreen(
+        Element.ALLOW_KEYBOARD_INPUT
+      );
     }
   } else {
     if (document.exitFullscreen) {
@@ -2783,43 +3149,232 @@ function toggleFullScreen() {
 }
 
 /*!
- * 
+ *
  * SHARE - This is the function that runs to open share url
- * 
+ *
  */
-function share(action){
-	gtag('event','click',{'event_category':'share','event_label':action});
-	
-	var loc = 'https://www.player1.win/games/1/connect-four'//location.href
+function share(action) {
+  gtag("event", "click", { event_category: "share", event_label: action });
 
-	var curr_loc = location.href
-	curr_loc = curr_loc.substring(0, curr_loc.lastIndexOf("/") + 1);
-	
-	var title = '';
-	var text = '';
+  var loc = "https://www.player1.win/games/1/connect-four"; //location.href
 
-	var prizeUSD = 0;
+  var curr_loc = location.href;
+  curr_loc = curr_loc.substring(0, curr_loc.lastIndexOf("/") + 1);
 
-	if (Player1.prizeUSD != undefined && Player1.prizeUSD != '')
-	{
-		prizeUSD = Player1.prizeUSD;
-	}
-	
-	title = shareTitle.replace("[SCORE]", prizeUSD);
-	text = shareMessage.replace("[SCORE]", prizeUSD);
-	
-	var shareurl = '';
-	
-	if( action == 'tiktok' ) {
-		shareurl = 'https://www.tiktok.com/@exampleuser/video/1234567890123456789?text=' + encodeURIComponent(text) + " " + encodeURIComponent(loc);
-	}else if( action == 'facebook' ){
-		//shareurl = 'https://www.facebook.com/dialog/share?href='+encodeURIComponent(loc)+'&quote='+encodeURIComponent(text) + encodeURIComponent(loc)
-		shareurl = 'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(curr_loc+'share?desc='+text+'&title='+title+'&url='+loc+'&thumb='+loc+'share.jpg&width=590&height=300');
-	}else if( action == 'google' ){
-		shareurl = 'https://plus.google.com/share?url='+loc;
-	}else if( action == 'whatsapp' ) {
-		shareurl = "whatsapp://send?text=" + encodeURIComponent(text) + " " + encodeURIComponent(loc);
-	}
-	
-	window.open(shareurl);
+  var title = "";
+  var text = "";
+
+  var prizeUSD = 0;
+
+  if (Player1.prizeUSD != undefined && Player1.prizeUSD != "") {
+    prizeUSD = Player1.prizeUSD;
+  }
+
+  title = shareTitle.replace("[SCORE]", prizeUSD);
+  text = shareMessage.replace("[SCORE]", prizeUSD);
+
+  var shareurl = "";
+
+  if (action == "tiktok") {
+    shareurl =
+      "https://www.tiktok.com/@exampleuser/video/1234567890123456789?text=" +
+      encodeURIComponent(text) +
+      " " +
+      encodeURIComponent(loc);
+  } else if (action == "facebook") {
+    //shareurl = 'https://www.facebook.com/dialog/share?href='+encodeURIComponent(loc)+'&quote='+encodeURIComponent(text) + encodeURIComponent(loc)
+    shareurl =
+      "https://www.facebook.com/sharer/sharer.php?u=" +
+      encodeURIComponent(
+        curr_loc +
+          "share?desc=" +
+          text +
+          "&title=" +
+          title +
+          "&url=" +
+          loc +
+          "&thumb=" +
+          loc +
+          "share.jpg&width=590&height=300"
+      );
+  } else if (action == "google") {
+    shareurl = "https://plus.google.com/share?url=" + loc;
+  } else if (action == "whatsapp") {
+    shareurl =
+      "whatsapp://send?text=" +
+      encodeURIComponent(text) +
+      " " +
+      encodeURIComponent(loc);
+  }
+
+  window.open(shareurl);
+}
+
+function lastSpace(column) {
+  let count = -1;
+  for (i = 0; i < gameData.settings.row; i++) {
+    if (gameData.board[i][column] == -1) {
+      count++;
+    }
+  }
+  return count;
+}
+
+function bestMove() {
+  let bestScore = -Infinity;
+  let move;
+  for (let j = 0; j < gameData.settings.column; j++) {
+    for (let i = 0; i < gameData.settings.row; i++) {
+      if (
+        gameData.board[i][j] == -1 &&
+        i == lastSpace(j) &&
+        lastSpace(j) >= 0
+      ) {
+        gameData.board[i][j] = 1;
+        let score = minimax(
+          gameData.board,
+          7,
+          alpha,
+          beta,
+          false
+        );
+		console.log('minimax result in bestMove: ', score);
+        gameData.board[i][j] = -1;
+        if (score > bestScore) {
+          bestScore = score;
+          move = { i, j };
+        }
+      }
+    }
+  }
+  return move.j;
+  // gameData.board[move.i][move.j] = 0;
+  // currentTurn = 'other';
+  // thinkingText.html("");
+}
+
+// function checkWinner() {
+//   var count = checkIsWinner(0, gameData.board);
+//   if (count.length >= gameData.settings.connect) return "r";
+//   count = checkIsWinner(1, gameData.board);
+//   if (count.length >= gameData.settings.connect) return "y";
+//   if (checkIsTie(gameData.board)) return "tie";
+//   return null;
+// }
+
+
+function equals4(a, b, c, d) {
+    return a == b && b == c && c == d && a != -1;
+}
+
+function checkWinner(board){
+    let winner = null;
+	const ch = "yr";
+    // Vertical
+    for (i = 0; i < 3 ; i++ ){
+         for (j = 0; j < 7; j++){
+            if(equals4(board[i][j], board[i+1][j], board[i+2][j], board[i+3][j])){
+                return ch[board[i][j]];
+            }           
+        }
+    }
+
+    // Horizontal
+    for (i = 0; i < 6 ; i++ ){
+		for (j = 0; j < 4; j++){
+		   if(equals4(board[i][j], board[i][j + 1], board[i][j + 2], board[i][j + 3])){
+			   return ch[board[i][j]];
+		   }           
+	   }
+   }
+
+    //ascending diagonal
+    for (i = 3; i < 6; i++){
+        for(j = 0; j < 4; j++){
+            if(equals4(board[i][j], board[i-1][j+1], board[i-2][j+2], board[i-3][j+3])){
+                return ch[board[i][j]];
+            }
+        }
+    }
+
+    //descending diagonal
+    for (i = 3; i < 6; i++){
+        for(j = 3; j < 7; j++){
+            if(equals4(board[i][j], board[i-1][j-1], board[i-2][j-2], board[i-3][j-3])){
+                return ch[board[i][j]];
+            }
+        }
+    }
+
+    let openSpots = 0;
+    for (let i = 0; i < 6; i++){
+        for (let j = 0; j < 7; j++){
+            if(board[i][j] == -1){
+                openSpots++;
+            }
+        }
+    }
+
+    if(winner == null && openSpots == 0){
+        return "tie";
+    }else{
+        return winner;
+    }
+}
+
+function max(x, y) {
+	return x > y ? x : y;
+}
+
+function min(x, y) {
+	return x < y ? x : y;
+}
+
+function minimax(board, depth, alpha, beta, isMaximizing) {
+  let result = checkWinner(board);
+  if (result !== null) {
+    return scores[result] + depth;
+  }
+
+  if (depth < 0) {
+    return Math.floor(Math.random() * (10000 - 1) + 100) / 100;
+  }
+
+  if (isMaximizing) {
+    let bestScore = -Infinity;
+    maxloop: 
+	for (let j = 0; j < gameData.settings.column; j++) {
+      for (let i = 0; i < gameData.settings.row; i++) {
+        if (board[i][j] == -1 && i == lastSpace(j) && lastSpace(j) >= 0) {
+          board[i][j] = 1;
+          let score = minimax(board, depth - 1, alpha, beta, false);
+          board[i][j] = -1;
+          bestScore = max(score, bestScore);
+          alpha = max(alpha, score);
+          if (beta <= alpha) {
+            break maxloop;
+          }
+        }
+      }
+    }
+    return bestScore;
+  } else {
+    let bestScore = Infinity;
+    minloop: 
+	for (let j = 0; j < gameData.settings.column; j++) {
+      for (let i = 0; i < gameData.settings.row; i++) {
+        if (board[i][j] == -1 && i == lastSpace(j) && lastSpace(j) >= 0) {
+          board[i][j] = 0;
+          let score = minimax(board, depth - 1, alpha, beta, true);
+          board[i][j] = -1;
+          bestScore = min(score, bestScore);
+          beta = min(beta, score);
+          if (beta <= alpha) {
+            break minloop;
+          }
+        }
+      }
+    }
+    return bestScore;
+  }
 }
