@@ -2614,9 +2614,9 @@ function animateWinDim(obj) {
  *
  */
 async function makeAIMove() {
-//  await randomSleep();
+  // await randomSleep();
 //   var bestColumn = getBestColumnForAI();
-  var bestColumn = bestMove();
+  var bestColumn = await bestMove();
   var firstEmptyRow = getFirstEmptyRow(bestColumn, gameData.board);
 
   placeIcon(firstEmptyRow, bestColumn, gameData.player);
@@ -2627,7 +2627,7 @@ function sleep(ms) {
 }
 
 async function randomSleep() {
-  const randomTime = Math.floor(Math.random() * 3000) + 1000; // Random time between 1000ms and 3000ms
+  const randomTime = Math.floor(Math.random() * 1000) + 200; // Random time between 1000ms and 3000ms
   await sleep(randomTime);
 }
 
@@ -3220,7 +3220,7 @@ function lastSpace(column) {
   return count;
 }
 
-function bestMove() {
+async function bestMove() {
   let bestScore = -Infinity;
   let move;
   for (let j = 0; j < gameData.settings.column; j++) {
@@ -3238,12 +3238,13 @@ function bestMove() {
           beta,
           false
         );
-		console.log('minimax result in bestMove: ', score);
         gameData.board[i][j] = -1;
         if (score > bestScore) {
           bestScore = score;
           move = { i, j };
         }
+
+        await sleep(20);
       }
     }
   }
@@ -3343,7 +3344,7 @@ function minimax(board, depth, alpha, beta, isMaximizing) {
   if (isMaximizing) {
     let bestScore = -Infinity;
     maxloop: 
-	for (let j = 0; j < gameData.settings.column; j++) {
+	  for (let j = 0; j < gameData.settings.column; j++) {
       for (let i = 0; i < gameData.settings.row; i++) {
         if (board[i][j] == -1 && i == lastSpace(j) && lastSpace(j) >= 0) {
           board[i][j] = 1;
