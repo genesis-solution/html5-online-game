@@ -1724,7 +1724,10 @@ function saveGame(score, opponentscore, winner) {
   localStorage.setItem("gameID", 1);
 
   var tokenID = localStorage.getItem("t");
-  if (tokenID != undefined && tokenID != "") {
+  if (socket != null) {
+    socket.disconnect();
+  }
+  if (tokenID != undefined && tokenID != "" && (gameData.ai == true || textDisplay.giveup == "other" || Math.floor(playerData.score) > Math.floor(playerData.opponentScore))) {
     localStorage.removeItem("t");
     $.ajax({
       type: "POST",
