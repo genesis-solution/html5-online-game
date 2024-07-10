@@ -230,6 +230,7 @@ var timeData = {
   timer: 0,
   oldTimer: 0,
   isDown: false,
+  countdown: 15000
 };
 var strokeData = { x: 0, y: 0 };
 var tweenData = { score: 0, tweenScore: 0 };
@@ -2113,6 +2114,29 @@ function createSocket() {
     timeData.isDown = true;
 
     timeData.countdown = 1200000
+
+    textDisplay.effectduration = 1200000;
+    var end = Date.now() + textDisplay.effectduration;
+
+    (function frame() {
+      // launch a few confetti from the left edge
+      confetti({
+        particleCount: 3,
+        angle: 60,
+        spread: 180,
+        startVelocity: 80,
+        origin: { x: 0.5, y: 1 },
+        // origin: {
+        //     x: Math.random(),
+        //     // since they fall down, start a bit higher than random
+        //     y: Math.random() - 0.2
+        // }
+      });
+      if (Date.now() < end && gameData.paused) {
+        requestAnimationFrame(frame);
+      }
+    })();
+
     alertTxt.text = "waiting for " + opponent[0].name;
 
   });
@@ -2789,7 +2813,7 @@ function updateTimerDown() {
           goPage("game");
 
           startGame();
-          
+
         },
         error: function (xhr, status, error) {
           // Handle errors
