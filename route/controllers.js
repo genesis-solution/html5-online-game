@@ -272,7 +272,8 @@ function getBotInfo(req, res) {
                     TokenId: userInfo[0].TokenId,
                     entityId: userInfo[0].entityId,
                     betUsd: betUsd,
-                    Status: 0
+                    Status: 0,
+                    depth: 7
                   })
                 }
                 else {

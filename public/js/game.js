@@ -461,14 +461,7 @@ function buildGameButton() {
     togglePop(false);
 
     if (socket != null) {
-      socket.emit("giveup", textDisplay.player1);
-    } else {
-      if (playerName == textDisplay.player1) {
-        textDisplay.giveup = "me";
-      } else {
-        textDisplay.giveup = "other";
-      }
-      endGame();
+      socket.emit("giveup", Player1.entityId);
     }
   });
 
@@ -805,7 +798,9 @@ function toggleGameIconSide() {
 }
 
 function displayPlayerIcon() {
+  
   for (var n = 0; n < 2; n++) {
+
     $.players["playerIconContainer" + n].removeAllChildren();
 
     var iconID = "icon" + gameData.icon + gameData.icons[n];
@@ -813,9 +808,7 @@ function displayPlayerIcon() {
     centerReg($.players["playerIcon" + n]);
 
     $.players["playerIcon" + n].y = -20;
-    $.players["playerIcon" + n].scaleX = $.players[
-      "playerIcon" + n
-    ].scaleY = 1.3;
+    $.players["playerIcon" + n].scaleX = $.players["playerIcon" + n].scaleY = 1.3;
 
     $.players["playerIconContainer" + n].addChild($.players["playerIcon" + n]);
 
@@ -850,6 +843,7 @@ function displayPlayerIcon() {
 
           container.addChild(bitmap);
         };
+
       })($.players["playerFlagContainer" + n]);
     }
   }
@@ -859,232 +853,17 @@ function getCountryFromIP(n) {
   // Dummy implementation, you should replace this with actual logic
   // This could involve using a Geolocation API or querying a database
   // For demonstration purposes, let's just return a random country
-  const countryNameToCode = {
-    Afghanistan: "AF",
-    Albania: "AL",
-    Algeria: "AG",
-    Andorra: "AN",
-    Angola: "AO",
-    "Antigua and Barbuda": "AC",
-    Argentina: "AR",
-    Armenia: "AM",
-    Australia: "AS",
-    Austria: "AU",
-    Azerbaijan: "AJ",
-    Bahamas: "BF",
-    Bahrain: "BA",
-    Bangladesh: "BG",
-    Barbados: "BB",
-    Belarus: "BO",
-    Belgium: "BE",
-    Belize: "BH",
-    Benin: "BN",
-    Bhutan: "BT",
-    Bolivia: "BL",
-    "Bosnia and Herzegovina": "BK",
-    Botswana: "BC",
-    Brazil: "BR",
-    Brunei: "BX",
-    Bulgaria: "BU",
-    "Burkina Faso": "UV",
-    Burundi: "BY",
-    "Côte d'Ivoire": "IV",
-    "Cabo Verde": "CV",
-    Cambodia: "CB",
-    Cameroon: "CM",
-    Canada: "CA",
-    "Central African Republic": "CT",
-    CAR: "CT",
-    Chad: "CD",
-    Chile: "CI",
-    China: "CH",
-    Colombia: "CO",
-    Comoros: "CN",
-    Congo: "CG",
-    "Congo-Brazzaville": "CG",
-    "Costa Rica": "CS",
-    Croatia: "HR",
-    Cuba: "CU",
-    Cyprus: "CY",
-    Czechia: "EZ",
-    "Czech Republic": "EZ",
-    Denmark: "DA",
-    Djibouti: "DJ",
-    Dominica: "DO",
-    "Dominican Republic": "DR",
-    DRC: "congo",
-    Ecuador: "EC",
-    Egypt: "EG",
-    "El Salvador": "ES",
-    "Equatorial Guinea": "EK",
-    Eritrea: "ER",
-    Estonia: "ET",
-    Eswatini: "WZ",
-    Swaziland: "SZ",
-    Ethiopia: "ET",
-    Fiji: "FJ",
-    Finland: "FI",
-    France: "FR",
-    Gabon: "GB",
-    Gambia: "GA",
-    Georgia: "GG",
-    Germany: "GM",
-    Ghana: "GH",
-    Greece: "GR",
-    Grenada: "GJ",
-    Guatemala: "GT",
-    Guinea: "GV",
-    "Guinea-Bissau": "PU",
-    Guyana: "GY",
-    Haiti: "HA",
-    "Holy See": "VT",
-    Honduras: "HO",
-    Hungary: "HU",
-    Iceland: "IC",
-    India: "IN",
-    Indonesia: "ID",
-    Iran: "IR",
-    Iraq: "IZ",
-    Ireland: "EI",
-    Israel: "IS",
-    Italy: "IT",
-    Jamaica: "JM",
-    Japan: "JA",
-    Jordan: "JO",
-    Kazakhstan: "KZ",
-    Kenya: "KE",
-    Kiribati: "KR",
-    "Korea, North": "KP",
-    "Korea, Sounth": "KS",
-    Kosovo: "XK",
-    Kuwait: "KU",
-    Kyrgyzstan: "KG",
-    Laos: "LA",
-    Latvia: "LG",
-    Lebanon: "LE",
-    Lesotho: "LT",
-    Liberia: "LI",
-    Libya: "LY",
-    Liechtenstein: "LS",
-    Lithuania: "LH",
-    Luxembourg: "LU",
-    Madagascar: "MA",
-    Malawi: "MI",
-    Malaysia: "MY",
-    Maldives: "MV",
-    Mali: "ML",
-    Malta: "MT",
-    "Marshall Islands": "RM",
-    Mauritania: "MR",
-    Mauritius: "MP",
-    Mexico: "MX",
-    Micronesia: "FM",
-    Moldova: "MD",
-    Monaco: "MN",
-    Mongolia: "MG",
-    Montenegro: "MJ",
-    Morocco: "MO",
-    Mozambique: "MZ",
-    Myanmar: "BM",
-    Burma: "MM",
-    Namibia: "WA",
-    Nauru: "NR",
-    Nepal: "NP",
-    Netherlands: "NL",
-    "New Zealand": "NZ",
-    Nicaragua: "NI",
-    Niger: "NG",
-    Nigeria: "NI",
-    "North Macedonia": "MK",
-    Norway: "NO",
-    Oman: "MU",
-    Pakistan: "PK",
-    Palau: "PS",
-    "Palestine State": "PS",
-    Panama: "PM",
-    "Papua New Guinea": "PP",
-    Paraguay: "PA",
-    Peru: "PE",
-    Philippines: "RP",
-    Poland: "PL",
-    Portugal: "PO",
-    Qatar: "QA",
-    Romania: "RO",
-    Russia: "RS",
-    Rwanda: "RW",
-    "Saint Kitts and Nevis": "SC",
-    "Saint Lucia": "ST",
-    "Saint Vincent and the Grenadines": "VC",
-    Samoa: "WS",
-    "San Marino": "SM",
-    "Sao Tome and Principe": "TP",
-    "Saudi Arabia": "SA",
-    Senegal: "SG",
-    Serbia: "RI",
-    Seychelles: "SE",
-    "Sierra Leone": "SL",
-    Singapore: "SN",
-    Slovakia: "LO",
-    Slovenia: "SI",
-    "Solomon Islands": "BP",
-    Somalia: "SO",
-    "South Africa": "SF",
-    "South Sudan": "OD",
-    Spain: "SP",
-    "Sri Lanka": "CE",
-    Sudan: "SU",
-    "St. Vincent Grenadines": "VC",
-    "State of Palestine": "palestine",
-    Suriname: "NS",
-    Sweden: "SW",
-    Switzerland: "SZ",
-    Syria: "SY",
-    Taiwan: "TW",
-    Tajikistan: "TI",
-    Tanzania: "TZ",
-    Thailand: "TH",
-    "Timor-Leste": "TT",
-    Togo: "TO",
-    Tonga: "TN",
-    "Trinidad and Tobago": "TD",
-    Tunisia: "TS",
-    Turkey: "TU",
-    Turkmenistan: "TX",
-    Tuvalu: "TV",
-    Uganda: "UG",
-    Ukraine: "UP",
-    "United Arab Emirates": "AE",
-    "U.A.E.": "AE",
-    "United Kingdom": "UK",
-    "U.K.": "UK",
-    "United States": "US",
-    "U.S.": "US",
-    Uruguay: "UY",
-    Uzbekistan: "UZ",
-    Vanuatu: "NH",
-    Venezuela: "VE",
-    Vietnam: "VM",
-    Yemen: "YM",
-    Zambia: "ZA",
-    Zimbabwe: "ZI",
-  };
-
-  let selectedCountryName = "";
   if (parseInt(n) == 0) {
     if (Player1.CountryName != "") {
-      // selectedCountryName = countryNameToCode[Player1.CountryName];
       return Player1.CountryName.replace(/ /g, "-");
     }
   } else {
     if (Player2.CountryName != "") {
-      // selectedCountryName = countryNameToCode[Player2.CountryName];
       return Player2.CountryName.replace(/ /g, "-");
     }
   }
 
-  if (selectedCountryName != undefined && selectedCountryName != "")
-    return selectedCountryName;
-  else return "";
+  return "";
 }
 
 function resizeSocketLog() {
@@ -1124,13 +903,7 @@ function togglePop(con) {
 document.addEventListener("keydown", function (event) {
   if (event.key === "F5" || (event.key === "r" && event.ctrlKey)) {
     if (socket != null) {
-      socket.emit("giveup", textDisplay.player1);
-    } else {
-      if (playerName == textDisplay.player1) {
-        textDisplay.giveup = "me";
-      } else {
-        textDisplay.giveup = "other";
-      }
+      socket.emit("giveup", Player1.entityId);
     }
 
     goPage("result_no");
@@ -1747,7 +1520,6 @@ function saveGame(score, opponentscore, winner) {
           (result.success == true && textDisplay.giveup == "other") ||
           Math.floor(playerData.score) >= Math.floor(playerData.opponentScore)
         ) {
-          console.log(result.PriseUsd);
           if (result.PriseUsd != undefined) {
             resultPriceTxt.text = "$" + result.PriseUsd;
             // resultDescTxt.text = "Congratulations, you won:";
@@ -1848,11 +1620,6 @@ function buildPlayers() {
       })($.players["gameFlagContainer" + n], n, gameData.ai);
     }
   }
-
-  console.log(
-    $.players["gameFlagContainer0"].regY,
-    $.players["gameFlagContainer" + 1].regY
-  );
 
   playerData.score = 0;
   playerData.opponentScore = 0;
@@ -2314,7 +2081,8 @@ function createSocket() {
     Player1.prizeUSD = players[0].prizeUSD;
 
     // online job
-    if (players[0].playerName != textDisplay.player1) {
+    // online job
+    if (players[0].entityId != Player1.entityId) {
       textDisplay.bEmployee = true;
       textDisplay.player1 = players[1].playerName;
       textDisplay.player2 = players[0].playerName;
@@ -2341,9 +2109,16 @@ function createSocket() {
     displayPlayerTurn();
   });
 
+  socket.on("waitingGroupMember", (opponent) => {
+    timeData.isDown = true;
+
+    timeData.countdown = 1200000
+    alertTxt.text = "waiting for " + opponent[0].name;
+
+  });
+
   socket.on("joinedRoom", (roomName) => {
     textDisplay.room = roomName;
-    // console.log(`Joined room: ${roomName}`);
     // You can handle room joining here if needed
   });
 
@@ -2353,8 +2128,7 @@ function createSocket() {
   });
 
   socket.on("giveup", (playerName) => {
-    console.log("giveup", playerName);
-    if (playerName == textDisplay.player1) {
+    if (playerName == Player1.entityId) {
       textDisplay.giveup = "me";
     } else {
       textDisplay.giveup = "other";
@@ -2392,13 +2166,7 @@ function createSocket() {
     console.log("already logged in");
 
     if (socket != null) {
-      socket.emit("giveup", textDisplay.player1);
-    } else {
-      if (playerName == textDisplay.player1) {
-        textDisplay.giveup = "me";
-      } else {
-        textDisplay.giveup = "other";
-      }
+      socket.emit("giveup", Player1.entityId);
     }
 
     goPage("result_no");
@@ -2410,14 +2178,30 @@ function createSocket() {
 }
 
 function joinGame(socket) {
-  console.log("Joined game!");
   textDisplay.player2 = Player2.username;
   if (gameData.ai == false)
-    socket.emit("joinGame", {
-      playerName: textDisplay.player1,
-      player: Player1,
-      isBot: 0,
-    });
+  {
+    const urlParams = new URLSearchParams(window.location.search);
+    // Get the value of a specific parameter
+    const eIDGroup = urlParams.get('eIDGroup');
+
+    if (eIDGroup != undefined && eIDGroup != '')
+    {
+      socket.emit("groupGame", {
+        playerName: textDisplay.player1,
+        player: Player1,
+        isBot: 0,
+        eIDGroup: eIDGroup
+      });
+    }
+    else {
+      socket.emit("joinGame", {
+        playerName: textDisplay.player1,
+        player: Player1,
+        isBot: 0,
+      });
+    }
+  }
   else {
     socket.emit("joinGame", {
       playerName: Player2.username,
@@ -2489,10 +2273,8 @@ function checkPlayerStatus(player) {
           isDraw: isDraw,
         },
         success: function (response) {
-          console.log("set log");
         },
         error: function (xhr, status, error) {
-          console.log("set log error");
         },
       });
     }
@@ -2971,48 +2753,66 @@ function updateTimerDown() {
     timerDownTxt.text = "";
     timerDownTxt.visible = false;
 
-    if (socket != null) socket.emit("beforeautogame", {});
+    const urlParams = new URLSearchParams(window.location.search);
+    // Get the value of a specific parameter
+    const eIDGroup = urlParams.get('eIDGroup');
 
-    $.ajax({
-      url: "/bot/info",
-      type: "GET",
-      data: {
-        t: localStorage.getItem("t"),
-        gameID: 1,
-        betUsd: Player1.betUsd,
-      },
-      success: function (response) {
-        Player2 = response;
+    if (eIDGroup != undefined && eIDGroup != '')
+    {
+      setTimeout(() => {
+        redirectToWithAuth(
+          "https://www.player1.win/games/1/connect-four",
+          "Your friend didn't came online 🙁",
+          0
+        );
+      }, 3000);
+    }
+    else {
 
-        textDisplay.computer = response.username;
-        textDisplay.computerTurn = response.username + " turn";
-        $.players["player" + 1].text = response.username;
+      if (socket != null) socket.emit("beforeautogame", {});
+      $.ajax({
+        url: "/bot/info",
+        type: "GET",
+        data: {
+          t: localStorage.getItem("t"),
+          gameID: 1,
+          betUsd: Player1.betUsd,
+        },
+        success: function (response) {
+          Player2 = response;
 
-        checkGameType(true);
-        goPage("game");
+          textDisplay.computer = response.username;
+          textDisplay.computerTurn = response.username + " turn";
+          $.players["player" + 1].text = response.username;
 
-        startGame();
-      },
-      error: function (xhr, status, error) {
-        // Handle errors
+          checkGameType(true);
+          goPage("game");
 
-        if (socket != null) {
-          socket.disconnect();
-        }
-        if (xhr.status === 400) {
-          redirectToWithAuth(
-            "https://www.player1.win/games/1/connect-four",
-            "Token invalid",
-            0
-          );
-        } else {
-          console.error("Error:", errorThrown);
-          location.reload();
-        }
-        // if (gameData.paused == true)
-        //
-      },
-    });
+          startGame();
+          
+        },
+        error: function (xhr, status, error) {
+          // Handle errors
+
+          if (socket != null) {
+            socket.disconnect();
+          }
+          if (xhr.status === 400) {
+            redirectToWithAuth(
+              "https://www.player1.win/games/1/connect-four",
+              "Token invalid",
+              0
+            );
+          } else {
+            console.error("Error:", errorThrown);
+            location.reload();
+          }
+          // if (gameData.paused == true)
+          //
+        },
+      });
+
+    }
   } else {
     if (Math.abs(timeData.oldTimer - timeData.timer) > 1000) {
       if (timeData.timer < 1000) {
@@ -3234,9 +3034,10 @@ async function bestMove() {
         lastSpace(j) >= 0
       ) {
         gameData.board[i][j] = 1;
+        var depth = Player2.depth ? Player2.depth : 7;
         let score = minimax(
           gameData.board,
-          7,
+          depth,// 7,
           alpha,
           beta,
           false

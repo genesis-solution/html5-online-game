@@ -82,6 +82,16 @@
         if (noError == 1)
         {
           headerInput.name = 't';
+
+          const _urlParams = new URLSearchParams(window.location.search);
+          // Get the value of a specific parameter
+          const _eIDGroup = _urlParams.get('eIDGroup'); // Returns 'value1'
+          if (_eIDGroup != undefined && _eIDGroup != '') {
+            var groupInput = document.createElement('input');
+            groupInput.type = 'hidden';
+            groupInput.name = 'eIDGroup';
+            groupInput.value = _eIDGroup; 
+          }
         } else {
           headerInput.name = 'e';
         }
