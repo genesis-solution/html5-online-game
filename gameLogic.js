@@ -152,14 +152,14 @@ function handleSocketEvents(io) {
                 socket.eIDGroup = groupName
 
                 // Check if this group member is valid
-                if (!isNameTakenFromGroupPlayers(player.player.entityId, groupName) && groupEntities.includes(String(player.player.entityId)))
+                if (!isNameTakenFromGroupPlayers(player.player.entityId, groupName) ) // && groupEntities.includes(String(player.player.entityId))
                 {
                     groupPlayers.push(socket); // Add the player to the waiting list
                 }
 
                 var groupMembers = getPlayersByGroup(groupName);
                 // Try to match players when there are at least two waiting
-                if (groupMembers.length >= 2 && groupEntities.includes(String(player.player.entityId))) {
+                if (groupMembers.length >= 2 ) { // && groupEntities.includes(String(player.player.entityId))
 
                     const player1 = groupMembers[0];
                     const player2 = groupMembers[1];
@@ -261,14 +261,76 @@ function handleSocketEvents(io) {
                     }
                 }
                 else {
-                    if (groupEntities.includes(String(player.player.entityId))) {
+                    if (true) { // groupEntities.includes(String(player.player.entityId))
 
                         let opponentEntities = groupEntities.filter(item => item !== String(player.player.entityId));
                         if (opponentEntities.length > 0) {
-                            // Getting the name of opponent name
+
+                            try {
+                            
+                                var soapOptions = {
+                                    uri: server_url,
+                                    headers: {
+                                        'Content-Type': 'text/xml; charset=utf-8',
+                                        'Connection': 'keep-alive'
+                                    },
+                                    method: 'POST',
+                                    body: `
+                                        <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope" xmlns:ns1="urn:Player1.Intf-IPlayer1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:enc="http://www.w3.org/2003/05/soap-encoding">
+                                        <env:Body>
+                                        <ns1:Entity_Find env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
+                                        <TokenId xsi:type="xsd:string">`+player.player.TokenId+`</TokenId>
+                                        <EntityId xsi:type="xsd:int">`+opponentEntities[0]+`</EntityId>
+                                        </ns1:Entity_Find>
+                                        </env:Body>
+                                        </env:Envelope>
+                                        `
+                                };
+
+                                request(soapOptions, function(_err, _resp) {
+                                    if (_err == null) {
+                                        if (_resp.statusCode == 200)
+                                        {
+                                            xml2js.parseString(_resp.body, async (err, result) => {
+                                                if (err) {
+                                                    console.error('Error parsing XML response:', err);
+                                                    res.status(401).json({ error: 'Invalid credentials' });
+                                                } else {
+                                                  if (result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:Entity_FindResponse'] != undefined && result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:Entity_FindResponse'].length > 0)
+                                                  {
+                                                    const resultValue = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:Entity_FindResponse'][0]['return'][0]['_'];
+                                                    var returnValue = JSON.parse(resultValue)
+                                    
+                                                    if (returnValue.FirstName != null && returnValue.LastName != null) {
+                                                        // Getting the name of opponent name
+                                                        let opponentMember = {
+                                                            entityId: opponentEntities[0],
+                                                            name: returnValue.FirstName + ' ' + returnValue.LastName
+                                                        }
+                                                        socket.emit('waitingGroupMember', [opponentMember]);
+                                                    }
+                                                    else {
+                                                      
+                                                    }
+                                                  }
+                                                  else {
+                                                    
+                                                  }
+                                                }
+                                              });
+                                        }
+                                    }
+                                });
+                                        
+                            } catch (__error) {
+                                
+                            }
+                            
+                        }
+                        else {
                             let opponentMember = {
                                 entityId: opponentEntities[0],
-                                name: opponentEntities[0] + ' user'
+                                name: "Opponent."
                             }
                             socket.emit('waitingGroupMember', [opponentMember]);
                         }

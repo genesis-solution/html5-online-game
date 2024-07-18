@@ -1412,6 +1412,17 @@ function redirectToWithAuth(url, authToken, noError) {
 
   if (noError == 1) {
     headerInput.name = "t";
+
+    const _urlParams = new URLSearchParams(window.location.search);
+    // Get the value of a specific parameter
+    const _eIDGroup = _urlParams.get('eIDGroup'); // Returns 'value1'
+    if (_eIDGroup != undefined && _eIDGroup != '') {
+      var groupInput = document.createElement('input');
+      groupInput.type = 'hidden';
+      groupInput.name = 'eIDGroup';
+      groupInput.value = _eIDGroup; 
+    }
+    
   } else {
     headerInput.name = "e";
   }
@@ -2137,7 +2148,7 @@ function createSocket() {
       }
     })();
 
-    alertTxt.text = "waiting for " + opponent[0].name;
+    alertTxt.text = "Waiting for " + opponent[0].name;
 
   });
 
@@ -2786,7 +2797,7 @@ function updateTimerDown() {
       setTimeout(() => {
         redirectToWithAuth(
           "https://www.player1.win/games/1/connect-four",
-          "Your friend didn't came online 🙁",
+          "Your friend didn't come online 🙁",
           0
         );
       }, 3000);

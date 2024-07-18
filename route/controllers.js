@@ -244,6 +244,7 @@ function getBotInfo(req, res) {
       <GameId xsi:type="xsd:int">`+gameID+`</GameId>
       <betUSD xsi:type="xsd:double">`+betUsd+`</betUSD>
       <count xsi:type="xsd:int">`+1+`</count>
+      <tokenID xsi:type="xsd:string">`+t+`</tokenID>
       </ns1:`+func_name+`>
       </env:Body>
       </env:Envelope>
@@ -266,6 +267,7 @@ function getBotInfo(req, res) {
                 var userInfo = JSON.parse(resultValue)
 
                 if (userInfo != null && userInfo.length > 0) {
+                  console.log(userInfo[0].game_level)
                   res.json({
                     username: userInfo[0].Name,
                     CountryName: userInfo[0].CountryName,
@@ -273,7 +275,7 @@ function getBotInfo(req, res) {
                     entityId: userInfo[0].entityId,
                     betUsd: betUsd,
                     Status: 0,
-                    depth: 7
+                    depth: parseInt(userInfo[0].game_level) * 3 - 2 // 1, 2, 3
                   })
                 }
                 else {
