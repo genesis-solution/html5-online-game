@@ -85,12 +85,12 @@
 
           const _urlParams = new URLSearchParams(window.location.search);
           // Get the value of a specific parameter
-          const _eIDGroup = _urlParams.get('eIDGroup'); // Returns 'value1'
-          if (_eIDGroup != undefined && _eIDGroup != '') {
+          const _invite_room = _urlParams.get('invite_room'); // Returns 'value1'
+          if (_invite_room != undefined && _invite_room != '') {
             var groupInput = document.createElement('input');
             groupInput.type = 'hidden';
-            groupInput.name = 'eIDGroup';
-            groupInput.value = _eIDGroup; 
+            groupInput.name = 'invite_room';
+            groupInput.value = _invite_room; 
           }
         } else {
           headerInput.name = 'e';

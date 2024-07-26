@@ -161,7 +161,11 @@ var textDisplay = {
   currentTurn: "me",
   giveup: "",
   winEffect: "no",
+  issubmitted: false,
   effectduration: "",
+  isOnline: true,
+  isActive: true,
+  isSelfActive: true
 };
 
 var Player1 = {
@@ -1075,69 +1079,33 @@ function goPage(page) {
       var textMessage = "";
       var textTitle = "";
       var textPrice = "";
-      if (textDisplay.giveup == "me" || Player1.prizeUSD == undefined) {
-        //textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
 
-        winner = Player2.entityId;
-        textTitle =
-          "The outcome of this game favors the opponent.\n\n 🙁  \n\n";
-        textMessage = "\n\nOne more try,\nyou've got this!";
-
-        resultTitleTxt.font = "20px bpreplaybold";
-        resultShareTxt.visible = false;
-        buttonFacebook.visible = false;
-        buttonTiktok.visible = false;
-        buttonWhatsapp.visible = false;
-        resultPriceTxt.visible = false;
-      } else if (
-        textDisplay.giveup == "other" &&
-        Player1.prizeUSD != undefined
-      ) {
-        //textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
-
-        winner = Player1.entityId;
-        textTitle = "You won!!!!";
-        textMessage = "Congratulations, you won:";
-        resultPriceTxt.text = "$" + Player1.prizeUSD;
-        resultTitleTxt.font = "60px bpreplaybold";
-        if (textDisplay.winEffect == "yes") {
-          textDisplay.winEffect = "no";
-          particles = [];
-          for (var i = 0; i < maxConfettis; i++) {
-            particles.push(new confettiParticle());
-          }
-          Draw();
-        }
-      } else {
-        if (
-          Math.floor(playerData.score) > Math.floor(playerData.opponentScore) &&
+      if (textDisplay.isOnline == true)
+      {
+        if (textDisplay.giveup == "me" || Player1.prizeUSD == undefined) {
+          //textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+  
+          winner = Player2.entityId;
+          textTitle =
+            "The outcome of this game favors the opponent.\n\n 🙁  \n\n";
+          textMessage = "\n\nOne more try,\nyou've got this!";
+          
+          resultTitleTxt.font = "20px bpreplaybold";
+          resultShareTxt.visible = false;
+          buttonFacebook.visible = false;
+          buttonTiktok.visible = false;
+          buttonWhatsapp.visible = false;
+          resultPriceTxt.visible = false;
+        } else if (
+          textDisplay.giveup == "other" &&
           Player1.prizeUSD != undefined
         ) {
           //textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
+  
           winner = Player1.entityId;
           textTitle = "You won!!!!";
           textMessage = "Congratulations, you won:";
           resultPriceTxt.text = "$" + Player1.prizeUSD;
-
-          resultTitleTxt.font = "60px bpreplaybold";
-          if (textDisplay.winEffect == "yes") {
-            textDisplay.winEffect = "no";
-            particles = [];
-            for (var i = 0; i < maxConfettis; i++) {
-              particles.push(new confettiParticle());
-            }
-            Draw();
-          }
-        } else if (
-          Math.floor(playerData.score) < 3 &&
-          Math.floor(playerData.opponentScore) < 3 &&
-          Player1.prizeUSD != undefined
-        ) {
-          winner = Player1.entityId;
-          textTitle = "You won!!!!";
-          textMessage = "Congratulations, you won:";
-          resultPriceTxt.text = "$" + Player1.prizeUSD;
-
           resultTitleTxt.font = "60px bpreplaybold";
           if (textDisplay.winEffect == "yes") {
             textDisplay.winEffect = "no";
@@ -1148,26 +1116,79 @@ function goPage(page) {
             Draw();
           }
         } else {
-          textTitle =
-            "The outcome of this game favors the opponent.\n\n 🙁 \n\n";
-          textMessage = "\n\nOne more try,\nyou've got this!";
-
-          winner = Player2.entityId;
-          resultTitleTxt.font = "20px bpreplaybold";
-          resultShareTxt.visible = false;
-          buttonFacebook.visible = false;
-          buttonTwitter.visible = false;
-          buttonTiktok.visible = false;
-          buttonWhatsapp.visible = false;
-          resultPriceTxt.visible = false;
-          //textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+          if (
+            Math.floor(playerData.score) > Math.floor(playerData.opponentScore) &&
+            Player1.prizeUSD != undefined
+          ) {
+            //textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
+            winner = Player1.entityId;
+            textTitle = "You won!!!!";
+            textMessage = "Congratulations, you won:";
+            resultPriceTxt.text = "$" + Player1.prizeUSD;
+  
+            resultTitleTxt.font = "60px bpreplaybold";
+            if (textDisplay.winEffect == "yes") {
+              textDisplay.winEffect = "no";
+              particles = [];
+              for (var i = 0; i < maxConfettis; i++) {
+                particles.push(new confettiParticle());
+              }
+              Draw();
+            }
+          } else if (
+            Math.floor(playerData.score) < 3 &&
+            Math.floor(playerData.opponentScore) < 3 &&
+            Player1.prizeUSD != undefined
+          ) {
+            winner = Player1.entityId;
+            textTitle = "You won!!!!";
+            textMessage = "Congratulations, you won:";
+            resultPriceTxt.text = "$" + Player1.prizeUSD;
+  
+            resultTitleTxt.font = "60px bpreplaybold";
+            if (textDisplay.winEffect == "yes") {
+              textDisplay.winEffect = "no";
+              particles = [];
+              for (var i = 0; i < maxConfettis; i++) {
+                particles.push(new confettiParticle());
+              }
+              Draw();
+            }
+          } else {
+            textTitle =
+              "The outcome of this game favors the opponent.\n\n 🙁 \n\n";
+            textMessage = "\n\nOne more try,\nyou've got this!";
+  
+            winner = Player2.entityId;
+            resultTitleTxt.font = "20px bpreplaybold";
+            resultShareTxt.visible = false;
+            buttonFacebook.visible = false;
+            buttonTwitter.visible = false;
+            buttonTiktok.visible = false;
+            buttonWhatsapp.visible = false;
+            resultPriceTxt.visible = false;
+            //textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+          }
         }
+
+        
+        saveGame(playerData.score, playerData.opponentScore, winner);
+      }
+      else {
+        textTitle =
+          "Ops, Your device got disconnected.\n\n 📴  \n\n";
+        textMessage = "\n\nOne more try,\nyou've got this!";
+
+        resultTitleTxt.font = "20px bpreplaybold";
+        resultShareTxt.visible = false;
+        buttonFacebook.visible = false;
+        buttonTiktok.visible = false;
+        buttonWhatsapp.visible = false;
+        resultPriceTxt.visible = false;
       }
 
       resultTitleTxt.text = textTitle;
       resultDescTxt.text = textMessage; // textDisplay.resultDesc.replace('[NUMBER]', Math.floor(tweenData.tweenScore)).replace('[SCORE]', Math.floor(playerData.score)).replace('[OPPONENTSCORE]', Math.floor(playerData.opponentScore));
-
-      saveGame(playerData.score, playerData.opponentScore, winner);
 
       break;
     case "result_no":
@@ -1415,12 +1436,12 @@ function redirectToWithAuth(url, authToken, noError) {
 
     const _urlParams = new URLSearchParams(window.location.search);
     // Get the value of a specific parameter
-    const _eIDGroup = _urlParams.get('eIDGroup'); // Returns 'value1'
-    if (_eIDGroup != undefined && _eIDGroup != '') {
+    const _invite_room = _urlParams.get('invite_room'); // Returns 'value1'
+    if (_invite_room != undefined && _invite_room != '') {
       var groupInput = document.createElement('input');
       groupInput.type = 'hidden';
-      groupInput.name = 'eIDGroup';
-      groupInput.value = _eIDGroup; 
+      groupInput.name = 'invite_room';
+      groupInput.value = _invite_room; 
     }
     
   } else {
@@ -1509,11 +1530,10 @@ function saveGame(score, opponentscore, winner) {
   localStorage.setItem("gameID", 1);
 
   var tokenID = localStorage.getItem("t");
-  if (socket != null) {
-    socket.disconnect();
-  }
+  
   if (tokenID != undefined && tokenID != "" && (gameData.ai == true || textDisplay.giveup == "other" || Math.floor(playerData.score) > Math.floor(playerData.opponentScore))) {
     localStorage.removeItem("t");
+    textDisplay.issubmitted = true;
     $.ajax({
       type: "POST",
       url: "/result",
@@ -1553,6 +1573,7 @@ function saveGame(score, opponentscore, winner) {
       },
     });
   }
+
 }
 
 /*!
@@ -1951,7 +1972,13 @@ function placeMove(column) {
       placeIconForMy(firstEmptyRow, column, gameData.player);
       gameData.moving = true;
       if (gameData.ai == false)
+      {
         socket.emit("move", { row: firstEmptyRow, column: column, player: 1 });
+
+        if (textDisplay.isActive == false) {
+          toggleGameTimer(true);
+        }
+      }
     }
   } else {
     placeIcon(firstEmptyRow, column, gameData.player);
@@ -2082,7 +2109,11 @@ var players = [];
 
 // my socket
 function createSocket() {
-  socket = io();
+  socket = io({
+    reconnection: true, // Enable reconnection
+    reconnectionAttempts: Infinity, // Unlimited reconnection attempts
+    reconnectionDelay: 1000, // Wait 1 second before trying to reconnect
+  });
 
   socket.on("startGamebySocket", (players) => {
     // Start the game
@@ -2148,7 +2179,7 @@ function createSocket() {
       }
     })();
 
-    alertTxt.text = "Waiting for " + opponent[0].name;
+    alertTxt.text = opponent[0].name;
 
   });
 
@@ -2172,6 +2203,7 @@ function createSocket() {
   });
 
   socket.on("toggleuser", (roomName) => {
+    if (textDisplay.isSelfActive == true)
     toggleGameTimer(true);
     if (textDisplay.firstGame == "no") {
       checkPlayerStatusByTimeout();
@@ -2179,7 +2211,7 @@ function createSocket() {
   });
 
   socket.on("playerDisconnected", (roomName) => {
-    if (roomName == textDisplay.room) {
+    if (socket != null && roomName == textDisplay.room) {
       endGame();
     }
   });
@@ -2193,6 +2225,21 @@ function createSocket() {
     // You can update your game UI accordingly with the opponent's move
   });
 
+  socket.on("active_status", (activeStatus) => {
+    textDisplay.isActive = activeStatus
+  });
+
+  socket.on("current_user", (activeStatus) => {
+
+    gameData.player = activeStatus;
+    gameData.turn = activeStatus;
+
+    togglePlayer();
+    displayPlayerTurn();
+
+    gameData.startPlayer = gameData.player;
+  });
+  
   socket.on("sendEmoji", (emojiName) => {
     showEmojiConvert(emojiName.name);
   });
@@ -2209,6 +2256,15 @@ function createSocket() {
     redirectToWithAuth("/login", "You are already playing", "");
   });
 
+  socket.on('disconnect', () => {
+    if (textDisplay.winEffect == 'no')
+    {
+      textDisplay.isOnline = false;
+      // socket.emit("giveup", Player1.entityId);
+      goPage("result");
+    }
+  });
+
   joinGame(socket);
 }
 
@@ -2218,15 +2274,15 @@ function joinGame(socket) {
   {
     const urlParams = new URLSearchParams(window.location.search);
     // Get the value of a specific parameter
-    const eIDGroup = urlParams.get('eIDGroup');
+    const invite_room = urlParams.get('invite_room');
 
-    if (eIDGroup != undefined && eIDGroup != '')
+    if (invite_room != undefined && invite_room != '')
     {
       socket.emit("groupGame", {
         playerName: textDisplay.player1,
         player: Player1,
         isBot: 0,
-        eIDGroup: eIDGroup
+        invite_room: invite_room
       });
     }
     else {
@@ -2298,7 +2354,7 @@ function checkPlayerStatus(player) {
   } else {
     displayPlayerTurn();
 
-    if (player == 0) {
+    if (player == 0 || textDisplay.isActive == false) {
       $.ajax({
         url: "/log",
         type: "GET",
@@ -2354,9 +2410,9 @@ function checkPlayerStatusByTimeout() {
   displayPlayerTurn();
 
   if (gameData.ai == false) {
-    gameData.player = gameData.startPlayer;
-    gameData.turn = gameData.startPlayer;
-    gameData.startPlayer = gameData.startPlayer == 0 ? 1 : 0;
+    // gameData.player = gameData.startPlayer;
+    // gameData.turn = gameData.startPlayer;
+    // gameData.startPlayer = gameData.startPlayer == 0 ? 1 : 0;
   } else {
     gameData.turn = gameData.turn == 1 ? 0 : 1;
     gameData.player = gameData.turn;
@@ -2702,7 +2758,7 @@ function updateGame() {
   if (!gameData.paused) {
     if (timeData.enable) {
       if (gameData.ai == false) {
-        if (gameData.player == 0) {
+        if (gameData.player == 0 || textDisplay.isActive == false) {
           timeData.nowDate = new Date();
           timeData.elapsedTime = Math.floor(
             timeData.nowDate.getTime() - timeData.startDate.getTime()
@@ -2743,6 +2799,7 @@ function updateTimerDownGame() {
   }
 }
 
+var nCounter = 0
 function updateTimer() {
   if (timeData.oldTimer == -1) {
     timeData.oldTimer = timeData.timer;
@@ -2756,12 +2813,18 @@ function updateTimer() {
     } else {
       timeData.enable = false;
 
-      if (gameData.player == 0 && socket != null) {
+      if ((gameData.player == 0) && socket != null) { // || (gameData.player == 1 && textDisplay.isActive == false)
+        
+        timeData.timer = 90000;
         socket.emit("toggleuser", textDisplay.room);
+        if (gameData.ai == false) {
+          socket.emit("current_user", gameData.player);
+        }
       }
     }
   } else {
     if (timeData.oldTimer - timeData.timer > 1000) {
+      nCounter = 0;
       if (timeData.timer < 1000) {
         playSound("soundCountdownEnd");
       } else if (timeData.timer <= 10000) {
@@ -2774,7 +2837,25 @@ function updateTimer() {
       timeData.oldTimer = timeData.timer;
     }
 
+    if (gameData.player == 1) {
+      if (timeData.oldTimer == timeData.timer) {
+        nCounter++;
+      }
+    }
+
+    if (nCounter > 75) { // FPS 25, waiting for 3 seconds
+      if (socket != null)
+      {
+        socket.emit("giveup", Player2.entityId);
+      }
+      else {
+        textDisplay.giveup = "other";
+        endGame();
+      }
+    }
+
     timerTxt.text = timerRedTxt.text = millisecondsToTimeGame(timeData.timer);
+
   }
 }
 
@@ -2790,9 +2871,9 @@ function updateTimerDown() {
 
     const urlParams = new URLSearchParams(window.location.search);
     // Get the value of a specific parameter
-    const eIDGroup = urlParams.get('eIDGroup');
+    const invite_room = urlParams.get('invite_room');
 
-    if (eIDGroup != undefined && eIDGroup != '')
+    if (invite_room != undefined && invite_room != '')
     {
       setTimeout(() => {
         redirectToWithAuth(
@@ -2803,13 +2884,13 @@ function updateTimerDown() {
       }, 3000);
     }
     else {
-
+      const t = urlParams.get('t');
       if (socket != null) socket.emit("beforeautogame", {});
       $.ajax({
         url: "/bot/info",
         type: "GET",
         data: {
-          t: localStorage.getItem("t"),
+          t: t,
           gameID: 1,
           betUsd: Player1.betUsd,
         },
@@ -2828,10 +2909,6 @@ function updateTimerDown() {
         },
         error: function (xhr, status, error) {
           // Handle errors
-
-          if (socket != null) {
-            socket.disconnect();
-          }
           if (xhr.status === 400) {
             redirectToWithAuth(
               "https://www.player1.win/games/1/connect-four",
@@ -3218,3 +3295,14 @@ function minimax(board, depth, alpha, beta, isMaximizing) {
     return bestScore;
   }
 }
+
+
+document.addEventListener('visibilitychange', function() {
+  if (document.hidden) {
+    textDisplay.isSelfActive = false;
+    socket.emit("active_status", false);
+  } else {
+    textDisplay.isSelfActive = true;
+    socket.emit("active_status", true);
+  }
+});

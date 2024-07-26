@@ -923,6 +923,22 @@ function tick(event) {
 	stage.update(event);
 }
 
+// Custom function to keep the ticker running
+function keepTickerRunning() {
+    if (document.hidden) {
+        // If the tab is inactive, you can still call the tick function
+        tick();
+    }
+}
+
+// Start the custom loop
+function gameLoop() {
+    keepTickerRunning();
+    requestAnimationFrame(gameLoop);
+}
+
+// Start the loop
+gameLoop();
 /*!
  * 
  * CANVAS MISC FUNCTIONS
