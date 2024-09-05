@@ -106,17 +106,20 @@
 
     gtag('config', 'G-E0TYQLGM15');
 
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // Get the value of a specific parameter
+    const tokenkey = urlParams.get('t'); // Returns 'value1'
+
+    let lang = urlParams.get('lang'); // Returns 'value1'
+    if (lang == undefined || lang == '') lang = 'en'
+
     try {
-        const urlParams = new URLSearchParams(window.location.search);
-
-        // Get the value of a specific parameter
-        const tokenkey = urlParams.get('t'); // Returns 'value1'
-
         if (tokenkey == undefined || tokenkey == '') {
-            redirectToWithAuth('https://www.player1.win/games/1/connect-four', 'Token not found', 0);
+            redirectToWithAuth('https://www.player1.win/'+lang+'/games/1/connect-four', 'Token not found', 0);
         }
     } catch (error) {
-          redirectToWithAuth('https://www.player1.win/games/1/connect-four', 'Token not found', 0);
+          redirectToWithAuth('https://www.player1.win/'+lang+'/games/1/connect-four', 'Token not found', 0);
       }
 
 

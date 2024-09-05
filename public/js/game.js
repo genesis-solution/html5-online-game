@@ -401,8 +401,11 @@ function buildGameButton() {
 
   buttonContinue.cursor = "pointer";
   buttonContinue.addEventListener("click", function (evt) {
+    const urlParams = new URLSearchParams(window.location.search);
+    let lang = urlParams.get('lang'); // Returns 'value1'
+    if (lang == undefined || lang == '') lang = 'en'
     playSound("soundButton");
-    window.location.href = "https://www.player1.win/games/1/connect-four?rb=1"; // 'https://beta2.player1.win/games/1/connect-four';
+    window.location.href = "https://www.player1.win/"+lang+"/games/1/connect-four?rb=1";
   });
 
   buttonFacebook.cursor = "pointer";
@@ -2873,11 +2876,16 @@ function updateTimerDown() {
     // Get the value of a specific parameter
     const invite_room = urlParams.get('invite_room');
 
+    let lang = urlParams.get('lang'); // Returns 'value1'
+    if (lang == undefined || lang == '') lang = 'en'
+
     if (invite_room != undefined && invite_room != '')
     {
+      
+
       setTimeout(() => {
         redirectToWithAuth(
-          "https://www.player1.win/games/1/connect-four",
+          "https://www.player1.win/"+lang+"/games/1/connect-four",
           "Your friend didn't come online 🙁",
           0
         );
@@ -2911,7 +2919,7 @@ function updateTimerDown() {
           // Handle errors
           if (xhr.status === 400) {
             redirectToWithAuth(
-              "https://www.player1.win/games/1/connect-four",
+              "https://www.player1.win/"+lang+"/games/1/connect-four",
               "Token invalid",
               0
             );
@@ -3071,7 +3079,11 @@ function toggleFullScreen() {
 function share(action) {
   gtag("event", "click", { event_category: "share", event_label: action });
 
-  var loc = "https://www.player1.win/games/1/connect-four"; //location.href
+  const urlParams = new URLSearchParams(window.location.search);
+  let lang = urlParams.get('lang'); // Returns 'value1'
+  if (lang == undefined || lang == '') lang = 'en'
+
+  var loc = "https://www.player1.win/"+lang+"/games/1/connect-four"; //location.href
 
   var curr_loc = location.href;
   curr_loc = curr_loc.substring(0, curr_loc.lastIndexOf("/") + 1);
