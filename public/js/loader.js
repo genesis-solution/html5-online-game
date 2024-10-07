@@ -73,6 +73,7 @@
 			{src:'assets/emoji10.png', id:'buttonEmoji10'},
 			{src:'assets/emoji_starter.png', id:'buttonEmojiStarter'},
 			{src:'assets/p1.png', id:'p1'},
+
 	];
 
 	for(var n=0; n<iconsArr.length; n++){

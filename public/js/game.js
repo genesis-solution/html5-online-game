@@ -1108,7 +1108,8 @@ function goPage(page) {
           winner = Player1.entityId;
           textTitle = "You won!!!!";
           textMessage = "Congratulations, you won:";
-          resultPriceTxt.text = "$" + Player1.prizeUSD;
+          resultPriceTxt.text = Player1.prizeUSD;
+          imageP1.visible = true;
           resultTitleTxt.font = "60px bpreplaybold";
           if (textDisplay.winEffect == "yes") {
             textDisplay.winEffect = "no";
@@ -1127,8 +1128,8 @@ function goPage(page) {
             winner = Player1.entityId;
             textTitle = "You won!!!!";
             textMessage = "Congratulations, you won:";
-            resultPriceTxt.text = "$" + Player1.prizeUSD;
-  
+            resultPriceTxt.text = Player1.prizeUSD;
+            imageP1.visible = true;
             resultTitleTxt.font = "60px bpreplaybold";
             if (textDisplay.winEffect == "yes") {
               textDisplay.winEffect = "no";
@@ -1146,7 +1147,8 @@ function goPage(page) {
             winner = Player1.entityId;
             textTitle = "You won!!!!";
             textMessage = "Congratulations, you won:";
-            resultPriceTxt.text = "$" + Player1.prizeUSD;
+            resultPriceTxt.text = Player1.prizeUSD;
+            imageP1.visible = true;
   
             resultTitleTxt.font = "60px bpreplaybold";
             if (textDisplay.winEffect == "yes") {
@@ -1556,7 +1558,7 @@ function saveGame(score, opponentscore, winner) {
           Math.floor(playerData.score) >= Math.floor(playerData.opponentScore)
         ) {
           if (result.PriseUsd != undefined) {
-            resultPriceTxt.text = "$" + result.PriseUsd;
+            resultPriceTxt.text = result.PriseUsd;
             // resultDescTxt.text = "Congratulations, you won:";
           } else {
             var textTitle =
