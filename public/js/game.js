@@ -161,7 +161,11 @@ var textDisplay = {
   currentTurn: "me",
   giveup: "",
   winEffect: "no",
+  issubmitted: false,
   effectduration: "",
+  isOnline: true,
+  isActive: true,
+  isSelfActive: true
 };
 
 var Player1 = {
@@ -194,6 +198,7 @@ let topHeight = 50;
 const cardPadding = 20;
 let imagesCanvas = {};
 
+var _autoGame;
 //Social share, [SCORE] will replace with game score
 var shareEnable = true; //toggle share
 var shareTitle = "Highscore on Connect Four is [SCORE]pts"; //social share score title
@@ -230,6 +235,7 @@ var timeData = {
   timer: 0,
   oldTimer: 0,
   isDown: false,
+  countdown: 15000
 };
 var strokeData = { x: 0, y: 0 };
 var tweenData = { score: 0, tweenScore: 0 };
@@ -396,8 +402,11 @@ function buildGameButton() {
 
   buttonContinue.cursor = "pointer";
   buttonContinue.addEventListener("click", function (evt) {
+    const urlParams = new URLSearchParams(window.location.search);
+    let lang = urlParams.get('lang'); // Returns 'value1'
+    if (lang == undefined || lang == '') lang = 'en'
     playSound("soundButton");
-    window.location.href = "https://www.player1.win/games/1/connect-four?rb=1"; // 'https://beta2.player1.win/games/1/connect-four';
+    window.location.href = "https://www.player1.win/"+lang+"/games/1/connect-four?rb=1";
   });
 
   buttonFacebook.cursor = "pointer";
@@ -461,14 +470,7 @@ function buildGameButton() {
     togglePop(false);
 
     if (socket != null) {
-      socket.emit("giveup", textDisplay.player1);
-    } else {
-      if (playerName == textDisplay.player1) {
-        textDisplay.giveup = "me";
-      } else {
-        textDisplay.giveup = "other";
-      }
-      endGame();
+      socket.emit("giveup", Player1.entityId);
     }
   });
 
@@ -805,7 +807,9 @@ function toggleGameIconSide() {
 }
 
 function displayPlayerIcon() {
+  
   for (var n = 0; n < 2; n++) {
+
     $.players["playerIconContainer" + n].removeAllChildren();
 
     var iconID = "icon" + gameData.icon + gameData.icons[n];
@@ -813,9 +817,7 @@ function displayPlayerIcon() {
     centerReg($.players["playerIcon" + n]);
 
     $.players["playerIcon" + n].y = -20;
-    $.players["playerIcon" + n].scaleX = $.players[
-      "playerIcon" + n
-    ].scaleY = 1.3;
+    $.players["playerIcon" + n].scaleX = $.players["playerIcon" + n].scaleY = 1.3;
 
     $.players["playerIconContainer" + n].addChild($.players["playerIcon" + n]);
 
@@ -850,6 +852,7 @@ function displayPlayerIcon() {
 
           container.addChild(bitmap);
         };
+
       })($.players["playerFlagContainer" + n]);
     }
   }
@@ -859,232 +862,17 @@ function getCountryFromIP(n) {
   // Dummy implementation, you should replace this with actual logic
   // This could involve using a Geolocation API or querying a database
   // For demonstration purposes, let's just return a random country
-  const countryNameToCode = {
-    Afghanistan: "AF",
-    Albania: "AL",
-    Algeria: "AG",
-    Andorra: "AN",
-    Angola: "AO",
-    "Antigua and Barbuda": "AC",
-    Argentina: "AR",
-    Armenia: "AM",
-    Australia: "AS",
-    Austria: "AU",
-    Azerbaijan: "AJ",
-    Bahamas: "BF",
-    Bahrain: "BA",
-    Bangladesh: "BG",
-    Barbados: "BB",
-    Belarus: "BO",
-    Belgium: "BE",
-    Belize: "BH",
-    Benin: "BN",
-    Bhutan: "BT",
-    Bolivia: "BL",
-    "Bosnia and Herzegovina": "BK",
-    Botswana: "BC",
-    Brazil: "BR",
-    Brunei: "BX",
-    Bulgaria: "BU",
-    "Burkina Faso": "UV",
-    Burundi: "BY",
-    "Côte d'Ivoire": "IV",
-    "Cabo Verde": "CV",
-    Cambodia: "CB",
-    Cameroon: "CM",
-    Canada: "CA",
-    "Central African Republic": "CT",
-    CAR: "CT",
-    Chad: "CD",
-    Chile: "CI",
-    China: "CH",
-    Colombia: "CO",
-    Comoros: "CN",
-    Congo: "CG",
-    "Congo-Brazzaville": "CG",
-    "Costa Rica": "CS",
-    Croatia: "HR",
-    Cuba: "CU",
-    Cyprus: "CY",
-    Czechia: "EZ",
-    "Czech Republic": "EZ",
-    Denmark: "DA",
-    Djibouti: "DJ",
-    Dominica: "DO",
-    "Dominican Republic": "DR",
-    DRC: "congo",
-    Ecuador: "EC",
-    Egypt: "EG",
-    "El Salvador": "ES",
-    "Equatorial Guinea": "EK",
-    Eritrea: "ER",
-    Estonia: "ET",
-    Eswatini: "WZ",
-    Swaziland: "SZ",
-    Ethiopia: "ET",
-    Fiji: "FJ",
-    Finland: "FI",
-    France: "FR",
-    Gabon: "GB",
-    Gambia: "GA",
-    Georgia: "GG",
-    Germany: "GM",
-    Ghana: "GH",
-    Greece: "GR",
-    Grenada: "GJ",
-    Guatemala: "GT",
-    Guinea: "GV",
-    "Guinea-Bissau": "PU",
-    Guyana: "GY",
-    Haiti: "HA",
-    "Holy See": "VT",
-    Honduras: "HO",
-    Hungary: "HU",
-    Iceland: "IC",
-    India: "IN",
-    Indonesia: "ID",
-    Iran: "IR",
-    Iraq: "IZ",
-    Ireland: "EI",
-    Israel: "IS",
-    Italy: "IT",
-    Jamaica: "JM",
-    Japan: "JA",
-    Jordan: "JO",
-    Kazakhstan: "KZ",
-    Kenya: "KE",
-    Kiribati: "KR",
-    "Korea, North": "KP",
-    "Korea, Sounth": "KS",
-    Kosovo: "XK",
-    Kuwait: "KU",
-    Kyrgyzstan: "KG",
-    Laos: "LA",
-    Latvia: "LG",
-    Lebanon: "LE",
-    Lesotho: "LT",
-    Liberia: "LI",
-    Libya: "LY",
-    Liechtenstein: "LS",
-    Lithuania: "LH",
-    Luxembourg: "LU",
-    Madagascar: "MA",
-    Malawi: "MI",
-    Malaysia: "MY",
-    Maldives: "MV",
-    Mali: "ML",
-    Malta: "MT",
-    "Marshall Islands": "RM",
-    Mauritania: "MR",
-    Mauritius: "MP",
-    Mexico: "MX",
-    Micronesia: "FM",
-    Moldova: "MD",
-    Monaco: "MN",
-    Mongolia: "MG",
-    Montenegro: "MJ",
-    Morocco: "MO",
-    Mozambique: "MZ",
-    Myanmar: "BM",
-    Burma: "MM",
-    Namibia: "WA",
-    Nauru: "NR",
-    Nepal: "NP",
-    Netherlands: "NL",
-    "New Zealand": "NZ",
-    Nicaragua: "NI",
-    Niger: "NG",
-    Nigeria: "NI",
-    "North Macedonia": "MK",
-    Norway: "NO",
-    Oman: "MU",
-    Pakistan: "PK",
-    Palau: "PS",
-    "Palestine State": "PS",
-    Panama: "PM",
-    "Papua New Guinea": "PP",
-    Paraguay: "PA",
-    Peru: "PE",
-    Philippines: "RP",
-    Poland: "PL",
-    Portugal: "PO",
-    Qatar: "QA",
-    Romania: "RO",
-    Russia: "RS",
-    Rwanda: "RW",
-    "Saint Kitts and Nevis": "SC",
-    "Saint Lucia": "ST",
-    "Saint Vincent and the Grenadines": "VC",
-    Samoa: "WS",
-    "San Marino": "SM",
-    "Sao Tome and Principe": "TP",
-    "Saudi Arabia": "SA",
-    Senegal: "SG",
-    Serbia: "RI",
-    Seychelles: "SE",
-    "Sierra Leone": "SL",
-    Singapore: "SN",
-    Slovakia: "LO",
-    Slovenia: "SI",
-    "Solomon Islands": "BP",
-    Somalia: "SO",
-    "South Africa": "SF",
-    "South Sudan": "OD",
-    Spain: "SP",
-    "Sri Lanka": "CE",
-    Sudan: "SU",
-    "St. Vincent Grenadines": "VC",
-    "State of Palestine": "palestine",
-    Suriname: "NS",
-    Sweden: "SW",
-    Switzerland: "SZ",
-    Syria: "SY",
-    Taiwan: "TW",
-    Tajikistan: "TI",
-    Tanzania: "TZ",
-    Thailand: "TH",
-    "Timor-Leste": "TT",
-    Togo: "TO",
-    Tonga: "TN",
-    "Trinidad and Tobago": "TD",
-    Tunisia: "TS",
-    Turkey: "TU",
-    Turkmenistan: "TX",
-    Tuvalu: "TV",
-    Uganda: "UG",
-    Ukraine: "UP",
-    "United Arab Emirates": "AE",
-    "U.A.E.": "AE",
-    "United Kingdom": "UK",
-    "U.K.": "UK",
-    "United States": "US",
-    "U.S.": "US",
-    Uruguay: "UY",
-    Uzbekistan: "UZ",
-    Vanuatu: "NH",
-    Venezuela: "VE",
-    Vietnam: "VM",
-    Yemen: "YM",
-    Zambia: "ZA",
-    Zimbabwe: "ZI",
-  };
-
-  let selectedCountryName = "";
   if (parseInt(n) == 0) {
     if (Player1.CountryName != "") {
-      // selectedCountryName = countryNameToCode[Player1.CountryName];
       return Player1.CountryName.replace(/ /g, "-");
     }
   } else {
     if (Player2.CountryName != "") {
-      // selectedCountryName = countryNameToCode[Player2.CountryName];
       return Player2.CountryName.replace(/ /g, "-");
     }
   }
 
-  if (selectedCountryName != undefined && selectedCountryName != "")
-    return selectedCountryName;
-  else return "";
+  return "";
 }
 
 function resizeSocketLog() {
@@ -1124,13 +912,7 @@ function togglePop(con) {
 document.addEventListener("keydown", function (event) {
   if (event.key === "F5" || (event.key === "r" && event.ctrlKey)) {
     if (socket != null) {
-      socket.emit("giveup", textDisplay.player1);
-    } else {
-      if (playerName == textDisplay.player1) {
-        textDisplay.giveup = "me";
-      } else {
-        textDisplay.giveup = "other";
-      }
+      socket.emit("giveup", Player1.entityId);
     }
 
     goPage("result_no");
@@ -1301,69 +1083,34 @@ function goPage(page) {
       var textMessage = "";
       var textTitle = "";
       var textPrice = "";
-      if (textDisplay.giveup == "me" || Player1.prizeUSD == undefined) {
-        //textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
 
-        winner = Player2.entityId;
-        textTitle =
-          "The outcome of this game favors the opponent.\n\n 🙁  \n\n";
-        textMessage = "\n\nOne more try,\nyou've got this!";
-
-        resultTitleTxt.font = "20px bpreplaybold";
-        resultShareTxt.visible = false;
-        buttonFacebook.visible = false;
-        buttonTiktok.visible = false;
-        buttonWhatsapp.visible = false;
-        resultPriceTxt.visible = false;
-      } else if (
-        textDisplay.giveup == "other" &&
-        Player1.prizeUSD != undefined
-      ) {
-        //textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
-
-        winner = Player1.entityId;
-        textTitle = "You won!!!!";
-        textMessage = "Congratulations, you won:";
-        resultPriceTxt.text = "$" + Player1.prizeUSD;
-        resultTitleTxt.font = "60px bpreplaybold";
-        if (textDisplay.winEffect == "yes") {
-          textDisplay.winEffect = "no";
-          particles = [];
-          for (var i = 0; i < maxConfettis; i++) {
-            particles.push(new confettiParticle());
-          }
-          Draw();
-        }
-      } else {
-        if (
-          Math.floor(playerData.score) > Math.floor(playerData.opponentScore) &&
+      if (textDisplay.isOnline == true)
+      {
+        if (textDisplay.giveup == "me" || Player1.prizeUSD == undefined) {
+          //textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+  
+          winner = Player2.entityId;
+          textTitle =
+            "The outcome of this game favors the opponent.\n\n 🙁  \n\n";
+          textMessage = "\n\nOne more try,\nyou've got this!";
+          
+          resultTitleTxt.font = "20px bpreplaybold";
+          resultShareTxt.visible = false;
+          buttonFacebook.visible = false;
+          buttonTiktok.visible = false;
+          buttonWhatsapp.visible = false;
+          resultPriceTxt.visible = false;
+        } else if (
+          textDisplay.giveup == "other" &&
           Player1.prizeUSD != undefined
         ) {
           //textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
+  
           winner = Player1.entityId;
           textTitle = "You won!!!!";
           textMessage = "Congratulations, you won:";
-          resultPriceTxt.text = "$" + Player1.prizeUSD;
-
-          resultTitleTxt.font = "60px bpreplaybold";
-          if (textDisplay.winEffect == "yes") {
-            textDisplay.winEffect = "no";
-            particles = [];
-            for (var i = 0; i < maxConfettis; i++) {
-              particles.push(new confettiParticle());
-            }
-            Draw();
-          }
-        } else if (
-          Math.floor(playerData.score) < 3 &&
-          Math.floor(playerData.opponentScore) < 3 &&
-          Player1.prizeUSD != undefined
-        ) {
-          winner = Player1.entityId;
-          textTitle = "You won!!!!";
-          textMessage = "Congratulations, you won:";
-          resultPriceTxt.text = "$" + Player1.prizeUSD;
-
+          resultPriceTxt.text = Player1.prizeUSD;
+          imageP1.visible = true;
           resultTitleTxt.font = "60px bpreplaybold";
           if (textDisplay.winEffect == "yes") {
             textDisplay.winEffect = "no";
@@ -1374,26 +1121,80 @@ function goPage(page) {
             Draw();
           }
         } else {
-          textTitle =
-            "The outcome of this game favors the opponent.\n\n 🙁 \n\n";
-          textMessage = "\n\nOne more try,\nyou've got this!";
-
-          winner = Player2.entityId;
-          resultTitleTxt.font = "20px bpreplaybold";
-          resultShareTxt.visible = false;
-          buttonFacebook.visible = false;
-          buttonTwitter.visible = false;
-          buttonTiktok.visible = false;
-          buttonWhatsapp.visible = false;
-          resultPriceTxt.visible = false;
-          //textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+          if (
+            Math.floor(playerData.score) > Math.floor(playerData.opponentScore) &&
+            Player1.prizeUSD != undefined
+          ) {
+            //textMessage = 'WIN: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')';
+            winner = Player1.entityId;
+            textTitle = "You won!!!!";
+            textMessage = "Congratulations, you won:";
+            resultPriceTxt.text = Player1.prizeUSD;
+            imageP1.visible = true;
+            resultTitleTxt.font = "60px bpreplaybold";
+            if (textDisplay.winEffect == "yes") {
+              textDisplay.winEffect = "no";
+              particles = [];
+              for (var i = 0; i < maxConfettis; i++) {
+                particles.push(new confettiParticle());
+              }
+              Draw();
+            }
+          } else if (
+            Math.floor(playerData.score) < 3 &&
+            Math.floor(playerData.opponentScore) < 3 &&
+            Player1.prizeUSD != undefined
+          ) {
+            winner = Player1.entityId;
+            textTitle = "You won!!!!";
+            textMessage = "Congratulations, you won:";
+            resultPriceTxt.text = Player1.prizeUSD;
+            imageP1.visible = true;
+  
+            resultTitleTxt.font = "60px bpreplaybold";
+            if (textDisplay.winEffect == "yes") {
+              textDisplay.winEffect = "no";
+              particles = [];
+              for (var i = 0; i < maxConfettis; i++) {
+                particles.push(new confettiParticle());
+              }
+              Draw();
+            }
+          } else {
+            textTitle =
+              "The outcome of this game favors the opponent.\n\n 🙁 \n\n";
+            textMessage = "\n\nOne more try,\nyou've got this!";
+  
+            winner = Player2.entityId;
+            resultTitleTxt.font = "20px bpreplaybold";
+            resultShareTxt.visible = false;
+            buttonFacebook.visible = false;
+            buttonTwitter.visible = false;
+            buttonTiktok.visible = false;
+            buttonWhatsapp.visible = false;
+            resultPriceTxt.visible = false;
+            //textMessage = 'LOSE: ' + $.players['player'+ 0].text + '(' + playerData.score + ') : ' + textDisplay.player2 + '(' + playerData.opponentScore + ')'
+          }
         }
+
+        
+        saveGame(playerData.score, playerData.opponentScore, winner);
+      }
+      else {
+        textTitle =
+          "Ops, Your device got disconnected.\n\n 📴  \n\n";
+        textMessage = "\n\nOne more try,\nyou've got this!";
+
+        resultTitleTxt.font = "20px bpreplaybold";
+        resultShareTxt.visible = false;
+        buttonFacebook.visible = false;
+        buttonTiktok.visible = false;
+        buttonWhatsapp.visible = false;
+        resultPriceTxt.visible = false;
       }
 
       resultTitleTxt.text = textTitle;
       resultDescTxt.text = textMessage; // textDisplay.resultDesc.replace('[NUMBER]', Math.floor(tweenData.tweenScore)).replace('[SCORE]', Math.floor(playerData.score)).replace('[OPPONENTSCORE]', Math.floor(playerData.opponentScore));
-
-      saveGame(playerData.score, playerData.opponentScore, winner);
 
       break;
     case "result_no":
@@ -1638,6 +1439,17 @@ function redirectToWithAuth(url, authToken, noError) {
 
   if (noError == 1) {
     headerInput.name = "t";
+
+    const _urlParams = new URLSearchParams(window.location.search);
+    // Get the value of a specific parameter
+    const _invite_room = _urlParams.get('invite_room'); // Returns 'value1'
+    if (_invite_room != undefined && _invite_room != '') {
+      var groupInput = document.createElement('input');
+      groupInput.type = 'hidden';
+      groupInput.name = 'invite_room';
+      groupInput.value = _invite_room; 
+    }
+    
   } else {
     headerInput.name = "e";
   }
@@ -1724,8 +1536,10 @@ function saveGame(score, opponentscore, winner) {
   localStorage.setItem("gameID", 1);
 
   var tokenID = localStorage.getItem("t");
-  if (tokenID != undefined && tokenID != "") {
+  
+  if (tokenID != undefined && tokenID != "" && (gameData.ai == true || textDisplay.giveup == "other" || Math.floor(playerData.score) > Math.floor(playerData.opponentScore))) {
     localStorage.removeItem("t");
+    textDisplay.issubmitted = true;
     $.ajax({
       type: "POST",
       url: "/result",
@@ -1744,9 +1558,8 @@ function saveGame(score, opponentscore, winner) {
           (result.success == true && textDisplay.giveup == "other") ||
           Math.floor(playerData.score) >= Math.floor(playerData.opponentScore)
         ) {
-          console.log(result.PriseUsd);
           if (result.PriseUsd != undefined) {
-            resultPriceTxt.text = "$" + result.PriseUsd;
+            resultPriceTxt.text = result.PriseUsd;
             // resultDescTxt.text = "Congratulations, you won:";
           } else {
             var textTitle =
@@ -1766,6 +1579,7 @@ function saveGame(score, opponentscore, winner) {
       },
     });
   }
+
 }
 
 /*!
@@ -1845,11 +1659,6 @@ function buildPlayers() {
       })($.players["gameFlagContainer" + n], n, gameData.ai);
     }
   }
-
-  console.log(
-    $.players["gameFlagContainer0"].regY,
-    $.players["gameFlagContainer" + 1].regY
-  );
 
   playerData.score = 0;
   playerData.opponentScore = 0;
@@ -2084,7 +1893,7 @@ function displayPlayerTurn() {
 
 function animatePlayerTurn(obj) {
   obj.alpha = 0.3;
-  var tweenSpeed = 0.2;
+  var tweenSpeed = 3;
   TweenMax.to(obj, tweenSpeed, {
     alpha: 1,
     overwrite: true,
@@ -2169,10 +1978,20 @@ function placeMove(column) {
       placeIconForMy(firstEmptyRow, column, gameData.player);
       gameData.moving = true;
       if (gameData.ai == false)
+      {
         socket.emit("move", { row: firstEmptyRow, column: column, player: 1 });
+
+        if (textDisplay.isActive == false) {
+          toggleGameTimer(true);
+        }
+      }
     }
   } else {
+
     placeIcon(firstEmptyRow, column, gameData.player);
+
+    _autoGame.place(column);
+    _autoGame.switchRound(0);
   }
 }
 
@@ -2300,7 +2119,11 @@ var players = [];
 
 // my socket
 function createSocket() {
-  socket = io();
+  socket = io({
+    reconnection: true, // Enable reconnection
+    reconnectionAttempts: Infinity, // Unlimited reconnection attempts
+    reconnectionDelay: 1000, // Wait 1 second before trying to reconnect
+  });
 
   socket.on("startGamebySocket", (players) => {
     // Start the game
@@ -2311,7 +2134,8 @@ function createSocket() {
     Player1.prizeUSD = players[0].prizeUSD;
 
     // online job
-    if (players[0].playerName != textDisplay.player1) {
+    // online job
+    if (players[0].entityId != Player1.entityId) {
       textDisplay.bEmployee = true;
       textDisplay.player1 = players[1].playerName;
       textDisplay.player2 = players[0].playerName;
@@ -2338,9 +2162,39 @@ function createSocket() {
     displayPlayerTurn();
   });
 
+  socket.on("waitingGroupMember", (opponent) => {
+    timeData.isDown = true;
+
+    timeData.countdown = 1200000
+
+    textDisplay.effectduration = 1200000;
+    var end = Date.now() + textDisplay.effectduration;
+
+    (function frame() {
+      // launch a few confetti from the left edge
+      confetti({
+        particleCount: 3,
+        angle: 60,
+        spread: 180,
+        startVelocity: 80,
+        origin: { x: 0.5, y: 1 },
+        // origin: {
+        //     x: Math.random(),
+        //     // since they fall down, start a bit higher than random
+        //     y: Math.random() - 0.2
+        // }
+      });
+      if (Date.now() < end && gameData.paused) {
+        requestAnimationFrame(frame);
+      }
+    })();
+
+    alertTxt.text = opponent[0].name;
+
+  });
+
   socket.on("joinedRoom", (roomName) => {
     textDisplay.room = roomName;
-    // console.log(`Joined room: ${roomName}`);
     // You can handle room joining here if needed
   });
 
@@ -2350,8 +2204,7 @@ function createSocket() {
   });
 
   socket.on("giveup", (playerName) => {
-    console.log("giveup", playerName);
-    if (playerName == textDisplay.player1) {
+    if (playerName == Player1.entityId) {
       textDisplay.giveup = "me";
     } else {
       textDisplay.giveup = "other";
@@ -2360,6 +2213,7 @@ function createSocket() {
   });
 
   socket.on("toggleuser", (roomName) => {
+    if (textDisplay.isSelfActive == true)
     toggleGameTimer(true);
     if (textDisplay.firstGame == "no") {
       checkPlayerStatusByTimeout();
@@ -2367,7 +2221,7 @@ function createSocket() {
   });
 
   socket.on("playerDisconnected", (roomName) => {
-    if (roomName == textDisplay.room) {
+    if (socket != null && roomName == textDisplay.room) {
       endGame();
     }
   });
@@ -2381,6 +2235,21 @@ function createSocket() {
     // You can update your game UI accordingly with the opponent's move
   });
 
+  socket.on("active_status", (activeStatus) => {
+    textDisplay.isActive = activeStatus
+  });
+
+  socket.on("current_user", (activeStatus) => {
+
+    gameData.player = activeStatus;
+    gameData.turn = activeStatus;
+
+    togglePlayer();
+    displayPlayerTurn();
+
+    gameData.startPlayer = gameData.player;
+  });
+  
   socket.on("sendEmoji", (emojiName) => {
     showEmojiConvert(emojiName.name);
   });
@@ -2389,13 +2258,7 @@ function createSocket() {
     console.log("already logged in");
 
     if (socket != null) {
-      socket.emit("giveup", textDisplay.player1);
-    } else {
-      if (playerName == textDisplay.player1) {
-        textDisplay.giveup = "me";
-      } else {
-        textDisplay.giveup = "other";
-      }
+      socket.emit("giveup", Player1.entityId);
     }
 
     goPage("result_no");
@@ -2403,18 +2266,43 @@ function createSocket() {
     redirectToWithAuth("/login", "You are already playing", "");
   });
 
+  socket.on('disconnect', () => {
+    if (textDisplay.winEffect == 'no')
+    {
+      textDisplay.isOnline = false;
+      // socket.emit("giveup", Player1.entityId);
+      goPage("result");
+    }
+  });
+
   joinGame(socket);
 }
 
 function joinGame(socket) {
-  console.log("Joined game!");
   textDisplay.player2 = Player2.username;
   if (gameData.ai == false)
-    socket.emit("joinGame", {
-      playerName: textDisplay.player1,
-      player: Player1,
-      isBot: 0,
-    });
+  {
+    const urlParams = new URLSearchParams(window.location.search);
+    // Get the value of a specific parameter
+    const invite_room = urlParams.get('invite_room');
+
+    if (invite_room != undefined && invite_room != '')
+    {
+      socket.emit("groupGame", {
+        playerName: textDisplay.player1,
+        player: Player1,
+        isBot: 0,
+        invite_room: invite_room
+      });
+    }
+    else {
+      socket.emit("joinGame", {
+        playerName: textDisplay.player1,
+        player: Player1,
+        isBot: 0,
+      });
+    }
+  }
   else {
     socket.emit("joinGame", {
       playerName: Player2.username,
@@ -2476,7 +2364,7 @@ function checkPlayerStatus(player) {
   } else {
     displayPlayerTurn();
 
-    if (player == 0) {
+    if (player == 0 || textDisplay.isActive == false) {
       $.ajax({
         url: "/log",
         type: "GET",
@@ -2486,16 +2374,26 @@ function checkPlayerStatus(player) {
           isDraw: isDraw,
         },
         success: function (response) {
-          console.log("set log");
         },
         error: function (xhr, status, error) {
-          console.log("set log error");
         },
       });
     }
 
     gameData.turn = gameData.turn == 1 ? 0 : 1;
     gameData.player = gameData.turn;
+
+
+    if (gameData.ai) {
+      var depth = Player2.depth ? Player2.depth + 1 : 8;
+      if (_autoGame == null) {
+        _autoGame = new Game(gameData.settings.row, gameData.settings.column, depth);
+        window.Game = _autoGame;
+      }
+      else {
+        _autoGame.restartGame(depth, gameData.player);
+      }
+    }
 
     TweenMax.to(gameContainer, tweenTimer, {
       overwrite: true,
@@ -2534,9 +2432,9 @@ function checkPlayerStatusByTimeout() {
   displayPlayerTurn();
 
   if (gameData.ai == false) {
-    gameData.player = gameData.startPlayer;
-    gameData.turn = gameData.startPlayer;
-    gameData.startPlayer = gameData.startPlayer == 0 ? 1 : 0;
+    // gameData.player = gameData.startPlayer;
+    // gameData.turn = gameData.startPlayer;
+    // gameData.startPlayer = gameData.startPlayer == 0 ? 1 : 0;
   } else {
     gameData.turn = gameData.turn == 1 ? 0 : 1;
     gameData.player = gameData.turn;
@@ -2614,12 +2512,19 @@ function animateWinDim(obj) {
  *
  */
 async function makeAIMove() {
-  // await randomSleep();
-//   var bestColumn = getBestColumnForAI();
-  var bestColumn = await bestMove();
-  var firstEmptyRow = getFirstEmptyRow(bestColumn, gameData.board);
 
-  placeIcon(firstEmptyRow, bestColumn, gameData.player);
+  await randomSleep();
+  
+  var nextColumn = await _autoGame.generateComputerDecision();
+
+  if (nextColumn != -1)
+  {
+    var firstEmptyRow = getFirstEmptyRow(nextColumn, gameData.board);
+    placeIcon(firstEmptyRow, nextColumn, gameData.player);
+
+    _autoGame.switchRound(1);
+  }
+
 }
 
 function sleep(ms) {
@@ -2627,133 +2532,13 @@ function sleep(ms) {
 }
 
 async function randomSleep() {
-  const randomTime = Math.floor(Math.random() * 1000) + 200; // Random time between 1000ms and 3000ms
+  const randomTime = Math.floor(Math.random() * 1000) + 2000; // Random time between 1000ms and 3000ms
   await sleep(randomTime);
-}
-
-function getBestColumnForAI() {
-  var winnerColumn = getWinnerColumn(gameData.board, gameData.player);
-  if (winnerColumn !== -1) {
-    return winnerColumn;
-  }
-  var adversary = gameData.player == 0 ? 1 : 0;
-
-  var winnerColumnForAdversary = getWinnerColumn(gameData.board, adversary);
-  if (winnerColumnForAdversary !== -1) {
-    return winnerColumnForAdversary;
-  }
-  var cpuStats = getColumnWithHighestScore(gameData.player, gameData.board);
-  var adversaryStats = getColumnWithHighestScore(adversary, gameData.board);
-  if (adversaryStats.highestCount > cpuStats.highestCount) {
-    return adversaryStats.columnIndex;
-  } else if (cpuStats.highestCount > 1) {
-    return cpuStats.columnIndex;
-  }
-  const centralColumn = getCentralColumn(gameData.board);
-  if (centralColumn !== -1) {
-    return centralColumn;
-  }
-  return getRandomColumn(gameData.board);
-}
-
-function getWinnerColumn(board, player) {
-  for (var i = 0; i < gameData.settings.column; i++) {
-    var boardClone = JSON.parse(JSON.stringify(board));
-    const firstEmptyRow = getFirstEmptyRow(i, boardClone);
-    if (firstEmptyRow !== -1) {
-      boardClone[firstEmptyRow][i] = player;
-      var connectLine = checkIsWinner(player, boardClone);
-      if (connectLine.length >= gameData.settings.connect) {
-        return i;
-      }
-    }
-  }
-  return -1;
-}
-
-function getColumnWithHighestScore(player, board) {
-  var returnObject = {
-    highestCount: -1,
-    columnIndex: -1,
-  };
-  for (var i = 0; i < gameData.settings.column; i++) {
-    var boardClone = JSON.parse(JSON.stringify(board));
-    var firstEmptyRow = getFirstEmptyRow(i, boardClone);
-    if (firstEmptyRow !== -1) {
-      boardClone[firstEmptyRow][i] = player;
-      const firstFilledRow = getFirstFilledRow(i, boardClone);
-      if (firstFilledRow !== -1) {
-        var count;
-        count = countUp(i, firstFilledRow, player, boardClone);
-        if (count.length > returnObject.highestCount) {
-          returnObject.highestCount = count;
-          returnObject.columnIndex = i;
-        }
-        count = countRight(i, firstFilledRow, player, boardClone);
-        if (count.length > returnObject.highestCount) {
-          returnObject.highestCount = count;
-          returnObject.columnIndex = i;
-        }
-        count = countUpRight(i, firstFilledRow, player, boardClone);
-        if (count.length > returnObject.highestCount) {
-          returnObject.highestCount = count;
-          returnObject.columnIndex = i;
-        }
-        count = countDownRight(i, firstFilledRow, player, boardClone);
-        if (count.length > returnObject.highestCount) {
-          returnObject.highestCount = count;
-          returnObject.columnIndex = i;
-        }
-      }
-    }
-  }
-  return returnObject;
-}
-
-function getRandomColumn(board) {
-  while (true) {
-    var boardClone = JSON.parse(JSON.stringify(board));
-    var randomColumnIndex = randomIntFromInterval(
-      0,
-      gameData.settings.column - 1
-    );
-    var firstEmptyRow = getFirstEmptyRow(randomColumnIndex, boardClone);
-    if (firstEmptyRow !== -1) {
-      return randomColumnIndex;
-    }
-  }
-}
-
-function getCentralColumn(board) {
-  var boardClone = JSON.parse(JSON.stringify(board));
-  var centralColumn = parseInt((gameData.settings.column - 1) / 2);
-  if (getFirstEmptyRow(centralColumn, boardClone) !== -1) {
-    return centralColumn;
-  }
-  return -1;
-}
-
-function getFirstFilledRow(columnIndex, board) {
-  for (var i = gameData.settings.row - 1; i >= 0; i--) {
-    if (board[i][columnIndex] !== -1) {
-      return i;
-    }
-  }
-  return -1;
 }
 
 function getFirstEmptyRow(columnIndex, board) {
   for (var i = gameData.settings.row - 1; i >= 0; i--) {
     if (board[i][columnIndex] === -1) {
-      return i;
-    }
-  }
-  return -1;
-}
-
-function getFirstNoEmptyRow(columnIndex, board) {
-  for (var i = gameData.settings.row - 1; i >= 0; i--) {
-    if (board[i][columnIndex] !== -1) {
       return i;
     }
   }
@@ -2882,7 +2667,7 @@ function updateGame() {
   if (!gameData.paused) {
     if (timeData.enable) {
       if (gameData.ai == false) {
-        if (gameData.player == 0) {
+        if (gameData.player == 0 || textDisplay.isActive == false) {
           timeData.nowDate = new Date();
           timeData.elapsedTime = Math.floor(
             timeData.nowDate.getTime() - timeData.startDate.getTime()
@@ -2923,6 +2708,7 @@ function updateTimerDownGame() {
   }
 }
 
+var nCounter = 0
 function updateTimer() {
   if (timeData.oldTimer == -1) {
     timeData.oldTimer = timeData.timer;
@@ -2936,12 +2722,18 @@ function updateTimer() {
     } else {
       timeData.enable = false;
 
-      if (gameData.player == 0 && socket != null) {
+      if ((gameData.player == 0) && socket != null) {
+        
+        timeData.timer = 90000;
         socket.emit("toggleuser", textDisplay.room);
+        if (gameData.ai == false) {
+          socket.emit("current_user", gameData.player);
+        }
       }
     }
   } else {
     if (timeData.oldTimer - timeData.timer > 1000) {
+      nCounter = 0;
       if (timeData.timer < 1000) {
         playSound("soundCountdownEnd");
       } else if (timeData.timer <= 10000) {
@@ -2954,7 +2746,25 @@ function updateTimer() {
       timeData.oldTimer = timeData.timer;
     }
 
+    if (gameData.player == 1) {
+      if (timeData.oldTimer == timeData.timer) {
+        nCounter++;
+      }
+    }
+
+    if (nCounter > 75) { // FPS 25, waiting for 3 seconds
+      if (socket != null)
+      {
+        socket.emit("giveup", Player2.entityId);
+      }
+      else {
+        textDisplay.giveup = "other";
+        endGame();
+      }
+    }
+
     timerTxt.text = timerRedTxt.text = millisecondsToTimeGame(timeData.timer);
+
   }
 }
 
@@ -2968,48 +2778,71 @@ function updateTimerDown() {
     timerDownTxt.text = "";
     timerDownTxt.visible = false;
 
-    if (socket != null) socket.emit("beforeautogame", {});
+    const urlParams = new URLSearchParams(window.location.search);
+    // Get the value of a specific parameter
+    const invite_room = urlParams.get('invite_room');
 
-    $.ajax({
-      url: "/bot/info",
-      type: "GET",
-      data: {
-        t: localStorage.getItem("t"),
-        gameID: 1,
-        betUsd: Player1.betUsd,
-      },
-      success: function (response) {
-        Player2 = response;
+    let lang = urlParams.get('lang'); // Returns 'value1'
+    if (lang == undefined || lang == '') lang = 'en'
 
-        textDisplay.computer = response.username;
-        textDisplay.computerTurn = response.username + " turn";
-        $.players["player" + 1].text = response.username;
+    if (invite_room != undefined && invite_room != '')
+    {
+      
 
-        checkGameType(true);
-        goPage("game");
+      setTimeout(() => {
+        redirectToWithAuth(
+          "https://www.player1.win/"+lang+"/games/1/connect-four",
+          "Your friend didn't come online 🙁",
+          0
+        );
+      }, 3000);
+    }
+    else {
+      const t = urlParams.get('t');
+      if (socket != null) socket.emit("beforeautogame", {});
+      $.ajax({
+        url: "/bot/info",
+        type: "GET",
+        data: {
+          t: t,
+          gameID: 1,
+          betUsd: Player1.betUsd,
+        },
+        success: function (response) {
+          Player2 = response;
 
-        startGame();
-      },
-      error: function (xhr, status, error) {
-        // Handle errors
+          textDisplay.computer = response.username;
+          textDisplay.computerTurn = response.username + " turn";
+          $.players["player" + 1].text = response.username;
 
-        if (socket != null) {
-          socket.disconnect();
-        }
-        if (xhr.status === 400) {
-          redirectToWithAuth(
-            "https://www.player1.win/games/1/connect-four",
-            "Token invalid",
-            0
-          );
-        } else {
-          console.error("Error:", errorThrown);
-          location.reload();
-        }
-        // if (gameData.paused == true)
-        //
-      },
-    });
+          checkGameType(true);
+          goPage("game");
+
+          startGame();
+
+          var depth = Player2.depth ? Player2.depth + 1 : 8;
+          _autoGame = new Game(gameData.settings.row, gameData.settings.column, depth);
+          window.Game = _autoGame;
+
+        },
+        error: function (xhr, status, error) {
+          // Handle errors
+          if (xhr.status === 400) {
+            redirectToWithAuth(
+              "https://www.player1.win/"+lang+"/games/1/connect-four",
+              "Token invalid",
+              0
+            );
+          } else {
+            console.error("Error:", errorThrown);
+            location.reload();
+          }
+          // if (gameData.paused == true)
+          //
+        },
+      });
+
+    }
   } else {
     if (Math.abs(timeData.oldTimer - timeData.timer) > 1000) {
       if (timeData.timer < 1000) {
@@ -3156,7 +2989,11 @@ function toggleFullScreen() {
 function share(action) {
   gtag("event", "click", { event_category: "share", event_label: action });
 
-  var loc = "https://www.player1.win/games/1/connect-four"; //location.href
+  const urlParams = new URLSearchParams(window.location.search);
+  let lang = urlParams.get('lang'); // Returns 'value1'
+  if (lang == undefined || lang == '') lang = 'en'
+
+  var loc = "https://www.player1.win/"+lang+"/games/1/connect-four"; //location.href
 
   var curr_loc = location.href;
   curr_loc = curr_loc.substring(0, curr_loc.lastIndexOf("/") + 1);
@@ -3218,40 +3055,6 @@ function lastSpace(column) {
     }
   }
   return count;
-}
-
-async function bestMove() {
-  let bestScore = -Infinity;
-  let move;
-  for (let j = 0; j < gameData.settings.column; j++) {
-    for (let i = 0; i < gameData.settings.row; i++) {
-      if (
-        gameData.board[i][j] == -1 &&
-        i == lastSpace(j) &&
-        lastSpace(j) >= 0
-      ) {
-        gameData.board[i][j] = 1;
-        let score = minimax(
-          gameData.board,
-          7,
-          alpha,
-          beta,
-          false
-        );
-        gameData.board[i][j] = -1;
-        if (score > bestScore) {
-          bestScore = score;
-          move = { i, j };
-        }
-
-        await sleep(20);
-      }
-    }
-  }
-  return move.j;
-  // gameData.board[move.i][move.j] = 0;
-  // currentTurn = 'other';
-  // thinkingText.html("");
 }
 
 // function checkWinner() {
@@ -3379,3 +3182,14 @@ function minimax(board, depth, alpha, beta, isMaximizing) {
     return bestScore;
   }
 }
+
+
+document.addEventListener('visibilitychange', function() {
+  if (document.hidden) {
+    textDisplay.isSelfActive = false;
+    socket.emit("active_status", false);
+  } else {
+    textDisplay.isSelfActive = true;
+    socket.emit("active_status", true);
+  }
+});

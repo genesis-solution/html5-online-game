@@ -29,7 +29,7 @@ function initGameCanvas(w,h){
 
 var guide = false;
 var canvasContainer, mainContainer, gameContainer, instructionContainer, resultContainer, moveContainer, confirmContainer;
-var guideline, bg, logo, buttonOk, result, shadowResult, buttonReplay, buttonFacebook, buttonTwitter, buttonWhatsapp, buttonTiktok, buttonFullscreen, buttonSoundOn, buttonSoundOff;
+var guideline, bg, logo, buttonOk, result, shadowResult, buttonReplay, imageP1, buttonFacebook, buttonTwitter, buttonWhatsapp, buttonTiktok, buttonFullscreen, buttonSoundOn, buttonSoundOff;
 
 $.players = {};
 
@@ -417,7 +417,9 @@ function buildGameCanvas(response){
 	resultPriceTxt.textBaseline='alphabetic';
 	resultPriceTxt.text = '';
 	
-	
+	imageP1 = new createjs.Bitmap(loader.getResult('p1'));
+	imageP1.visible = false;
+
 	buttonFacebook = new createjs.Bitmap(loader.getResult('buttonFacebook'));
 	buttonTwitter = new createjs.Bitmap(loader.getResult('buttonTwitter'));
 	buttonWhatsapp = new createjs.Bitmap(loader.getResult('buttonWhatsapp'));
@@ -503,7 +505,7 @@ function buildGameCanvas(response){
 	mainContainer.addChild(logo, logoP, buttonTypeContainer, buttonPlayerContainer, buttonLocalContainer, buttonStart);
 	boardContainer.addChild(boardDesignBackContainer, boardIconContainer, boardDesignContainer, boardColor, boardBorder, statusContainer);
 	gameContainer.addChild(boardContainer, timerContainer, emojiContainer, emojiSettingContainer);
-	resultContainer.addChild(itemResult, itemResultP, buttonContinue, resultTitleTxt, resultDescTxt, resultPriceTxt);
+	resultContainer.addChild(itemResult, itemResultP, buttonContinue, resultTitleTxt, resultDescTxt, resultPriceTxt, imageP1);
 	
 	if(shareEnable){
 		resultContainer.addChild(resultShareTxt, buttonFacebook, buttonTiktok, buttonWhatsapp);
@@ -662,6 +664,9 @@ function changeCanvasViewport(){
 			resultPriceTxt.x = canvasW/2;
 			resultPriceTxt.y = canvasH/100 * 43;
 			
+			imageP1.x = canvasW/2 - 33;
+			imageP1.y = canvasH/100 * 43 - 18;
+
 			//exit
 			itemExit.visible = true;
 			itemExitP.visible = false;
@@ -802,6 +807,9 @@ function changeCanvasViewport(){
 
 			resultPriceTxt.x = canvasW/2;
 			resultPriceTxt.y = canvasH/100 * 45;
+
+			imageP1.x = canvasW/2 - 33;
+			imageP1.y = canvasH/100 * 45 - 18;
 			
 			//exit
 			itemExit.visible = false;
@@ -923,6 +931,22 @@ function tick(event) {
 	stage.update(event);
 }
 
+// Custom function to keep the ticker running
+function keepTickerRunning() {
+    if (document.hidden) {
+        // If the tab is inactive, you can still call the tick function
+        tick();
+    }
+}
+
+// Start the custom loop
+function gameLoop() {
+    keepTickerRunning();
+    requestAnimationFrame(gameLoop);
+}
+
+// Start the loop
+gameLoop();
 /*!
  * 
  * CANVAS MISC FUNCTIONS

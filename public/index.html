@@ -82,7 +82,8 @@
         <script src="/socket.io/socket.io.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery.min.js"><\/script>')</script>
-        
+        <script src="js/board.js"></script>
+        <script src="js/connect-four.js"></script>
         <script src="js/vendor/detectmobilebrowser.js"></script>
         <script src="js/vendor/createjs.min.js"></script>
 		<script src="js/vendor/TweenMax.min.js"></script>
@@ -106,17 +107,20 @@
 
     gtag('config', 'G-E0TYQLGM15');
 
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // Get the value of a specific parameter
+    const tokenkey = urlParams.get('t'); // Returns 'value1'
+
+    let lang = urlParams.get('lang'); // Returns 'value1'
+    if (lang == undefined || lang == '') lang = 'en'
+
     try {
-        const urlParams = new URLSearchParams(window.location.search);
-
-        // Get the value of a specific parameter
-        const tokenkey = urlParams.get('t'); // Returns 'value1'
-
         if (tokenkey == undefined || tokenkey == '') {
-            redirectToWithAuth('https://www.player1.win/games/1/connect-four', 'Token not found', 0);
+            redirectToWithAuth('https://www.player1.win/'+lang+'/games/1/connect-four', 'Token not found', 0);
         }
     } catch (error) {
-          redirectToWithAuth('https://www.player1.win/games/1/connect-four', 'Token not found', 0);
+          redirectToWithAuth('https://www.player1.win/'+lang+'/games/1/connect-four', 'Token not found', 0);
       }
 
 
@@ -131,14 +135,27 @@
         if (noError == 1)
         {
           headerInput.name = 't';
+
+          const _urlParams = new URLSearchParams(window.location.search);
+          // Get the value of a specific parameter
+          const _invite_room = _urlParams.get('invite_room'); // Returns 'value1'
+          if (_invite_room != undefined && _invite_room != '') {
+            var groupInput = document.createElement('input');
+            groupInput.type = 'hidden';
+            groupInput.name = 'invite_room';
+            groupInput.value = _invite_room; 
+          }
+          
         } else {
           headerInput.name = 'e';
         }
+        
         headerInput.value = authToken; 
         form.appendChild(headerInput);
         document.body.appendChild(form);
         form.submit();
-      }
+    }
     
     </script>
+
 </html>
