@@ -39,7 +39,7 @@ function handleSocketEvents(io) {
 
                     let obj_player1 = { id: player1.id, name: player1.playerName, username: player1.playerName, playerName: player1.playerName, CountryName: player1.CountryName, entityId: player1.entityId, TokenId: player1.TokenId, gameID: player1.gameID, Status: player1.Status, betUsd: player1.betUsd, CountryName: player1.CountryName, isBot: player1.isBot };
                     let obj_player2 = { id: player2.id, name: player2.playerName, username: player2.playerName, playerName: player2.playerName, CountryName: player2.CountryName, entityId: player2.entityId, TokenId: player2.TokenId, gameID: player2.gameID, Status: player2.Status, betUsd: player2.betUsd, CountryName: player2.CountryName, isBot: player2.isBot };
-
+                    
                     try {
                         const url = server_url;
                         const func_name = "Entity_Entry_Update";
@@ -81,9 +81,7 @@ function handleSocketEvents(io) {
                                   if (result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'] != undefined && result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'].length > 0)
                                   {
                                     const resultValue = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['NS1:'+func_name+'Response'][0]['return'][0]['_'];
-                                    var returnValue = JSON.parse(resultValue)
-
-                                    console.log(returnValue)
+                                    var returnValue = JSON.parse(resultValue);
                     
                                     if (returnValue.ResultCode == 0 && returnValue.ResultMessage == 'OK') {
                                         obj_player1['games_entryID'] = returnValue.games_entryID;

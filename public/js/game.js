@@ -198,6 +198,7 @@ let topHeight = 50;
 const cardPadding = 20;
 let imagesCanvas = {};
 
+var _autoGame;
 //Social share, [SCORE] will replace with game score
 var shareEnable = true; //toggle share
 var shareTitle = "Highscore on Connect Four is [SCORE]pts"; //social share score title
@@ -1892,7 +1893,7 @@ function displayPlayerTurn() {
 
 function animatePlayerTurn(obj) {
   obj.alpha = 0.3;
-  var tweenSpeed = 0.2;
+  var tweenSpeed = 3;
   TweenMax.to(obj, tweenSpeed, {
     alpha: 1,
     overwrite: true,
@@ -1986,7 +1987,11 @@ function placeMove(column) {
       }
     }
   } else {
+
     placeIcon(firstEmptyRow, column, gameData.player);
+
+    _autoGame.place(column);
+    _autoGame.switchRound(0);
   }
 }
 
@@ -2378,6 +2383,18 @@ function checkPlayerStatus(player) {
     gameData.turn = gameData.turn == 1 ? 0 : 1;
     gameData.player = gameData.turn;
 
+
+    if (gameData.ai) {
+      var depth = Player2.depth ? Player2.depth + 1 : 8;
+      if (_autoGame == null) {
+        _autoGame = new Game(gameData.settings.row, gameData.settings.column, depth);
+        window.Game = _autoGame;
+      }
+      else {
+        _autoGame.restartGame(depth, gameData.player);
+      }
+    }
+
     TweenMax.to(gameContainer, tweenTimer, {
       overwrite: true,
       onComplete: function () {
@@ -2495,12 +2512,19 @@ function animateWinDim(obj) {
  *
  */
 async function makeAIMove() {
-  // await randomSleep();
-//   var bestColumn = getBestColumnForAI();
-  var bestColumn = await bestMove();
-  var firstEmptyRow = getFirstEmptyRow(bestColumn, gameData.board);
 
-  placeIcon(firstEmptyRow, bestColumn, gameData.player);
+  await randomSleep();
+  
+  var nextColumn = await _autoGame.generateComputerDecision();
+
+  if (nextColumn != -1)
+  {
+    var firstEmptyRow = getFirstEmptyRow(nextColumn, gameData.board);
+    placeIcon(firstEmptyRow, nextColumn, gameData.player);
+
+    _autoGame.switchRound(1);
+  }
+
 }
 
 function sleep(ms) {
@@ -2508,133 +2532,13 @@ function sleep(ms) {
 }
 
 async function randomSleep() {
-  const randomTime = Math.floor(Math.random() * 1000) + 200; // Random time between 1000ms and 3000ms
+  const randomTime = Math.floor(Math.random() * 1000) + 2000; // Random time between 1000ms and 3000ms
   await sleep(randomTime);
-}
-
-function getBestColumnForAI() {
-  var winnerColumn = getWinnerColumn(gameData.board, gameData.player);
-  if (winnerColumn !== -1) {
-    return winnerColumn;
-  }
-  var adversary = gameData.player == 0 ? 1 : 0;
-
-  var winnerColumnForAdversary = getWinnerColumn(gameData.board, adversary);
-  if (winnerColumnForAdversary !== -1) {
-    return winnerColumnForAdversary;
-  }
-  var cpuStats = getColumnWithHighestScore(gameData.player, gameData.board);
-  var adversaryStats = getColumnWithHighestScore(adversary, gameData.board);
-  if (adversaryStats.highestCount > cpuStats.highestCount) {
-    return adversaryStats.columnIndex;
-  } else if (cpuStats.highestCount > 1) {
-    return cpuStats.columnIndex;
-  }
-  const centralColumn = getCentralColumn(gameData.board);
-  if (centralColumn !== -1) {
-    return centralColumn;
-  }
-  return getRandomColumn(gameData.board);
-}
-
-function getWinnerColumn(board, player) {
-  for (var i = 0; i < gameData.settings.column; i++) {
-    var boardClone = JSON.parse(JSON.stringify(board));
-    const firstEmptyRow = getFirstEmptyRow(i, boardClone);
-    if (firstEmptyRow !== -1) {
-      boardClone[firstEmptyRow][i] = player;
-      var connectLine = checkIsWinner(player, boardClone);
-      if (connectLine.length >= gameData.settings.connect) {
-        return i;
-      }
-    }
-  }
-  return -1;
-}
-
-function getColumnWithHighestScore(player, board) {
-  var returnObject = {
-    highestCount: -1,
-    columnIndex: -1,
-  };
-  for (var i = 0; i < gameData.settings.column; i++) {
-    var boardClone = JSON.parse(JSON.stringify(board));
-    var firstEmptyRow = getFirstEmptyRow(i, boardClone);
-    if (firstEmptyRow !== -1) {
-      boardClone[firstEmptyRow][i] = player;
-      const firstFilledRow = getFirstFilledRow(i, boardClone);
-      if (firstFilledRow !== -1) {
-        var count;
-        count = countUp(i, firstFilledRow, player, boardClone);
-        if (count.length > returnObject.highestCount) {
-          returnObject.highestCount = count;
-          returnObject.columnIndex = i;
-        }
-        count = countRight(i, firstFilledRow, player, boardClone);
-        if (count.length > returnObject.highestCount) {
-          returnObject.highestCount = count;
-          returnObject.columnIndex = i;
-        }
-        count = countUpRight(i, firstFilledRow, player, boardClone);
-        if (count.length > returnObject.highestCount) {
-          returnObject.highestCount = count;
-          returnObject.columnIndex = i;
-        }
-        count = countDownRight(i, firstFilledRow, player, boardClone);
-        if (count.length > returnObject.highestCount) {
-          returnObject.highestCount = count;
-          returnObject.columnIndex = i;
-        }
-      }
-    }
-  }
-  return returnObject;
-}
-
-function getRandomColumn(board) {
-  while (true) {
-    var boardClone = JSON.parse(JSON.stringify(board));
-    var randomColumnIndex = randomIntFromInterval(
-      0,
-      gameData.settings.column - 1
-    );
-    var firstEmptyRow = getFirstEmptyRow(randomColumnIndex, boardClone);
-    if (firstEmptyRow !== -1) {
-      return randomColumnIndex;
-    }
-  }
-}
-
-function getCentralColumn(board) {
-  var boardClone = JSON.parse(JSON.stringify(board));
-  var centralColumn = parseInt((gameData.settings.column - 1) / 2);
-  if (getFirstEmptyRow(centralColumn, boardClone) !== -1) {
-    return centralColumn;
-  }
-  return -1;
-}
-
-function getFirstFilledRow(columnIndex, board) {
-  for (var i = gameData.settings.row - 1; i >= 0; i--) {
-    if (board[i][columnIndex] !== -1) {
-      return i;
-    }
-  }
-  return -1;
 }
 
 function getFirstEmptyRow(columnIndex, board) {
   for (var i = gameData.settings.row - 1; i >= 0; i--) {
     if (board[i][columnIndex] === -1) {
-      return i;
-    }
-  }
-  return -1;
-}
-
-function getFirstNoEmptyRow(columnIndex, board) {
-  for (var i = gameData.settings.row - 1; i >= 0; i--) {
-    if (board[i][columnIndex] !== -1) {
       return i;
     }
   }
@@ -2818,7 +2722,7 @@ function updateTimer() {
     } else {
       timeData.enable = false;
 
-      if ((gameData.player == 0) && socket != null) { // || (gameData.player == 1 && textDisplay.isActive == false)
+      if ((gameData.player == 0) && socket != null) {
         
         timeData.timer = 90000;
         socket.emit("toggleuser", textDisplay.room);
@@ -2915,6 +2819,10 @@ function updateTimerDown() {
           goPage("game");
 
           startGame();
+
+          var depth = Player2.depth ? Player2.depth + 1 : 8;
+          _autoGame = new Game(gameData.settings.row, gameData.settings.column, depth);
+          window.Game = _autoGame;
 
         },
         error: function (xhr, status, error) {
@@ -3147,41 +3055,6 @@ function lastSpace(column) {
     }
   }
   return count;
-}
-
-async function bestMove() {
-  let bestScore = -Infinity;
-  let move;
-  for (let j = 0; j < gameData.settings.column; j++) {
-    for (let i = 0; i < gameData.settings.row; i++) {
-      if (
-        gameData.board[i][j] == -1 &&
-        i == lastSpace(j) &&
-        lastSpace(j) >= 0
-      ) {
-        gameData.board[i][j] = 1;
-        var depth = Player2.depth ? Player2.depth : 7;
-        let score = minimax(
-          gameData.board,
-          depth,// 7,
-          alpha,
-          beta,
-          false
-        );
-        gameData.board[i][j] = -1;
-        if (score > bestScore) {
-          bestScore = score;
-          move = { i, j };
-        }
-
-        await sleep(20);
-      }
-    }
-  }
-  return move.j;
-  // gameData.board[move.i][move.j] = 0;
-  // currentTurn = 'other';
-  // thinkingText.html("");
 }
 
 // function checkWinner() {
